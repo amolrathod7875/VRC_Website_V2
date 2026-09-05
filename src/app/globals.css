@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-950: #062445;
+  --color-brand-900: #0b3a6a;
+  --color-brand-800: #0e4d8c;
+  --color-brand-700: #1565b0;
+  --color-brand-600: #1a73c7;
+  --color-brand-500: #2b8ad9;
+  --color-brand-100: #dbeafe;
+  --color-brand-50: #eef5fb;
+  --color-surface: #f7f9fc;
+  --color-surface-muted: #eef2f7;
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: #0f172a;
+  background: #fff;
+  font-family: var(--font-sans);
+}
+
+.placeholder-block {
+  background: linear-gradient(135deg, #d9e3ee 0%, #c5d3e3 50%, #b7c7d9 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.placeholder-block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 12px,
+    rgba(255, 255, 255, 0.18) 12px,
+    rgba(255, 255, 255, 0.18) 24px
+  );
+}
+
+@keyframes logo-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.logo-marquee {
+  animation: logo-marquee 28s linear infinite;
+}
+
+.logo-marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes fade-slide {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.hero-slide-enter {
+  animation: fade-slide 0.55s ease;
+}
