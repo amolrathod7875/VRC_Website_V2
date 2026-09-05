@@ -10,7 +10,6 @@ import {
   presenceLocations,
   weProvide,
 } from "@/lib/data";
-import { HeroCarousel } from "@/components/HeroCarousel";
 import { LogoSlider } from "@/components/LogoSlider";
 import { Placeholder } from "@/components/Placeholder";
 import { ProductCard } from "@/components/ProductCard";
@@ -18,6 +17,7 @@ import { TrustStrip } from "@/components/TrustStrip";
 import { PerformanceCard } from "@/components/PerformanceCard";
 import { ApplicationTile } from "@/components/ApplicationTile";
 import { CtaBanner } from "@/components/CtaBanner";
+import { BrandStatement } from "@/components/BrandStatement";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
@@ -75,7 +75,7 @@ export default function HomePage() {
               <IconArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="relative overflow-hidden rounded-xl">
+          <div className="relative h-full self-stretch overflow-hidden rounded-xl">
             <Image
               src="/landing-industrial-coatings.jpg"
               alt="VR Coatings industrial manufacturing facility"
@@ -87,9 +87,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <HeroCarousel />
-
       <TrustStrip />
+
+      <BrandStatement />
 
       <section id="products" className="scroll-mt-24 bg-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
