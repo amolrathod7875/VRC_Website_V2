@@ -258,6 +258,10 @@ export function findProduct(slug: string) {
   return flattenProducts().find((entry) => entry.node.slug === slug);
 }
 
+export function findIndustry(slug: string) {
+  return industries.find((item) => item.slug === slug);
+}
+
 export const applications = [
   { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts." },
   { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components." },

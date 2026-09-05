@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ComponentType } from "react";
 import { industries } from "@/lib/data";
 import {
@@ -18,6 +19,7 @@ import {
   IconTree,
   IconWind,
 } from "./Icon";
+import { IconArrowRight } from "./Icon";
 
 type IconCmp = ComponentType<{ className?: string }>;
 
@@ -58,7 +60,10 @@ export function IndustryGrid() {
             const Icon = ICON_BY_SLUG[item.slug] ?? IconFactory;
             return (
               <li key={item.slug}>
-                <div className="group flex h-full flex-col items-center gap-4 rounded-lg border border-slate-200 bg-white p-6 text-center transition-all duration-200 ease-out hover:border-[#1678C8] hover:shadow-sm">
+                <Link
+                  href={`/services/${item.slug}`}
+                  className="group flex h-full cursor-pointer flex-col items-center gap-4 rounded-lg border border-slate-200 bg-white p-6 text-center transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[#1678C8] hover:shadow-sm"
+                >
                   <span
                     aria-hidden
                     className="flex h-11 w-11 items-center justify-center text-[#1678C8] transition-transform duration-200 ease-out group-hover:scale-105"
@@ -68,7 +73,11 @@ export function IndustryGrid() {
                   <span className="text-sm font-semibold text-brand-950 transition-colors duration-200 ease-out group-hover:text-[#1678C8]">
                     {item.name}
                   </span>
-                </div>
+                  <span className="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-[#1678C8] opacity-0 transition-opacity duration-200 ease-out group-hover:opacity-100">
+                    Explore
+                    <IconArrowRight className="h-3 w-3" />
+                  </span>
+                </Link>
               </li>
             );
           })}

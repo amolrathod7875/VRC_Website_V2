@@ -18,7 +18,8 @@ import { PerformanceCard } from "@/components/PerformanceCard";
 import { ApplicationTile } from "@/components/ApplicationTile";
 import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
-import { IndustryGrid } from "@/components/IndustryGrid";
+import { HeritageSince } from "@/components/HeritageSince";
+import { ServicesCta } from "@/components/ServicesCta";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
@@ -107,6 +108,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HeritageSince />
+
       <TrustStrip />
 
       <BrandStatement />
@@ -142,7 +145,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <IndustryGrid />
+      <ServicesCta />
 
       <section id="applications" className="bg-[#062746] text-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
