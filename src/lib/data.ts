@@ -135,53 +135,29 @@ export const featuredProducts = [
 export type LandingProduct = {
   slug: string;
   name: string;
-  category: string;
+  category?: string;
   description: string;
 };
 
 export const landingProducts: LandingProduct[] = [
-  {
-    slug: "aeroclear-e-coat",
-    name: "AeroClear E-Coat",
-    category: "E-Coat / Electrocoating",
-    description:
-      "Low-VOC electrocoat primer designed for aerospace and defence component lines.",
-  },
-  {
-    slug: "industrial-protective-coatings",
-    name: "Industrial Protective Coatings",
-    category: "Protective Coatings",
-    description:
-      "High-performance coating systems engineered to protect industrial equipment and fabricated surfaces.",
-  },
-  {
-    slug: "high-temperature-coatings",
-    name: "High Temperature Coatings",
-    category: "High Temperature",
-    description:
-      "Specialized coating solutions designed for surfaces exposed to elevated operating temperatures.",
-  },
-  {
-    slug: "corrosion-protection-systems",
-    name: "Corrosion Protection Systems",
-    category: "Corrosion Protection",
-    description:
-      "Advanced coating systems providing durable corrosion resistance for demanding industrial environments.",
-  },
-  {
-    slug: "specialty-coatings",
-    name: "Specialty Coatings",
-    category: "Specialty Coatings",
-    description:
-      "Application-specific coating solutions engineered around performance, substrate and operating requirements.",
-  },
-  {
-    slug: "custom-coating-solutions",
-    name: "Custom Coating Solutions",
-    category: "Custom Solutions",
-    description:
-      "Engineered coating systems developed to meet specific customer, substrate and application requirements.",
-  },
+  { slug: "barrel-pump", name: "Barrel pump", description: "" },
+  { slug: "cheetah", name: "Cheetah", description: "" },
+  { slug: "cub", name: "Cub", description: "" },
+  { slug: "diaphragm-pump", name: "Diaphragm Pump", description: "" },
+  { slug: "drum-press", name: "DRUM PRESS", description: "" },
+  { slug: "elephant-pump", name: "Elephant Pump", description: "" },
+  { slug: "hippo-pump", name: "Hippo Pump", description: "" },
+  { slug: "leopard-electric", name: "Leopard - ELECTRIC\u2026", description: "" },
+  { slug: "pfp-dragon", name: "PFP DRAGON", description: "" },
+  { slug: "polyurea", name: "Polyurea", description: "" },
+  { slug: "pressure-feed-pot", name: "Pressure Feed Pot", description: "" },
+  { slug: "rhino-pump", name: "Rhino Pump", description: "" },
+  { slug: "spray-painting-guns", name: "Spray Painting Guns", description: "" },
+  { slug: "tiger-mini", name: "Tiger Mini", description: "" },
+  { slug: "tiger-pump", name: "Tiger Pump", description: "" },
+  { slug: "turbine-stirrer", name: "Turbine Stirrer", description: "" },
+  { slug: "vrc-mix-hp", name: "VRC MIX HP", description: "" },
+  { slug: "vrc-mix-lp", name: "VRC MIX LP", description: "" },
 ];
 
 export const clients = [

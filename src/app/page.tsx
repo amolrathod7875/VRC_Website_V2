@@ -46,7 +46,7 @@ export default function HomePage() {
   return (
     <>
       <section className="bg-surface">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pt-16 pb-20 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-20 lg:pb-24">
+        <div className="mx-auto grid max-w-7xl items-start gap-12 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-16 lg:pb-24">
           <div>
             <Eyebrow>Who we are</Eyebrow>
             <SectionHeading>Engineered coating solutions for demanding industries.</SectionHeading>
@@ -75,13 +75,13 @@ export default function HomePage() {
               <IconArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="relative h-full self-stretch overflow-hidden rounded-xl">
+          <div className="relative overflow-hidden rounded-xl">
             <Image
               src="/landing-industrial-coatings.jpg"
               alt="VR Coatings industrial manufacturing facility"
               width={1200}
               height={900}
-              className="h-full w-full object-cover"
+              className="aspect-[4/3] w-full object-cover"
             />
           </div>
         </div>
@@ -101,9 +101,13 @@ export default function HomePage() {
               long-term reliability across industrial applications.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {landingProducts.map((product) => (
-              <ProductCard key={product.slug} product={product} />
+              <ProductCard
+                key={product.slug}
+                product={product}
+                href={`/products/${product.slug}`}
+              />
             ))}
           </div>
         </div>
