@@ -18,19 +18,28 @@ import { PerformanceCard } from "@/components/PerformanceCard";
 import { ApplicationTile } from "@/components/ApplicationTile";
 import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
+import { IndustryGrid } from "@/components/IndustryGrid";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
   IconArrowRight,
+  IconBuilding,
+  IconCar,
   IconCert,
   IconChemical,
+  IconCircuit,
   IconCorrosion,
   IconCustom,
   IconDurability,
   IconFactory,
+  IconPlane,
   IconPrecision,
   IconProtection,
+  IconShield,
+  IconShip,
   IconTemperature,
+  IconZap,
+  type IconProps,
 } from "@/components/Icon";
 
 const PERFORMANCE_ICONS = [
@@ -41,6 +50,17 @@ const PERFORMANCE_ICONS = [
   IconTemperature,
   IconPrecision,
 ];
+
+type IconCmp = (props: IconProps) => React.ReactElement;
+
+const APPLICATION_ICONS: Record<string, IconCmp> = {
+  automotive: IconCar,
+  "defence-aerospace": IconShield,
+  electronics: IconCircuit,
+  infrastructure: IconBuilding,
+  marine: IconShip,
+  energy: IconZap,
+};
 
 export default function HomePage() {
   return (
@@ -101,8 +121,8 @@ export default function HomePage() {
               long-term reliability across industrial applications.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {landingProducts.map((product) => (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {landingProducts.slice(0, 6).map((product) => (
               <ProductCard
                 key={product.slug}
                 product={product}
@@ -110,8 +130,19 @@ export default function HomePage() {
               />
             ))}
           </div>
+          <div className="mt-12">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
+            >
+              View All Products
+              <IconArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
         </div>
       </section>
+
+      <IndustryGrid />
 
       <section id="applications" className="bg-[#062746] text-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
@@ -128,8 +159,8 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {applications.map((app, i) => {
-              const Icon = i % 2 === 0 ? IconApplication : IconFactory;
+            {applications.map((app) => {
+              const Icon = APPLICATION_ICONS[app.slug] ?? IconApplication;
               return (
                 <ApplicationTile
                   key={app.slug}

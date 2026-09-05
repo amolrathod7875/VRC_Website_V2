@@ -267,6 +267,25 @@ export const applications = [
   { slug: "energy", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets." },
 ];
 
+export const industries = [
+  { slug: "manufacturing", name: "Manufacturing" },
+  { slug: "automotive", name: "Automotive" },
+  { slug: "shipyard-marine", name: "Shipyard & Marine" },
+  { slug: "defence", name: "Defence" },
+  { slug: "aerospace", name: "Aerospace" },
+  { slug: "railways", name: "Railways" },
+  { slug: "oil-gas", name: "Oil & Gas" },
+  { slug: "construction", name: "Construction" },
+  { slug: "wood-furniture", name: "Wood & Furniture" },
+  { slug: "packaging", name: "Packaging" },
+  { slug: "printing", name: "Printing" },
+  { slug: "agriculture", name: "Agriculture" },
+  { slug: "pharma-food", name: "Pharma & Food" },
+  { slug: "electronics", name: "Electronics" },
+  { slug: "wind-energy", name: "Wind Energy" },
+  { slug: "infrastructure", name: "Infrastructure" },
+];
+
 export const clientTabs = {
   Manufacturing: ["Apex Steel", "Delta Fabrication", "Summit Rail", "ForgeWorks Ltd."],
   Automotive: ["Helios Auto", "Northwind OEM", "Gearline Components"],
