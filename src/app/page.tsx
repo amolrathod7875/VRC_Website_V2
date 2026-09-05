@@ -109,7 +109,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-[#062746] text-white">
+      <section id="applications" className="bg-[#062746] text-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
             <div>

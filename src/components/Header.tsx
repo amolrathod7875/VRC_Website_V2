@@ -6,6 +6,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { navItems, searchIndex } from "@/lib/data";
 
+const SECTION_TO_NAV: Record<string, string> = {
+  products: "Products",
+  applications: "Applications",
+};
+
 function SearchControl() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -83,18 +88,106 @@ function SearchControl() {
   );
 }
 
+type NavLinkProps = {
+  label: string;
+  href: string;
+  active: boolean;
+  hasChildren: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+};
+
+function NavLink({ label, href, active, hasChildren, onMouseEnter, onMouseLeave }: NavLinkProps) {
+  return (
+    <Link
+      href={href}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      aria-current={active ? "page" : undefined}
+      className="group relative inline-flex items-center gap-1 px-3 py-3 text-sm font-medium transition-colors duration-200 ease-out"
+    >
+      <span
+        className={`transition-colors duration-200 ease-out ${
+          active ? "text-[#1678C8]" : "text-slate-900 group-hover:text-[#1678C8]"
+        }`}
+      >
+        {label}
+      </span>
+      {hasChildren && (
+        <svg
+          viewBox="0 0 20 20"
+          className={`h-3.5 w-3.5 transition-colors duration-200 ease-out ${
+            active ? "text-[#1678C8]" : "text-slate-700 group-hover:text-[#1678C8]"
+          }`}
+          fill="currentColor"
+        >
+          <path d="M5.5 7.5 10 12l4.5-4.5" />
+        </svg>
+      )}
+      <span
+        aria-hidden
+        className={`pointer-events-none absolute left-3 right-3 -bottom-px h-[2px] origin-left rounded-full bg-[#1678C8] transition-transform duration-300 ease-out ${
+          active
+            ? "scale-x-100"
+            : "scale-x-0 group-hover:scale-x-100"
+        }`}
+      />
+    </Link>
+  );
+}
+
 export function Header() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
 
   useEffect(() => {
     setMobileOpen(false);
     setOpenMenu(null);
   }, [pathname]);
 
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveSection(null);
+      return;
+    }
+    const sections = Object.keys(SECTION_TO_NAV)
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          setActiveSection(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [pathname]);
+
+  const isRouteActive = (item: (typeof navItems)[number]) => {
+    if (item.href === "/") {
+      return pathname === "/" && activeSection === null;
+    }
+    return (
+      pathname === item.href ||
+      pathname.startsWith(`${item.href}/`) ||
+      (item.children?.some((c) => pathname === c.href) ?? false)
+    );
+  };
+
+  const isSectionActive = (label: string) =>
+    pathname === "/" && activeSection !== null && SECTION_TO_NAV[activeSection] === label;
+
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
       <div className="mx-auto flex w-[94%] max-w-[1600px] items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-10 xl:px-12">
         <Link href="/" className="flex items-center gap-3">
           <Image
@@ -125,15 +218,10 @@ export function Header() {
           </button>
         </div>
       </div>
-      <nav className="border-t border-slate-100 bg-brand-900">
+      <nav className="border-t border-slate-200 bg-white">
         <div className="mx-auto hidden w-[94%] max-w-[1600px] items-center gap-2 px-4 lg:flex lg:px-10 xl:px-12">
           {navItems.map((item) => {
-            const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname === item.href ||
-                  pathname.startsWith(`${item.href}/`) ||
-                  (item.children?.some((c) => pathname === c.href) ?? false);
+            const active = isRouteActive(item) || isSectionActive(item.label);
             return (
               <div
                 key={item.label}
@@ -141,30 +229,30 @@ export function Header() {
                 onMouseEnter={() => item.children && setOpenMenu(item.label)}
                 onMouseLeave={() => setOpenMenu(null)}
               >
-                <Link
+                <NavLink
+                  label={item.label}
                   href={item.href}
-                  className={`inline-flex items-center gap-1 px-3 py-3 text-sm font-medium ${
-                    active ? "bg-brand-800 text-white" : "text-slate-100 hover:bg-brand-800"
-                  }`}
-                >
-                  {item.label}
-                  {item.children && (
-                    <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor">
-                      <path d="M5.5 7.5 10 12l4.5-4.5" />
-                    </svg>
-                  )}
-                </Link>
+                  active={active}
+                  hasChildren={Boolean(item.children)}
+                />
                 {item.children && openMenu === item.label && (
-                  <div className="absolute left-0 min-w-52 overflow-hidden rounded-b-md bg-white shadow-xl">
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-brand-50 hover:text-brand-800"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
+                  <div className="absolute left-0 top-full min-w-56 overflow-hidden rounded-b-md border border-slate-200 bg-white shadow-xl">
+                    {item.children.map((child) => {
+                      const childActive = pathname === child.href;
+                      return (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className={`block px-4 py-2.5 text-sm transition-colors duration-200 ${
+                            childActive
+                              ? "bg-brand-50 text-[#1678C8]"
+                              : "text-slate-700 hover:bg-brand-50 hover:text-[#1678C8]"
+                          }`}
+                        >
+                          {child.label}
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -172,19 +260,36 @@ export function Header() {
           })}
         </div>
         {mobileOpen && (
-          <div className="space-y-1 px-4 py-3 lg:hidden">
-            {navItems.map((item) => (
-              <div key={item.label} className="border-b border-brand-800/70 py-1">
-                <Link href={item.href} className="block py-2 text-sm font-medium text-white">
-                  {item.label}
-                </Link>
-                {item.children?.map((child) => (
-                  <Link key={child.href} href={child.href} className="block py-1.5 pl-3 text-sm text-brand-100">
-                    {child.label}
+          <div className="space-y-1 border-t border-slate-200 bg-white px-4 py-3 lg:hidden">
+            {navItems.map((item) => {
+              const active = isRouteActive(item) || isSectionActive(item.label);
+              return (
+                <div key={item.label} className="border-b border-slate-200 py-1 last:border-b-0">
+                  <Link
+                    href={item.href}
+                    className={`block py-2 text-sm font-medium transition-colors ${
+                      active ? "text-[#1678C8]" : "text-slate-900 hover:text-[#1678C8]"
+                    }`}
+                  >
+                    {item.label}
                   </Link>
-                ))}
-              </div>
-            ))}
+                  {item.children?.map((child) => {
+                    const childActive = pathname === child.href;
+                    return (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        className={`block py-1.5 pl-3 text-sm transition-colors ${
+                          childActive ? "text-[#1678C8]" : "text-slate-600 hover:text-[#1678C8]"
+                        }`}
+                      >
+                        {child.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </div>
         )}
       </nav>
