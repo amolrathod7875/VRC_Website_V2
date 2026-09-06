@@ -59,7 +59,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <img
                   src={node.image}
                   alt={node.name}
-                  className="mb-8 aspect-[16/9] w-full rounded-xl object-cover object-center"
+                  className="mb-8 aspect-[16/9] w-full rounded-xl object-contain object-center"
                 />
               ) : (
                 <Placeholder
@@ -135,7 +135,7 @@ export default async function ProductDetailPage({ params }: Props) {
             <img
               src={node.image}
               alt={node.name}
-              className="mb-8 aspect-[16/9] w-full rounded-xl object-cover object-center"
+              className="mb-8 aspect-[16/9] w-full rounded-xl object-contain object-center"
             />
           ) : (
             <Placeholder
