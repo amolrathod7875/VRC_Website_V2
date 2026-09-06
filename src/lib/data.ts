@@ -160,17 +160,6 @@ export const landingProducts: LandingProduct[] = [
   { slug: "vrc-mix-lp", name: "VRC MIX LP", description: "" },
 ];
 
-export const clients = [
-  "Apex Steel",
-  "Northwind OEM",
-  "Helios Auto",
-  "Pinnacle Defence",
-  "Orbit Electronics",
-  "Delta Fabrication",
-  "Summit Rail",
-  "Blue Harbor Marine",
-];
-
 export type ProductNode = {
   slug: string;
   name: string;

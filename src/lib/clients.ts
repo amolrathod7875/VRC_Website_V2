@@ -169,3 +169,21 @@ export const clientsByIndustry = clientIndustries.reduce((acc, ind) => {
   acc[ind] = sortByIndustryTier(clients.filter((c) => c.industry === ind));
   return acc;
 }, {} as Record<(typeof clientIndustries)[number], Client[]>);
+
+export const trustedClientNames = [
+  "Tata Steel",
+  "Toyota Kirloskar",
+  "Mercedes",
+  "Mahindra & Mahindra",
+  "Cummins",
+  "Indian Oil Corporation (IOC)",
+  "DRDO",
+] as const;
+
+export function getTrustedClients(): Client[] {
+  const byName = new Map(clients.map((c) => [c.name.toLowerCase(), c]));
+  return trustedClientNames
+    .map((name) => byName.get(name.toLowerCase()))
+    .filter((c): c is Client => c !== undefined)
+    .filter((c): c is Client & { logo: string } => "logo" in c && typeof c.logo === "string");
+}
