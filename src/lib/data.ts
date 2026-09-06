@@ -290,14 +290,6 @@ export const industries = [
   { slug: "infrastructure", name: "Infrastructure" },
 ];
 
-export const clientTabs = {
-  Manufacturing: ["Apex Steel", "Delta Fabrication", "Summit Rail", "ForgeWorks Ltd."],
-  Automotive: ["Helios Auto", "Northwind OEM", "Gearline Components"],
-  "Defence & Aerospace": ["Pinnacle Defence", "AeroVector Systems", "Skyline Avionics"],
-  Electronics: ["Orbit Electronics", "Nexus PCB", "Voltara Devices"],
-  Others: ["Blue Harbor Marine", "Civic Infra Group"],
-} as const;
-
 export const weProvide = [
   { title: "Application Support", text: "On-site process guidance from surface prep to final inspection." },
   { title: "Custom Formulation", text: "Lab-backed recipes matched to substrate, climate, and duty cycle." },
