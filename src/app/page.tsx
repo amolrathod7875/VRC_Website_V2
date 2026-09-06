@@ -66,44 +66,53 @@ const APPLICATION_ICONS: Record<string, IconCmp> = {
 export default function HomePage() {
   return (
     <>
-      <section className="bg-surface">
-        <div className="mx-auto grid max-w-7xl items-start gap-12 px-4 pt-12 pb-20 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:pt-16 lg:pb-24">
-          <div>
-            <Eyebrow>Who we are</Eyebrow>
-            <SectionHeading>Engineered coating solutions for demanding industries.</SectionHeading>
-            <p className="mt-6 text-base leading-8 text-slate-600">
-              VR Coatings develops, manufactures, and supports industrial coating systems for OEM lines
-              and maintenance programmes. We pair formulation science with application support so films
-              perform in the field — not only in the lab.
-            </p>
-            <p className="mt-4 text-base leading-8 text-slate-600">
-              From zinc-rich primers and high-build epoxies to architectural powders and electrocoat
-              primers, our systems are specified by manufacturers who need predictable protection on
-              critical surfaces.
-            </p>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {weProvide.slice(0, 4).map((item) => (
-                <div key={item.title} className="rounded-lg bg-white px-4 py-3 text-sm font-medium text-brand-900">
-                  {item.title}
-                </div>
-              ))}
+      <section className="relative isolate overflow-hidden">
+        <video
+          className="who-we-are-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden="true"
+        >
+          <source src="/Landing_Video.mp4" type="video/mp4" />
+        </video>
+        <div className="who-we-are-overlay" aria-hidden="true" />
+        <div className="who-we-are-content">
+          <div className="mx-auto max-w-7xl px-4 pt-12 pb-20 sm:px-6 lg:pt-16 lg:pb-24">
+            <div>
+              <Eyebrow tone="white">Who we are</Eyebrow>
+              <SectionHeading tone="white">
+                Engineered coating solutions for demanding industries.
+              </SectionHeading>
+              <p className="mt-6 max-w-3xl text-base leading-8 text-slate-100">
+                VR Coatings develops, manufactures, and supports industrial coating systems for OEM lines
+                and maintenance programmes. We pair formulation science with application support so films
+                perform in the field — not only in the lab.
+              </p>
+              <p className="mt-4 max-w-3xl text-base leading-8 text-slate-100">
+                From zinc-rich primers and high-build epoxies to architectural powders and electrocoat
+                primers, our systems are specified by manufacturers who need predictable protection on
+                critical surfaces.
+              </p>
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+                {weProvide.slice(0, 4).map((item) => (
+                  <div
+                    key={item.title}
+                    className="rounded-lg bg-white/90 px-4 py-3 text-sm font-medium text-brand-900"
+                  >
+                    {item.title}
+                  </div>
+                ))}
+              </div>
+              <Link
+                href="/about"
+                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-brand-100"
+              >
+                About VR Coatings
+                <IconArrowRight className="h-3.5 w-3.5" />
+              </Link>
             </div>
-            <Link
-              href="/about"
-              className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
-            >
-              About VR Coatings
-              <IconArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          </div>
-          <div className="relative overflow-hidden rounded-xl">
-            <Image
-              src="/landing-industrial-coatings.jpg"
-              alt="VR Coatings industrial manufacturing facility"
-              width={1200}
-              height={900}
-              className="aspect-[4/3] w-full object-cover"
-            />
           </div>
         </div>
       </section>
