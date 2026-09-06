@@ -199,17 +199,18 @@ export type LandingProduct = {
   category?: string;
   description: string;
   catalogue?: string;
+  image?: string | null;
 };
 
 export const landingProducts: LandingProduct[] = [
-  { slug: "barrel-pump", name: "Barrel pump", description: "", catalogue: "/Catalogue/Barrel Pump.pdf" },
-  { slug: "cheetah", name: "Cheetah", description: "", catalogue: "/Catalogue/Cheetah.pdf" },
-  { slug: "cub", name: "Cub", description: "", catalogue: "/Catalogue/cub.pdf" },
-  { slug: "diaphragm-pump", name: "Diaphragm Pump", description: "", catalogue: "/Catalogue/diaphragm pump.pdf" },
-  { slug: "drum-press", name: "DRUM PRESS", description: "", catalogue: "/Catalogue/DRUM PRESS.pdf" },
-  { slug: "elephant-pump", name: "Elephant Pump", description: "", catalogue: "/Catalogue/Elephant.pdf" },
+  { slug: "barrel-pump", name: "Barrel pump", description: "", catalogue: "/Catalogue/Barrel Pump.pdf", image: "/Product_png_s/Barrel Transfer Pump.png" },
+  { slug: "cheetah", name: "Cheetah", description: "", catalogue: "/Catalogue/Cheetah.pdf", image: "/Product_png_s/Cheetah.png" },
+  { slug: "cub", name: "Cub", description: "", catalogue: "/Catalogue/cub.pdf", image: "/Product_png_s/Category_wise_products/Cub/Cub pump.jpg" },
+  { slug: "diaphragm-pump", name: "Diaphragm Pump", description: "", catalogue: "/Catalogue/diaphragm pump.pdf", image: "/Product_png_s/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
+  { slug: "drum-press", name: "DRUM PRESS", description: "", catalogue: "/Catalogue/DRUM PRESS.pdf", image: "/Product_png_s/Drum press1.png" },
+  { slug: "elephant-pump", name: "Elephant Pump", description: "", catalogue: "/Catalogue/Elephant.pdf", image: "/Product_png_s/Category_wise_products/Elephant Pump/Elephant 14398.jpg" },
   { slug: "hippo-pump", name: "Hippo Pump", description: "", catalogue: "/Catalogue/Hippo.pdf" },
-  { slug: "leopard-electric", name: "Leopard - ELECTRIC\u2026", description: "" },
+  { slug: "leopard-electric", name: "Leopard - ELECTRIC…", description: "" },
   { slug: "pfp-dragon", name: "PFP DRAGON", description: "", catalogue: "/Catalogue/dragon.pdf" },
   { slug: "polyurea", name: "Polyurea", description: "", catalogue: "/Catalogue/polyurea.pdf" },
   { slug: "pressure-feed-pot", name: "Pressure Feed Pot", description: "", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf" },

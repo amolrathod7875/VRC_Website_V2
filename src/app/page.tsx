@@ -337,12 +337,12 @@ export default function HomePage() {
               specified across OEM and maintenance programmes.
             </p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {featuredProducts.map((product) => (
               <Link
                 key={product.slug}
                 href={`/products/${product.slug}`}
-                className="overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-brand-200 hover:shadow-sm"
+                className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-brand-200 hover:shadow-sm"
               >
                 <Placeholder label={`${product.name} image`} ratio="4 / 3" />
                 <div className="p-5">

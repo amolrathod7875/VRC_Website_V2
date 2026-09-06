@@ -13,15 +13,23 @@ export function ProductCard({ product, href = "/products" }: ProductCardProps) {
       href={href}
       className="group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white transition hover:border-brand-200 hover:shadow-sm"
     >
-      <div className="relative overflow-hidden">
-        <div className="transition duration-300 group-hover:scale-[1.02]">
-          <Placeholder
-            label={`${product.name} image`}
-            ratio="16 / 10"
-            className="rounded-none"
-          />
+       <div className="relative overflow-hidden">
+          <div className="transition duration-300 group-hover:scale-[1.02]">
+            {product.image ? (
+              <img
+                src={product.image}
+                alt={product.name}
+                className="aspect-[16/10] w-full object-contain object-center"
+              />
+            ) : (
+              <Placeholder
+                label={`${product.name} image`}
+                ratio="16 / 10"
+                className="rounded-none"
+              />
+            )}
+          </div>
         </div>
-      </div>
       <div className="flex flex-1 flex-col p-5">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-brand-700">
           {product.category}
