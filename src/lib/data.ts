@@ -84,6 +84,67 @@ export const socialLinks = [
   { name: "WhatsApp", href: "https://wa.me/912027412200", icon: "wa" },
 ];
 
+export type FooterLink = { label: string; href: string };
+export type FooterColumn = { title: string; links: FooterLink[] };
+
+export const footerProductColumns: FooterColumn[] = [
+  {
+    title: "SPRAY SYSTEMS",
+    links: [
+      { label: "DRAGON \u2014 PFP System", href: "/products" },
+      { label: "CHEETAH \u2014 2K Hot Airless", href: "/products" },
+      { label: "RHINO \u2014 Heavy Duty", href: "/products" },
+      { label: "TIGER \u2014 Low/Medium Duty", href: "/products" },
+      { label: "MINI TIGER \u2014 Air-Assisted", href: "/products" },
+      { label: "POLYUREA System", href: "/products" },
+      { label: "VRC-MIX HP", href: "/products" },
+      { label: "VRC MIX (L/M)", href: "/products" },
+      { label: "LEOPARD \u2014 Electric Pump", href: "/products" },
+      { label: "TUBE/VARNISH COATING", href: "/products" },
+    ],
+  },
+  {
+    title: "TRANSFER PUMPS",
+    links: [
+      { label: "ELEPHANT \u2014 High Volume", href: "/products" },
+      { label: "HIPPO \u2014 Low Pressure", href: "/products" },
+      { label: "BARREL PUMP \u2014 20L", href: "/products" },
+      { label: "CUB \u2014 Four-Ball Piston", href: "/products" },
+      { label: "DRUM PRESS", href: "/products" },
+    ],
+  },
+  {
+    title: "SPRAY GUNS",
+    links: [
+      { label: "Manual Spray Guns", href: "/products" },
+      { label: "Automatic Spray Guns", href: "/products" },
+      { label: "KINGFISHER \u2014 Conventional", href: "/products" },
+    ],
+  },
+  {
+    title: "ACCESSORIES",
+    links: [
+      { label: "Ball Valves \u2014 up to 500 BAR", href: "/products" },
+      { label: "Pressure Regulators HP/LP", href: "/products" },
+      { label: "Inline Filters HP/LP", href: "/products" },
+      { label: "Turbine Stirrers", href: "/products" },
+      { label: "Pneumatic Stirrer", href: "/products" },
+      { label: "Pressure Feed Pot", href: "/products" },
+      { label: "Pulsation Dampner", href: "/products" },
+    ],
+  },
+];
+
+export const footerCompanyLinks: FooterLink[] = [
+  { label: "About VR Coatings", href: "/about" },
+  { label: "Industries Served", href: "/assets/industries" },
+  { label: "Product Videos", href: "/products" },
+  { label: "Careers", href: "/resources/career" },
+  { label: "Vendor Registration", href: "/contact" },
+  { label: "Contact Us", href: "/contact" },
+  { label: "Visit Original Site", href: "https://www.vrcoatings.com" },
+];
+
 export const upcomingProducts = [
   {
     id: "up-1",

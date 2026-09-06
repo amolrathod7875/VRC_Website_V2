@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { companyEmail, offices, socialLinks } from "@/lib/data";
+import {
+  companyEmail,
+  offices,
+  socialLinks,
+  footerProductColumns,
+  footerCompanyLinks,
+} from "@/lib/data";
 
 function SocialIcon({ icon }: { icon: string }) {
   const common = "h-4 w-4";
@@ -33,59 +39,111 @@ function SocialIcon({ icon }: { icon: string }) {
   }
   return (
     <svg viewBox="0 0 24 24" className={common} fill="currentColor" aria-hidden>
-      <path d="M12.04 2C6.58 2 2.15 6.3 2.15 11.6c0 1.7.46 3.3 1.27 4.7L2 22l5.86-1.5A10.2 10.2 0 0 0 12.04 21c5.46 0 9.89-4.3 9.89-9.6C21.93 6.3 17.5 2 12.04 2zm5.74 13.6c-.24.67-1.18 1.22-1.93 1.38-.52.11-1.2.2-3.49-.73-2.93-1.19-4.82-4.1-4.96-4.29-.14-.19-1.16-1.51-1.16-2.88 0-1.37.74-2.04 1-2.32.24-.27.54-.34.72-.34h.52c.16 0 .39-.06.6.45.24.58.8 2 .87 2.14.07.15.12.32.02.51-.1.2-.15.32-.3.5-.14.17-.3.38-.43.51-.14.13-.29.28-.12.54.16.27.73 1.18 1.57 1.91 1.08.94 1.99 1.23 2.27 1.37.28.13.44.11.6-.07.17-.19.7-.8.88-1.07.19-.27.37-.23.62-.13.26.09 1.63.77 1.91.91.28.13.46.2.53.31.07.12.07.67-.17 1.34z" />
+      <path d="M12.04 2C6.58 2 2.15 6.3 2.15 11.6c0 1.7.46 3.3 1.27 4.7L2 22l5.86-1.5A10.2 10.2 0 0 0 12.04 21c5.46 0 9.89-4.3 9.89-9.6C21.93 6.3 17.5 2 12.04 2zm5.74 13.6c-.24.67-1.18 1.22-1.93 1.38-.52.11-1.2.2-3.49-.73-2.93-1.19-4.82-4.1-4.96-4.29-.14-.19-1.16-1.51-1.16-2.88 0-1.37.74-2.04 1-2.32.24-.27.54-.34.72-.34h.52c.16 0 .39-.06.6.45.24.58.8 2 .87 2.14.07.15.12.32.02.51-.1.2-.15.32-.3.5-.14.17-.3.38-.43.51-.14.13-.29.28-.12.54.16.27.73 1.18 1.57 1.91 1.08.94 1.99 1.23 2.27 1.37.28.13.44.11.6-.07.17-.19.7-.8 1.88-1.07.19-.27.37-.23.62-.13.26.09 1.63.77 1.91.91.28.13.46.2.53.31.07.12.07.67-.17 1.34z" />
     </svg>
   );
 }
 
+function FooterAnchor({ label, href }: { label: string; href: string }) {
+  const isExternal = href.startsWith("http");
+  const className =
+    "text-sm text-slate-300 transition-colors duration-150 hover:text-[#1678C8]";
+  if (isExternal) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        {label}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {label}
+    </Link>
+  );
+}
+
 export function Footer() {
+  const year = new Date().getFullYear();
+  const headOffice = offices[0];
+  const address = headOffice ? headOffice.lines.slice(1).join(", ") : "";
+  const social = socialLinks.slice(0, 3);
+
   return (
     <footer className="mt-auto bg-brand-950 text-slate-200">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
-        {offices.map((office) => (
-          <div key={office.title}>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-100">
-              {office.title}
-            </h3>
-            {office.lines.map((line) => (
-              <p key={line} className="text-sm leading-6 text-slate-300">
-                {line}
-              </p>
-            ))}
-            <a href={office.phoneHref} className="mt-3 inline-block text-sm font-medium text-white hover:text-brand-100">
-              {office.phone}
-            </a>
-          </div>
-        ))}
-        <div>
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-100">
-            Connect
-          </h3>
-          <a href={`mailto:${companyEmail}`} className="text-sm font-medium text-white hover:text-brand-100">
-            {companyEmail}
-          </a>
-          <div className="mt-5 flex flex-wrap gap-3">
-            {socialLinks.map((item) => (
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr] lg:px-8">
+        <div className="space-y-5">
+          <h2 className="text-xl font-bold text-white">VR Coatings Pvt. Ltd.</h2>
+          <p className="max-w-xs text-sm leading-6 text-slate-300">
+            India&apos;s leading manufacturer of industrial spray painting equipment, dispensing
+            machines, transfer pumps, and fluid handling systems. ISO, TUV, ATEX &amp; CE
+            certified since 1985.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {social.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
                 target="_blank"
                 rel="noreferrer"
                 aria-label={item.name}
-                className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-800 text-white transition hover:bg-brand-600"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-800 text-white transition-colors duration-200 hover:bg-brand-600"
               >
                 <SocialIcon icon={item.icon} />
               </a>
             ))}
           </div>
-          <p className="mt-8 text-xs text-slate-400">
-            © {2026} VR Coatings Pvt. Ltd. All rights reserved.
-          </p>
-          <p className="mt-2">
-            <Link href="/contact" className="text-sm text-brand-100 hover:underline">
-              Contact Us
-            </Link>
-          </p>
+        </div>
+
+        {footerProductColumns.map((column) => (
+          <div key={column.title} className="space-y-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
+              {column.title}
+            </h3>
+            <ul className="space-y-2.5">
+              {column.links.map((link) => (
+                <li key={link.label}>
+                  <FooterAnchor label={link.label} href={link.href} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+
+        <div className="space-y-4">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-white">
+            COMPANY
+          </h3>
+          <ul className="space-y-2.5">
+            {footerCompanyLinks.map((link) => (
+              <li key={link.label}>
+                <FooterAnchor label={link.label} href={link.href} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-slate-600">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-xs text-slate-400 sm:px-6 lg:px-8">
+          <span>
+            © {year} VR Coatings Pvt. Ltd. · {address}
+          </span>
+          <span className="flex flex-wrap items-center gap-2">
+            <span>Made in India</span>
+            <span className="text-slate-500">·</span>
+            <a
+              href="https://www.vrcoatings.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-[#1678C8]"
+            >
+              www.vrcoatings.com
+            </a>
+            <span className="text-slate-500">·</span>
+            <a href={`mailto:${companyEmail}`} className="hover:text-[#1678C8]">
+              {companyEmail}
+            </a>
+          </span>
         </div>
       </div>
     </footer>
