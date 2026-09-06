@@ -449,6 +449,141 @@ export const presenceLocations = [
   { title: "North America", region: "Troy, MI, USA" },
 ];
 
+export type ProductCategory = {
+  slug: string;
+  name: string;
+  children?: ProductCategory[];
+  lineBreakAfter?: string;
+};
+
+export const productCategories: ProductCategory[] = [
+  {
+    slug: "spray-painting-guns",
+    name: "Spray Painting Guns",
+    children: [
+      { slug: "conventional-guns", name: "Conventional Guns" },
+      { slug: "manual-guns", name: "Manual Guns" },
+      { slug: "automatic-guns", name: "Automatic Guns" },
+      { slug: "pu-foam-gun", name: "PU Foam Gun" },
+      { slug: "wax-spray-gun", name: "Wax Spray Gun" },
+      { slug: "electrostatic-gun", name: "Electrostatic Gun" },
+    ],
+  },
+  {
+    slug: "spray-painting-equipment",
+    name: "Spray Painting Equipment",
+    children: [
+      { slug: "tiger", name: "Tiger" },
+      { slug: "mini-tiger", name: "Mini Tiger" },
+      { slug: "rhino", name: "Rhino" },
+      { slug: "hippo", name: "Hippo" },
+      { slug: "cheetah", name: "Cheetah" },
+      { slug: "dragon", name: "Dragon" },
+      { slug: "polyurea", name: "Polyurea" },
+      {
+        slug: "electronic-two-component",
+        name: "Electronic Two Component",
+        children: [
+          { slug: "vrc-mix-hp", name: "VRC - Mix HP" },
+          { slug: "vrc-mix-lp", name: "VRC - Mix LP" },
+        ],
+      },
+      {
+        slug: "fixed-ratio-two-component",
+        name: "Fixed Ratio Two Component",
+        children: [
+          { slug: "vrc-mix-hp-fixed", name: "VRC - Mix HP" },
+          { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP" },
+        ],
+      },
+      { slug: "lion", name: "Lion" },
+    ],
+  },
+  {
+    slug: "paint-transfer-pumps",
+    name: "Paint Transfer Pumps",
+    children: [
+      { slug: "hippo-pump", name: "Hippo" },
+      { slug: "elephant", name: "Elephant" },
+      { slug: "cub", name: "Cub" },
+      { slug: "barrel-pump", name: "Barrel Pump" },
+      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot" },
+    ],
+  },
+  {
+    slug: "dispensing-equipment-drum-press",
+    name: "Dispensing Equipment - Drum Press",
+    children: [
+      { slug: "drum-press", name: "Drum Press" },
+      {
+        slug: "doser",
+        name: "Doser",
+        children: [
+          { slug: "single-component", name: "Single Component" },
+          { slug: "two-component", name: "Two Component" },
+        ],
+      },
+    ],
+  },
+  { slug: "painting-reciprocators", name: "Painting Reciprocators" },
+  {
+    slug: "paint-agitation-system-turbine-stirrer",
+    name: "Paint Agitation System - Turbine Stirrer",
+    lineBreakAfter: "Turbine",
+    children: [
+      { slug: "turbine-stirrer", name: "Turbine Stirrer" },
+      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer" },
+      { slug: "electrical-flame-proof-stirrer", name: "Electrical Flame Proof Stirrer" },
+    ],
+  },
+  {
+    slug: "accessories",
+    name: "Accessories",
+    children: [
+      { slug: "valves", name: "Valves" },
+      { slug: "two-component-mixers", name: "Two Component Mixers" },
+      { slug: "filters", name: "Filters" },
+      { slug: "heating-accessories", name: "Heating Accessories" },
+      { slug: "guns", name: "Guns" },
+      {
+        slug: "pressure-regulator",
+        name: "Pressure Regulator",
+        children: [
+          { slug: "back-pressure-regulator", name: "Back Pressure Regulator" },
+        ],
+      },
+      {
+        slug: "hoses",
+        name: "Hoses",
+        children: [
+          { slug: "electrically-heated-hoses", name: "Electrically Heated Hoses" },
+          { slug: "water-heated-hoses", name: "Water Heated Hoses" },
+          {
+            slug: "ptfe",
+            name: "PTFE",
+            children: [
+              { slug: "ptfe-low-pressure-hoses", name: "Low Pressure Hoses" },
+              { slug: "ptfe-high-pressure-hoses", name: "High Pressure Hoses" },
+            ],
+          },
+          {
+            slug: "thermoplastic-hoses",
+            name: "Thermoplastic Hoses",
+            children: [
+              { slug: "thermoplastic-low-pressure-hoses", name: "Low Pressure Hoses" },
+              { slug: "thermoplastic-high-pressure-hoses", name: "High Pressure Hoses" },
+            ],
+          },
+          { slug: "suction-hoses", name: "Suction Hoses" },
+          { slug: "air-hoses-for-spraying", name: "Air Hoses for Spraying" },
+          { slug: "pneumatic-tube", name: "Pneumatic Tube" },
+        ],
+      },
+      { slug: "other-accessories", name: "Other Accessories" },
+    ],
+  },
+];
+
 export const searchIndex = [
   { title: "Home", href: "/", keywords: "home coatings solutions" },
   { title: "About Us", href: "/about", keywords: "about company infrastructure" },

@@ -111,3 +111,23 @@ body {
     padding-right: 5vw;
   }
 }
+
+/* Product sidebar scrollbar */
+.product-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.product-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-sidebar::-webkit-scrollbar-thumb {
+  background-color: theme("colors.slate.300");
+  border-radius: 3px;
+  border: 1px solid theme("colors.slate.200");
+}
+
+.product-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: theme("colors.slate.300") transparent;
+}
