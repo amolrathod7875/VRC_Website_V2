@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
-import { weProvide } from "@/lib/data";
+import { weProvide, companyStats } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
-import { Placeholder } from "@/components/Placeholder";
+import { IconSupport, IconFlask, IconBadgeCheck, IconGlobe } from "@/components/Icon";
+
+const iconMap = {
+  support: IconSupport,
+  flask: IconFlask,
+  badgeCheck: IconBadgeCheck,
+  globe: IconGlobe,
+};
 
 export const metadata: Metadata = { title: "About Us" };
 
@@ -15,19 +22,49 @@ export default function AboutPage() {
       />
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid items-center gap-10 lg:grid-cols-2">
-          <Placeholder label="Infrastructure / factory photo" className="min-h-[320px] rounded-xl lg:min-h-[420px]" />
+          <img
+            src="/VR-Coatings-Pvt-Ltd-Factory.png"
+            alt="VR Coatings manufacturing facility"
+            className="min-h-[320px] rounded-xl object-cover object-center lg:min-h-[420px]"
+          />
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-700">Infrastructure</p>
-            <h2 className="mt-2 text-3xl font-semibold text-brand-950">Built for scale and consistency</h2>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-700">
+              About VR Coatings
+            </p>
+            <h2 className="mt-2 text-3xl font-semibold text-brand-950">
+              Built around performance, reliability and application expertise.
+            </h2>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              Our manufacturing campus houses resin processing, mill rooms, powder extrusion, quality laboratories,
-              and climate-controlled storage. Production cells are organised for batch traceability, while application
-              labs replicate customer lines so recommendations are grounded in real process conditions.
+              VR Coatings develops, manufactures, and supports industrial coating systems for demanding
+              applications. Our approach combines formulation science with practical application support
+              to deliver coating solutions designed for real operating conditions.
             </p>
             <p className="mt-4 text-sm leading-7 text-slate-600">
-              Head office, factory, and North America operations work as one supply network—so specification,
-              sampling, and fulfilment stay aligned from first trial to serial production.
+              Our systems are developed around the requirements of the substrate, process, environment
+              and end-use application. From protective coatings and primers to specialised industrial
+              systems, we focus on consistent performance and dependable protection.
             </p>
+            <p className="mt-4 text-sm leading-7 text-slate-600">
+              We work closely with customers across OEM and industrial applications, supporting the
+              process from product selection and trials through application and production.
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="bg-[#0a1f40] py-10">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5 lg:gap-0 lg:border lg:border-slate-700/50">
+            {companyStats.map((stat, index) => (
+              <div
+                key={stat.label}
+                className={`flex flex-col items-center justify-center py-6 ${index < 4 ? "border-b sm:border-b-0 sm:border-r sm:border-slate-700/50 lg:border-b-0" : ""}`}
+              >
+                <span className="text-3xl font-bold text-white sm:text-4xl">{stat.value}</span>
+                <span className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-300">
+                  {stat.label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -35,13 +72,18 @@ export default function AboutPage() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <h2 className="mb-8 text-3xl font-semibold text-brand-950">We provide</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {weProvide.map((item) => (
-              <article key={item.title} className="rounded-xl border border-slate-200 bg-white p-6">
-                <Placeholder label={`${item.title} icon`} className="mb-4 h-14 w-14 rounded-lg" />
-                <h3 className="font-semibold text-brand-900">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
-              </article>
-            ))}
+            {weProvide.map((item) => {
+              const IconComponent = iconMap[item.icon as keyof typeof iconMap];
+              return (
+                <article key={item.title} className="rounded-xl border border-slate-200 bg-white p-6 flex flex-col items-center text-center">
+                  <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-lg bg-slate-50">
+                    {IconComponent && <IconComponent className="h-8 w-8 text-brand-700" />}
+                  </div>
+                  <h3 className="font-semibold text-brand-900">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>

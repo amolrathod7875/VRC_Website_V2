@@ -295,3 +295,51 @@ export function IconZap({ className = base }: IconProps) {
     </svg>
   );
 }
+
+export function IconSupport({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <circle cx="24" cy="24" r="16" />
+      <path d="M24 8v8M24 32v8" strokeLinecap="round" />
+      <path d="M8 24h8M32 24h8" strokeLinecap="round" />
+      <path d="M14 14l6 6M28 28l6 6M14 34l6-6M28 14l6 6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconFlask({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M30 2V12c4-1 6-4 6-8H12c0 4 2 7 6 8V2h12z" strokeLinecap="round" />
+      <path d="M32 4H16" />
+      <path d="M30 24c3-2 5-5 5-9h-6" />
+      <path d="M18 15a10 10 0 0 1 0 18c-4 2-6 6-6 10h-6v-2c0-4 2-8 6-10a10 10 0 0 1 6-18z" />
+      <path d="M12 36c-2 0-4 2-4 4v4h20v-4c0-2-2-4-4-4h-2" />
+    </svg>
+  );
+}
+
+export function IconBadgeCheck({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <path d="M24 6L8 12v12c0 10 8 18 16 22s16-8 16-22V12z" />
+      <circle cx="24" cy="24" r="9" />
+      <path d="M20 28l3 3 5-5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function IconGlobe({ className = base }: IconProps) {
+  return (
+    <svg viewBox="0 0 48 40" className={className} fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round">
+      <circle cx="24" cy="20" r="16" />
+      <path d="M24 4c1.5 4-2 8-6 12s-12 10-16 14" />
+      <path d="M24 4c1.5 4-2 8-6 12s-12 10-16 14" />
+      <path d="M24 4c1.5 4-2 8-6 12s-12 10-16 14" />
+      <path d="M24 42c5-2 9-7 11-14" />
+      <path d="M24 42c5-2 9-7 11-14" />
+      <path d="M8 20h32" strokeLinecap="round" />
+      <path d="M24 4v36" strokeLinecap="round" />
+    </svg>
+  );
+}

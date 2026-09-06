@@ -343,10 +343,18 @@ export const industries = [
 ];
 
 export const weProvide = [
-  { title: "Application Support", text: "On-site process guidance from surface prep to final inspection." },
-  { title: "Custom Formulation", text: "Lab-backed recipes matched to substrate, climate, and duty cycle." },
-  { title: "Quality Assurance", text: "Batch traceability, film testing, and documented QC protocols." },
-  { title: "Global Supply", text: "Coordinated logistics from India and North America to your line." },
+  { title: "Application Support", text: "On-site process guidance from surface prep to final inspection.", icon: "support" },
+  { title: "Custom Formulation", text: "Lab-backed recipes matched to substrate, climate, and duty cycle.", icon: "flask" },
+  { title: "Quality Assurance", text: "Batch traceability, film testing, and documented QC protocols.", icon: "badgeCheck" },
+  { title: "Global Supply", text: "Coordinated logistics from India and North America to your line.", icon: "globe" },
+ ];
+ 
+export const companyStats = [
+  { value: "1985", label: "FOUNDED" },
+  { value: "40+", label: "YEARS EXPERIENCE" },
+  { value: "30+", label: "PRODUCT LINES" },
+  { value: "15+", label: "INDUSTRIES SERVED" },
+  { value: "5", label: "GLOBAL CERTIFICATIONS" },
 ];
 
 export const trustPillars = [
