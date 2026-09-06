@@ -198,33 +198,35 @@ export type LandingProduct = {
   name: string;
   category?: string;
   description: string;
+  catalogue?: string;
 };
 
 export const landingProducts: LandingProduct[] = [
-  { slug: "barrel-pump", name: "Barrel pump", description: "" },
-  { slug: "cheetah", name: "Cheetah", description: "" },
-  { slug: "cub", name: "Cub", description: "" },
-  { slug: "diaphragm-pump", name: "Diaphragm Pump", description: "" },
-  { slug: "drum-press", name: "DRUM PRESS", description: "" },
-  { slug: "elephant-pump", name: "Elephant Pump", description: "" },
-  { slug: "hippo-pump", name: "Hippo Pump", description: "" },
+  { slug: "barrel-pump", name: "Barrel pump", description: "", catalogue: "/Catalogue/Barrel Pump.pdf" },
+  { slug: "cheetah", name: "Cheetah", description: "", catalogue: "/Catalogue/Cheetah.pdf" },
+  { slug: "cub", name: "Cub", description: "", catalogue: "/Catalogue/cub.pdf" },
+  { slug: "diaphragm-pump", name: "Diaphragm Pump", description: "", catalogue: "/Catalogue/diaphragm pump.pdf" },
+  { slug: "drum-press", name: "DRUM PRESS", description: "", catalogue: "/Catalogue/DRUM PRESS.pdf" },
+  { slug: "elephant-pump", name: "Elephant Pump", description: "", catalogue: "/Catalogue/Elephant.pdf" },
+  { slug: "hippo-pump", name: "Hippo Pump", description: "", catalogue: "/Catalogue/Hippo.pdf" },
   { slug: "leopard-electric", name: "Leopard - ELECTRIC\u2026", description: "" },
-  { slug: "pfp-dragon", name: "PFP DRAGON", description: "" },
-  { slug: "polyurea", name: "Polyurea", description: "" },
-  { slug: "pressure-feed-pot", name: "Pressure Feed Pot", description: "" },
-  { slug: "rhino-pump", name: "Rhino Pump", description: "" },
+  { slug: "pfp-dragon", name: "PFP DRAGON", description: "", catalogue: "/Catalogue/dragon.pdf" },
+  { slug: "polyurea", name: "Polyurea", description: "", catalogue: "/Catalogue/polyurea.pdf" },
+  { slug: "pressure-feed-pot", name: "Pressure Feed Pot", description: "", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf" },
+  { slug: "rhino-pump", name: "Rhino Pump", description: "", catalogue: "/Catalogue/rhino.pdf" },
   { slug: "spray-painting-guns", name: "Spray Painting Guns", description: "" },
-  { slug: "tiger-mini", name: "Tiger Mini", description: "" },
-  { slug: "tiger-pump", name: "Tiger Pump", description: "" },
-  { slug: "turbine-stirrer", name: "Turbine Stirrer", description: "" },
-  { slug: "vrc-mix-hp", name: "VRC MIX HP", description: "" },
-  { slug: "vrc-mix-lp", name: "VRC MIX LP", description: "" },
+  { slug: "tiger-mini", name: "Tiger Mini", description: "", catalogue: "/Catalogue/Tiger_mini.pdf" },
+  { slug: "tiger-pump", name: "Tiger Pump", description: "", catalogue: "/Catalogue/Tiger.pdf" },
+  { slug: "turbine-stirrer", name: "Turbine Stirrer", description: "", catalogue: "/Catalogue/turbine.pdf" },
+  { slug: "vrc-mix-hp", name: "VRC MIX HP", description: "", catalogue: "/Catalogue/VRC - MIX HP.pdf" },
+  { slug: "vrc-mix-lp", name: "VRC MIX LP", description: "", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf" },
 ];
 
 export type ProductNode = {
   slug: string;
   name: string;
   summary: string;
+  catalogue?: string;
   children?: ProductNode[];
 };
 
@@ -452,6 +454,7 @@ export const presenceLocations = [
 export type ProductCategory = {
   slug: string;
   name: string;
+  catalogue?: string;
   children?: ProductCategory[];
   lineBreakAfter?: string;
 };
@@ -461,9 +464,9 @@ export const productCategories: ProductCategory[] = [
     slug: "spray-painting-guns",
     name: "Spray Painting Guns",
     children: [
-      { slug: "conventional-guns", name: "Conventional Guns" },
-      { slug: "manual-guns", name: "Manual Guns" },
-      { slug: "automatic-guns", name: "Automatic Guns" },
+      { slug: "conventional-guns", name: "Conventional Guns", catalogue: "/Catalogue/CONVENTIONAL GUNS_f.pdf" },
+      { slug: "manual-guns", name: "Manual Guns", catalogue: "/Catalogue/manual_GUNS.pdf" },
+      { slug: "automatic-guns", name: "Automatic Guns", catalogue: "/Catalogue/AUTOMATIC_gun.pdf" },
       { slug: "pu-foam-gun", name: "PU Foam Gun" },
       { slug: "wax-spray-gun", name: "Wax Spray Gun" },
       { slug: "electrostatic-gun", name: "Electrostatic Gun" },
@@ -473,19 +476,19 @@ export const productCategories: ProductCategory[] = [
     slug: "spray-painting-equipment",
     name: "Spray Painting Equipment",
     children: [
-      { slug: "tiger", name: "Tiger" },
-      { slug: "mini-tiger", name: "Mini Tiger" },
-      { slug: "rhino", name: "Rhino" },
-      { slug: "hippo", name: "Hippo" },
-      { slug: "cheetah", name: "Cheetah" },
-      { slug: "dragon", name: "Dragon" },
-      { slug: "polyurea", name: "Polyurea" },
+      { slug: "tiger", name: "Tiger", catalogue: "/Catalogue/Tiger.pdf" },
+      { slug: "mini-tiger", name: "Mini Tiger", catalogue: "/Catalogue/Tiger_mini.pdf" },
+      { slug: "rhino", name: "Rhino", catalogue: "/Catalogue/rhino.pdf" },
+      { slug: "hippo", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf" },
+      { slug: "cheetah", name: "Cheetah", catalogue: "/Catalogue/Cheetah.pdf" },
+      { slug: "dragon", name: "Dragon", catalogue: "/Catalogue/dragon.pdf" },
+      { slug: "polyurea", name: "Polyurea", catalogue: "/Catalogue/polyurea.pdf" },
       {
         slug: "electronic-two-component",
         name: "Electronic Two Component",
         children: [
-          { slug: "vrc-mix-hp", name: "VRC - Mix HP" },
-          { slug: "vrc-mix-lp", name: "VRC - Mix LP" },
+          { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/Catalogue/VRC - MIX HP.pdf" },
+          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf" },
         ],
       },
       {
@@ -503,18 +506,18 @@ export const productCategories: ProductCategory[] = [
     slug: "paint-transfer-pumps",
     name: "Paint Transfer Pumps",
     children: [
-      { slug: "hippo-pump", name: "Hippo" },
-      { slug: "elephant", name: "Elephant" },
-      { slug: "cub", name: "Cub" },
-      { slug: "barrel-pump", name: "Barrel Pump" },
-      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot" },
+      { slug: "hippo-pump", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf" },
+      { slug: "elephant", name: "Elephant", catalogue: "/Catalogue/Elephant.pdf" },
+      { slug: "cub", name: "Cub", catalogue: "/Catalogue/cub.pdf" },
+      { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/Catalogue/Barrel Pump.pdf" },
+      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf" },
     ],
   },
   {
     slug: "dispensing-equipment-drum-press",
     name: "Dispensing Equipment - Drum Press",
     children: [
-      { slug: "drum-press", name: "Drum Press" },
+      { slug: "drum-press", name: "Drum Press", catalogue: "/Catalogue/DRUM PRESS.pdf" },
       {
         slug: "doser",
         name: "Doser",
@@ -531,8 +534,8 @@ export const productCategories: ProductCategory[] = [
     name: "Paint Agitation System - Turbine Stirrer",
     lineBreakAfter: "Turbine",
     children: [
-      { slug: "turbine-stirrer", name: "Turbine Stirrer" },
-      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer" },
+      { slug: "turbine-stirrer", name: "Turbine Stirrer", catalogue: "/Catalogue/turbine.pdf" },
+      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer", catalogue: "/Catalogue/PNEUMATIC STIRRER.pdf" },
       { slug: "electrical-flame-proof-stirrer", name: "Electrical Flame Proof Stirrer" },
     ],
   },
@@ -540,9 +543,9 @@ export const productCategories: ProductCategory[] = [
     slug: "accessories",
     name: "Accessories",
     children: [
-      { slug: "valves", name: "Valves" },
+      { slug: "valves", name: "Valves", catalogue: "/Catalogue/Valves.pdf" },
       { slug: "two-component-mixers", name: "Two Component Mixers" },
-      { slug: "filters", name: "Filters" },
+      { slug: "filters", name: "Filters", catalogue: "/Catalogue/filters.pdf" },
       { slug: "heating-accessories", name: "Heating Accessories" },
       { slug: "guns", name: "Guns" },
       {
@@ -551,6 +554,7 @@ export const productCategories: ProductCategory[] = [
         children: [
           { slug: "back-pressure-regulator", name: "Back Pressure Regulator" },
         ],
+        catalogue: "/Catalogue/regulator.pdf",
       },
       {
         slug: "hoses",
@@ -607,3 +611,44 @@ export const searchIndex = [
     keywords: `${node.name} ${node.summary}`,
   })),
 ];
+
+export type CatalogueEntry = {
+  slug: string;
+  name: string;
+  category: string;
+  catalogue: string;
+};
+
+export const cataloguePDFs: CatalogueEntry[] = [
+  { slug: "ball-valves", name: "Ball Valves", category: "Accessories", catalogue: "/Catalogue/ball_valves.pdf" },
+  { slug: "pulsation-dampner", name: "Pulsation Dampner", category: "Accessories", catalogue: "/Catalogue/PULSATION DAMPNER.pdf" },
+  { slug: "paint-preparation-unit", name: "Paint Preparation Unit", category: "Special", catalogue: "/Catalogue/Paint Preparation Unit.pdf" },
+  { slug: "tube-varnish-coating-system", name: "Tube Varnish Coating System", category: "Special", catalogue: "/Catalogue/TUBE VARNISH COATING SYSTEM.pdf" },
+  { slug: "leopard-electric", name: "Leopard - Electric", category: "Paint Transfer Pumps", catalogue: "/Catalogue/Electric_pump.pdf" },
+];
+
+export function findCatalogue(slug: string): string | undefined {
+  const cat = flattenCategories(productCategories).find((e) => e.node.slug === slug);
+  if (cat?.node.catalogue) return cat.node.catalogue;
+
+  const landing = landingProducts.find((p) => p.slug === slug);
+  if (landing?.catalogue) return landing.catalogue;
+
+  const special = cataloguePDFs.find((e) => e.slug === slug);
+  if (special?.catalogue) return special.catalogue;
+
+  return undefined;
+}
+
+function flattenCategories(
+  nodes: ProductCategory[],
+  trail: ProductCategory[] = []
+): { node: ProductCategory; trail: ProductCategory[] }[] {
+  return nodes.flatMap((node) => {
+    const next = [...trail, node];
+    const self = [{ node, trail: next }];
+    return node.children
+      ? [...self, ...flattenCategories(node.children, next)]
+      : self;
+  });
+}
