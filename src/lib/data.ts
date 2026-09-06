@@ -341,11 +341,55 @@ export const capabilityHighlights = [
   { title: "Climate-Controlled Storage", text: "Raw material and finished-goods warehousing for batch integrity." },
 ];
 
-export const certifications = [
-  { name: "ISO 9001:2015", scope: "Quality management" },
-  { name: "ISO 14001:2015", scope: "Environmental management" },
-  { name: "IATF 16949", scope: "Automotive quality" },
-  { name: "Qualicoat aligned", scope: "Architectural powder processes" },
+export type Certification = {
+  name: string;
+  scope: string;
+  title?: string;
+  file?: string;
+  preview?: string;
+  body?: string;
+  validTo?: string;
+};
+
+export const certifications: Certification[] = [
+  {
+    name: "ISO 9001:2015",
+    scope: "Quality management",
+    title: "ISO 9001:2015 Quality Management System Certificate",
+    body:
+      "Certificate No. AB22IS214430 issued by BMQR. Valid until 20 September 2027. Scope covers design, manufacturing, marketing, installation, sales and services of industrial spray painting and fluid handling equipments.",
+    file: "/CERTIFICATES/V R COATINGS PVT LTD -9001-RCA - CERTIFICATE.pdf",
+    validTo: "20 September 2027",
+  },
+  {
+    name: "ATEX Acknowledgement",
+    scope: "Hazardous area equipment",
+    title: "ATEX Acknowledgement of Receipt",
+    body:
+      "Document No. 2656/1/2018 issued by Technicka inspekcia, a.s. (Notified Body 1354). Acknowledges receipt of technical file documentation under Directive 2014/34/EU for non-electrical painting and fluid handling equipments. Technical documentation stored for 10 years.",
+    file: "/CERTIFICATES/ATTEX CERTIFICATE.PDF",
+    preview: "/certifications/atex-acknowledgement.jpg",
+    validTo: "13 August 2028",
+  },
+  {
+    name: "CE Certificate",
+    scope: "Machine safety",
+    title: "Certificate of Conformity (CE Marking)",
+    body:
+      "Certificate No. 3874-CI-32025 issued by CEPROM (Romania). Valid until 5 February 2030. Confirms compliance of industrial spray painting and fluid handling equipments with Directive 2006/42/EC. Reference standards: EN ISO 12100:2010, EN 60204-1:2006+A1:2009.",
+    file: "/CERTIFICATES/3874-CI-32025 Industrial Spray Painting and Fluid Handling Equip.pdf",
+    preview: "/certifications/ce-certificate-of-conformity.jpg",
+    validTo: "5 February 2030",
+  },
+  {
+    name: "ATEX EU-Type",
+    scope: "Flameproof equipment",
+    title: "EU-Type Examination Certificate (ATEX)",
+    body:
+      "Certificate No. TI19 ATEX 1308 X issued by Technicka inspekcia, a.s. (Notified Body 1354). EU-type examination for flameproof fluid heater under Directive 2014/34/EU. Compliance with EN 60079-0:2018 and EN 60079-1:2014.",
+    file: "/CERTIFICATES/Certificate TI19 ATEX 1308 X.pdf",
+    preview: "/certifications/atex-eu-type-exam.jpg",
+  },
 ];
 
 export const presenceLocations = [
