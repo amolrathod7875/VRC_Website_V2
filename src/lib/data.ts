@@ -359,6 +359,7 @@ export const certifications: Certification[] = [
     body:
       "Certificate No. AB22IS214430 issued by BMQR. Valid until 20 September 2027. Scope covers design, manufacturing, marketing, installation, sales and services of industrial spray painting and fluid handling equipments.",
     file: "/CERTIFICATES/V R COATINGS PVT LTD -9001-RCA - CERTIFICATE.pdf",
+    preview: "/certifications/iso-9001-certificate.jpg",
     validTo: "20 September 2027",
   },
   {
