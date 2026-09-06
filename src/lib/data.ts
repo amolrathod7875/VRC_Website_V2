@@ -674,7 +674,7 @@ export const blogPosts: BlogPost[] = [
       "The first few months were filled with sleepless nights. We worked out of a modest workshop in Pune, often making do with what we had. The first pump we built was tested in our backyard before it ever saw a factory floor. And when it worked — really worked — we knew we had something special.",
       "We didn\u2019t know then that VR Coatings would one day be a trusted name across India and even abroad. We only knew we wanted to make machines that never let our customers down.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_1.png",
   },
   {
     slug: "learning-by-listening-our-first-customers",
@@ -687,7 +687,7 @@ export const blogPosts: BlogPost[] = [
       "Our first big break came when an automotive supplier took a chance on us. Their imported dispensing system was down for weeks, waiting for spares. We offered them a locally made solution that worked — and kept working. That customer is still with us today.",
       "From there, word spread. Industries from paints to adhesives to shipbuilding began calling us. Not because we were the cheapest, but because we understood their pain and solved it. Listening became our biggest strength — and it still is.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_2.png",
   },
   {
     slug: "growing-roots-and-branches",
@@ -700,7 +700,7 @@ export const blogPosts: BlogPost[] = [
       "One of our proudest moments was when a customer told us: \u201cYour pump works better than the one we imported from Europe.\u201d That wasn\u2019t just praise — it was proof that Make in India could compete with the world.",
       "We didn\u2019t just grow in size; we grew in reputation. By the early 2000s, we were working with major names in automotive, construction, and manufacturing. And we were just getting started.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_3.png",
   },
   {
     slug: "our-leap-into-the-global-arena",
@@ -713,7 +713,7 @@ export const blogPosts: BlogPost[] = [
       "That\u2019s when we decided to set up an assembly unit in Germany. It wasn\u2019t easy — new regulations, new market expectations — but it was worth it. The German presence allowed us to support European customers more closely and showcase Indian engineering on a global stage.",
       "From Pune to Germany, our machines began carrying the VR Coatings name to factories around the world. And each time a customer said, \u201cThis is better than what we had before,\u201d we knew our decision was right.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_4.png",
   },
   {
     slug: "innovation-is-in-our-dna",
@@ -726,7 +726,7 @@ export const blogPosts: BlogPost[] = [
       "But innovation for us is not just about adding electronics. It\u2019s about making machines smarter, more reliable, and easier to maintain. Whether it\u2019s a high-viscosity adhesive or a delicate electronics potting compound, our solutions are engineered to perform.",
       "And we never stop learning — every new customer challenge is a chance to innovate again.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_5.png",
   },
   {
     slug: "looking-back-moving-forward",
@@ -739,7 +739,7 @@ export const blogPosts: BlogPost[] = [
       "But even as we look ahead, we never forget where we came from — a small workshop, a few determined people, and a belief that Indian engineering could stand shoulder to shoulder with the world.",
       "And if there\u2019s one thing we\u2019ve learned in these decades, it\u2019s this: Machines may be made of steel, but trust is built in the hearts of customers. That\u2019s what keeps VR Coatings running strong — yesterday, today, and tomorrow.",
     ],
-    image: null,
+    image: "/BLOGS/Blog_6.png",
   },
 ];
 
