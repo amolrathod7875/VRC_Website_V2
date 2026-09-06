@@ -228,6 +228,7 @@ export type ProductNode = {
   summary: string;
   catalogue?: string;
   children?: ProductNode[];
+  image?: string | null;
 };
 
 export const productTree: ProductNode[] = [
@@ -465,15 +466,17 @@ export type ProductCategory = {
   catalogue?: string;
   children?: ProductCategory[];
   lineBreakAfter?: string;
+  image?: string | null;
 };
 
 export const productCategories: ProductCategory[] = [
   {
     slug: "spray-painting-guns",
     name: "Spray Painting Guns",
+    image: "/Product png_s/Flamingo 11817.png",
     children: [
       { slug: "conventional-guns", name: "Conventional Guns", catalogue: "/Catalogue/CONVENTIONAL GUNS_f.pdf" },
-      { slug: "manual-guns", name: "Manual Guns", catalogue: "/Catalogue/manual_GUNS.pdf" },
+      { slug: "manual-guns", name: "Manual Guns", catalogue: "/Catalogue/manual_GUNS.pdf", image: "/Product png_s/king.png" },
       { slug: "automatic-guns", name: "Automatic Guns", catalogue: "/Catalogue/AUTOMATIC_gun.pdf" },
       { slug: "pu-foam-gun", name: "PU Foam Gun" },
       { slug: "wax-spray-gun", name: "Wax Spray Gun" },
@@ -483,20 +486,21 @@ export const productCategories: ProductCategory[] = [
   {
     slug: "spray-painting-equipment",
     name: "Spray Painting Equipment",
+    image: "/Product png_s/Tiger.png",
     children: [
-      { slug: "tiger", name: "Tiger", catalogue: "/Catalogue/Tiger.pdf" },
-      { slug: "mini-tiger", name: "Mini Tiger", catalogue: "/Catalogue/Tiger_mini.pdf" },
-      { slug: "rhino", name: "Rhino", catalogue: "/Catalogue/rhino.pdf" },
-      { slug: "hippo", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf" },
-      { slug: "cheetah", name: "Cheetah", catalogue: "/Catalogue/Cheetah.pdf" },
-      { slug: "dragon", name: "Dragon", catalogue: "/Catalogue/dragon.pdf" },
-      { slug: "polyurea", name: "Polyurea", catalogue: "/Catalogue/polyurea.pdf" },
+      { slug: "tiger", name: "Tiger", catalogue: "/Catalogue/Tiger.pdf", image: "/Product png_s/Tiger.png" },
+      { slug: "mini-tiger", name: "Mini Tiger", catalogue: "/Catalogue/Tiger_mini.pdf", image: "/Product png_s/Tiger_mini.png" },
+      { slug: "rhino", name: "Rhino", catalogue: "/Catalogue/rhino.pdf", image: "/Product png_s/Rhino 4040 (1) copy.png" },
+      { slug: "hippo", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf", image: "/Product png_s/Hippo.png" },
+      { slug: "cheetah", name: "Cheetah", catalogue: "/Catalogue/Cheetah.pdf", image: "/Product png_s/Cheetah.png" },
+      { slug: "dragon", name: "Dragon", catalogue: "/Catalogue/dragon.pdf", image: "/Product png_s/PFP.png" },
+      { slug: "polyurea", name: "Polyurea", catalogue: "/Catalogue/polyurea.pdf", image: "/Product png_s/Polyurea gun 4106.png" },
       {
         slug: "electronic-two-component",
         name: "Electronic Two Component",
         children: [
-          { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/Catalogue/VRC - MIX HP.pdf" },
-          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf" },
+          { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/Catalogue/VRC - MIX HP.pdf", image: "/Product png_s/VRC MIX HP 0964.png" },
+          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/Product png_s/VRC MIX LP.png" },
         ],
       },
       {
@@ -513,19 +517,21 @@ export const productCategories: ProductCategory[] = [
   {
     slug: "paint-transfer-pumps",
     name: "Paint Transfer Pumps",
+    image: "/Product png_s/Elephant 14398.jpg",
     children: [
-      { slug: "hippo-pump", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf" },
-      { slug: "elephant", name: "Elephant", catalogue: "/Catalogue/Elephant.pdf" },
-      { slug: "cub", name: "Cub", catalogue: "/Catalogue/cub.pdf" },
-      { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/Catalogue/Barrel Pump.pdf" },
+      { slug: "hippo-pump", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf", image: "/Product png_s/Hippo 14311.jpg" },
+      { slug: "elephant", name: "Elephant", catalogue: "/Catalogue/Elephant.pdf", image: "/Product png_s/Elephant 14398.jpg" },
+      { slug: "cub", name: "Cub", catalogue: "/Catalogue/cub.pdf", image: "/Product png_s/Cub pump.jpg" },
+      { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/Catalogue/Barrel Pump.pdf", image: "/Product png_s/Barrel Transfer Pump 14419.jpg" },
       { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf" },
     ],
   },
   {
     slug: "dispensing-equipment-drum-press",
     name: "Dispensing Equipment - Drum Press",
+    image: "/Product png_s/Drum press1.png",
     children: [
-      { slug: "drum-press", name: "Drum Press", catalogue: "/Catalogue/DRUM PRESS.pdf" },
+      { slug: "drum-press", name: "Drum Press", catalogue: "/Catalogue/DRUM PRESS.pdf", image: "/Product png_s/Drum press1.png" },
       {
         slug: "doser",
         name: "Doser",
@@ -536,29 +542,32 @@ export const productCategories: ProductCategory[] = [
       },
     ],
   },
-  { slug: "painting-reciprocators", name: "Painting Reciprocators" },
+  { slug: "painting-reciprocators", name: "Painting Reciprocators", image: "/Product png_s/VRC HAWK.png" },
   {
     slug: "paint-agitation-system-turbine-stirrer",
     name: "Paint Agitation System - Turbine Stirrer",
+    image: "/Product png_s/Turbinr Stirrer.png",
     lineBreakAfter: "Turbine",
     children: [
-      { slug: "turbine-stirrer", name: "Turbine Stirrer", catalogue: "/Catalogue/turbine.pdf" },
-      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer", catalogue: "/Catalogue/PNEUMATIC STIRRER.pdf" },
+      { slug: "turbine-stirrer", name: "Turbine Stirrer", catalogue: "/Catalogue/turbine.pdf", image: "/Product png_s/Turbinr Stirrer.png" },
+      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer", catalogue: "/Catalogue/PNEUMATIC STIRRER.pdf", image: "/Product png_s/pneumatic_stirrer.png" },
       { slug: "electrical-flame-proof-stirrer", name: "Electrical Flame Proof Stirrer" },
     ],
   },
   {
     slug: "accessories",
     name: "Accessories",
+    image: "/Product png_s/slimline filter.png",
     children: [
       { slug: "valves", name: "Valves", catalogue: "/Catalogue/Valves.pdf" },
-      { slug: "two-component-mixers", name: "Two Component Mixers" },
-      { slug: "filters", name: "Filters", catalogue: "/Catalogue/filters.pdf" },
+      { slug: "two-component-mixers", name: "Two Component Mixers", image: "/Product png_s/Mixing Manifold 14427.png" },
+      { slug: "filters", name: "Filters", catalogue: "/Catalogue/filters.pdf", image: "/Product png_s/slimline filter.png" },
       { slug: "heating-accessories", name: "Heating Accessories" },
       { slug: "guns", name: "Guns" },
       {
         slug: "pressure-regulator",
         name: "Pressure Regulator",
+        image: "/Product png_s/LP regulator 4219.png",
         children: [
           { slug: "back-pressure-regulator", name: "Back Pressure Regulator" },
         ],

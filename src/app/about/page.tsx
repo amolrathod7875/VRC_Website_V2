@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { weProvide, companyStats } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
 import { IconSupport, IconFlask, IconBadgeCheck, IconGlobe } from "@/components/Icon";
@@ -48,6 +49,20 @@ export default function AboutPage() {
               We work closely with customers across OEM and industrial applications, supporting the
               process from product selection and trials through application and production.
             </p>
+            <div className="mt-8 flex flex-wrap items-center gap-5 sm:gap-6">
+              <Link
+                href="/contact"
+                className="inline-flex h-16 min-w-[192px] items-center justify-center rounded-[14px] bg-brand-700 px-8 py-3 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-600 lg:px-9"
+              >
+                Contact Us
+              </Link>
+              <Link
+                href="/products"
+                className="inline-flex h-16 min-w-[192px] items-center justify-center rounded-[14px] border-2 border-brand-700 bg-transparent px-8 py-3 text-sm font-semibold text-brand-700 transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-700 hover:text-white lg:px-9"
+              >
+                Our Products
+              </Link>
+            </div>
           </div>
         </div>
       </section>

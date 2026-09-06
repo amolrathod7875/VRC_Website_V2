@@ -55,11 +55,19 @@ export default async function ProductDetailPage({ params }: Props) {
           </nav>
           <div>
             <p className="mb-4 text-sm text-slate-500">{breadcrumbs}</p>
-            <Placeholder
-              label={`${node.name} image`}
-              ratio="16 / 9"
-              className="mb-8 rounded-xl"
-            />
+            {node.image ? (
+                <img
+                  src={node.image}
+                  alt={node.name}
+                  className="mb-8 aspect-[16/9] w-full rounded-xl object-cover object-center"
+                />
+              ) : (
+                <Placeholder
+                  label={`${node.name} image`}
+                  ratio="16 / 9"
+                  className="mb-8 rounded-xl"
+                />
+              )}
             {node.children && node.children.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2">
                 {node.children.map((child) => (
@@ -123,11 +131,19 @@ export default async function ProductDetailPage({ params }: Props) {
           <p className="mb-4 text-sm text-slate-500">
             {trail.map((item: { name: string }) => item.name).join(" / ")}
           </p>
-          <Placeholder
-            label={`${node.name} image`}
-            ratio="16 / 9"
-            className="mb-8 rounded-xl"
-          />
+          {node.image ? (
+            <img
+              src={node.image}
+              alt={node.name}
+              className="mb-8 aspect-[16/9] w-full rounded-xl object-cover object-center"
+            />
+          ) : (
+            <Placeholder
+              label={`${node.name} image`}
+              ratio="16 / 9"
+              className="mb-8 rounded-xl"
+            />
+          )}
           <div className="prose max-w-none text-sm leading-7 text-slate-600">
             <p>{node.summary || "Detailed technical specifications coming soon."}</p>
             <Link
