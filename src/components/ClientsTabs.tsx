@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { clients, clientIndustries } from "@/lib/clients";
+import { clients, clientIndustries, sortByGlobalPriority, sortByIndustryTier } from "@/lib/clients";
 import type { Client } from "@/lib/clients";
 
 const tabs = ["All", ...clientIndustries];
@@ -11,8 +11,11 @@ export function ClientsTabs() {
   const [search, setSearch] = useState("");
   const [erroredImages, setErroredImages] = useState<Set<string>>(new Set());
 
-  const displayedClients = clients.filter((c) => {
-    if (active !== "All" && c.industry !== active) return false;
+  const displayedClients = (
+    active === "All"
+      ? sortByGlobalPriority(clients)
+      : sortByIndustryTier(clients.filter((c) => c.industry === active))
+  ).filter((c) => {
     if (search.trim()) {
       const q = search.toLowerCase().trim();
       return c.name.toLowerCase().includes(q) || c.industry.toLowerCase().includes(q);
