@@ -652,3 +652,97 @@ function flattenCategories(
       : self;
   });
 }
+
+export type BlogPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string[];
+  image: string | null;
+};
+
+export const blogPosts: BlogPost[] = [
+  {
+    slug: "the-day-it-all-began-1985",
+    title: "The Day It All Began — 1985",
+    excerpt:
+      "The story of how VR Coatings began in Pune in 1985, driven by a simple idea: build reliable industrial equipment for Indian conditions.",
+    content: [
+      "If you want to build something that lasts, start with honesty and a screwdriver.",
+      "It was 1985 in Pune. The Indian industry was waking up to new possibilities, but reliable fluid-handling equipment was still a distant dream for many. We were a small group of engineers and dreamers, with grease on our hands and fire in our hearts.",
+      "The idea for VR Coatings came not from a business plan, but from a frustration. Imported machines were expensive, difficult to maintain, and ill-suited for Indian conditions. We thought: Why not make our own, better ones? Machines designed for India, in India — that could stand the dust, heat, and long working hours.",
+      "The first few months were filled with sleepless nights. We worked out of a modest workshop in Pune, often making do with what we had. The first pump we built was tested in our backyard before it ever saw a factory floor. And when it worked — really worked — we knew we had something special.",
+      "We didn\u2019t know then that VR Coatings would one day be a trusted name across India and even abroad. We only knew we wanted to make machines that never let our customers down.",
+    ],
+    image: null,
+  },
+  {
+    slug: "learning-by-listening-our-first-customers",
+    title: "Learning by Listening — Our First Customers",
+    excerpt:
+      "How early customers and shop-floor feedback shaped VR Coatings\u2019 approach to engineering and problem solving.",
+    content: [
+      "In our early years, our best teachers were not in classrooms — they were on shop floors.",
+      "We made it a habit to listen. To watch how operators worked, how maintenance teams handled breakdowns, how production managers stressed over downtime. Every complaint was a clue, every request a challenge.",
+      "Our first big break came when an automotive supplier took a chance on us. Their imported dispensing system was down for weeks, waiting for spares. We offered them a locally made solution that worked — and kept working. That customer is still with us today.",
+      "From there, word spread. Industries from paints to adhesives to shipbuilding began calling us. Not because we were the cheapest, but because we understood their pain and solved it. Listening became our biggest strength — and it still is.",
+    ],
+    image: null,
+  },
+  {
+    slug: "growing-roots-and-branches",
+    title: "Growing Roots and Branches",
+    excerpt:
+      "How VR Coatings evolved from a workshop into a growing engineering organization.",
+    content: [
+      "By the mid-1990s, VR Coatings was no longer just a workshop — it was becoming an organization.",
+      "We moved into larger facilities in Pune. We started building teams, training engineers, and investing in better tools. Our product line expanded from manual dispensing systems to automatic, servo-driven, and feedback-controlled machines.",
+      "One of our proudest moments was when a customer told us: \u201cYour pump works better than the one we imported from Europe.\u201d That wasn\u2019t just praise — it was proof that Make in India could compete with the world.",
+      "We didn\u2019t just grow in size; we grew in reputation. By the early 2000s, we were working with major names in automotive, construction, and manufacturing. And we were just getting started.",
+    ],
+    image: null,
+  },
+  {
+    slug: "our-leap-into-the-global-arena",
+    title: "Our Leap in to the Global Arena",
+    excerpt:
+      "The decision to set up a German assembly unit and carry Indian engineering to factories around the world.",
+    content: [
+      "Every business dreams of going global — but for us, it wasn\u2019t just a dream.",
+      "Our reputation began reaching beyond India\u2019s borders. International companies started approaching us for machines that could withstand demanding industrial conditions yet be economical.",
+      "That\u2019s when we decided to set up an assembly unit in Germany. It wasn\u2019t easy — new regulations, new market expectations — but it was worth it. The German presence allowed us to support European customers more closely and showcase Indian engineering on a global stage.",
+      "From Pune to Germany, our machines began carrying the VR Coatings name to factories around the world. And each time a customer said, \u201cThis is better than what we had before,\u201d we knew our decision was right.",
+    ],
+    image: null,
+  },
+  {
+    slug: "innovation-is-in-our-dna",
+    title: "Innovation Is in Our DNA",
+    excerpt:
+      "From IoT-enabled dosing systems to electric pumps, how continuous innovation drives every VR Coatings solution.",
+    content: [
+      "If you walk through our factory floor today, you\u2019ll see machines that our younger selves could barely imagine in 1985.",
+      "We now build IoT-enabled dosing systems, micro-dispensers accurate to 0.001 grams, and vacuum-assisted systems for high-precision applications. We\u2019ve even developed electric pumps that are clean, quiet, and energy-efficient.",
+      "But innovation for us is not just about adding electronics. It\u2019s about making machines smarter, more reliable, and easier to maintain. Whether it\u2019s a high-viscosity adhesive or a delicate electronics potting compound, our solutions are engineered to perform.",
+      "And we never stop learning — every new customer challenge is a chance to innovate again.",
+    ],
+    image: null,
+  },
+  {
+    slug: "looking-back-moving-forward",
+    title: "Looking Back, Moving Forward",
+    excerpt:
+      "From a small Pune workshop to a trusted global name, and the road ahead toward an IPO.",
+    content: [
+      "Today, VR Coatings stands as India\u2019s most trusted name in high-viscosity spraying and dispensing equipment. We serve industries from automotive to aerospace, pharmaceuticals to shipbuilding. Our clients include INS Vikrant, Mercedes-Benz, Tata Motors, Mahindra & Mahindra, and Indian Railways.",
+      "We are preparing for our next big leap — a public offering (IPO) that will fund our R&D and global expansion.",
+      "But even as we look ahead, we never forget where we came from — a small workshop, a few determined people, and a belief that Indian engineering could stand shoulder to shoulder with the world.",
+      "And if there\u2019s one thing we\u2019ve learned in these decades, it\u2019s this: Machines may be made of steel, but trust is built in the hearts of customers. That\u2019s what keeps VR Coatings running strong — yesterday, today, and tomorrow.",
+    ],
+    image: null,
+  },
+];
+
+export function findBlogPost(slug: string) {
+  return blogPosts.find((post) => post.slug === slug);
+}

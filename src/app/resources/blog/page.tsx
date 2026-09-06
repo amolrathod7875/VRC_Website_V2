@@ -1,28 +1,43 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { blogPosts } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
 import { Placeholder } from "@/components/Placeholder";
+import { IconArrowRight } from "@/components/Icon";
 
 export const metadata: Metadata = { title: "Blog" };
-
-const posts = [
-  { title: "Surface preparation that actually lasts", date: "12 Aug 2026", excerpt: "Why blast profile and soluble salts decide coating life more than topcoat colour." },
-  { title: "Choosing zinc primers for coastal steel", date: "28 Jul 2026", excerpt: "Inorganic vs organic zinc, overcoating windows, and common field failures." },
-  { title: "Powder vs liquid for OEM housings", date: "04 Jul 2026", excerpt: "Throughput, film build, and repair strategy when both chemistries are viable." },
-];
 
 export default function BlogPage() {
   return (
     <>
-      <PageHero kicker="Resources" title="Blog" text="Technical notes and process guidance. Imagery is placeholder until photography is added." />
+      <PageHero kicker="Resources" title="Blog" text="Stories from the shop floor to the global stage." />
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-3">
-          {posts.map((post) => (
-            <article key={post.title} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-              <Placeholder label="Blog cover image" ratio="16 / 9" />
-              <div className="p-5">
-                <p className="text-xs uppercase tracking-wider text-brand-600">{post.date}</p>
-                <h2 className="mt-2 text-lg font-semibold text-brand-900">{post.title}</h2>
-                <p className="mt-2 text-sm text-slate-600">{post.excerpt}</p>
+          {blogPosts.map((post) => (
+            <article key={post.slug} className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white">
+              {post.image ? (
+                <img
+                  src={post.image}
+                  alt={post.title}
+                  className="aspect-video w-full object-cover"
+                />
+              ) : (
+                <Placeholder
+                  label="Blog cover image"
+                  ratio="16 / 9"
+                  className="w-full"
+                />
+              )}
+              <div className="flex flex-1 flex-col p-5">
+                <h2 className="text-lg font-semibold text-brand-900">{post.title}</h2>
+                <p className="mt-2 flex-1 text-sm text-slate-600">{post.excerpt}</p>
+                <Link
+                  href={`/resources/blog/${post.slug}`}
+                  className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-700 hover:text-brand-600"
+                >
+                  Read article
+                  <IconArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </article>
           ))}
