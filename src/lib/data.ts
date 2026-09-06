@@ -388,25 +388,6 @@ export const presenceLocations = [
   { title: "North America", region: "Troy, MI, USA" },
 ];
 
-export const faqs = [
-  {
-    q: "Do you supply both liquid and powder coatings?",
-    a: "Yes. VR Coatings manufactures protective liquids, industrial powders, and specialty systems for OEM and maintenance markets.",
-  },
-  {
-    q: "Can products be custom-matched?",
-    a: "Colour, gloss, and performance can be tailored after a technical review of substrate, process, and environment.",
-  },
-  {
-    q: "Where can I download the catalog?",
-    a: "Visit the Catalog page to request the current product catalog. A download placeholder is provided until the PDF is uploaded.",
-  },
-  {
-    q: "How do I become a distributor?",
-    a: "Use the Contact Us form and select Partnership as the inquiry type. Our commercial team will follow up.",
-  },
-];
-
 export const searchIndex = [
   { title: "Home", href: "/", keywords: "home coatings solutions" },
   { title: "About Us", href: "/about", keywords: "about company infrastructure" },
