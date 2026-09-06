@@ -75,6 +75,14 @@ body {
   animation: fade-slide 0.55s ease;
 }
 
+.who-we-are-video-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 .who-we-are-video {
   position: absolute;
   inset: 0;
@@ -84,20 +92,22 @@ body {
   object-position: center center;
 }
 
-.who-we-are-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-      90deg,
-      rgba(8, 43, 76, 0.82) 0%,
-      rgba(11, 92, 151, 0.55) 35%,
-      rgba(22, 120, 200, 0.28) 70%,
-      rgba(22, 120, 200, 0.15) 100%
-    );
-}
-
 .who-we-are-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   min-height: 680px;
+  margin-top: 16px;
+  max-width: 40vw;
+  margin-left: 0;
+  margin-right: auto;
+  padding-left: 5vw;
+  padding-right: 3vw;
+}
+
+@media (max-width: 768px) {
+  .who-we-are-content {
+    max-width: 100%;
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
 }

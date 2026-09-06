@@ -66,54 +66,51 @@ const APPLICATION_ICONS: Record<string, IconCmp> = {
 export default function HomePage() {
   return (
     <>
-      <section className="relative isolate overflow-hidden">
-        <video
-          className="who-we-are-video"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden="true"
-        >
-          <source src="/Landing_Video.mp4" type="video/mp4" />
-        </video>
-        <div className="who-we-are-overlay" aria-hidden="true" />
+      <section className="relative isolate flex items-center overflow-hidden">
+        <div className="who-we-are-video-container">
+          <video
+            className="who-we-are-video"
+            autoPlay
+            muted
+            loop
+            playsInline
+            aria-hidden="true"
+          >
+            <source src="/Landing_Video.mp4" type="video/mp4" />
+          </video>
+        </div>
         <div className="who-we-are-content">
-          <div className="mx-auto max-w-7xl px-4 pt-12 pb-20 sm:px-6 lg:pt-16 lg:pb-24">
-            <div>
-              <Eyebrow tone="white">Who we are</Eyebrow>
-              <SectionHeading tone="white">
-                Engineered coating solutions for demanding industries.
-              </SectionHeading>
-              <p className="mt-6 max-w-3xl text-base leading-8 text-slate-100">
-                VR Coatings develops, manufactures, and supports industrial coating systems for OEM lines
-                and maintenance programmes. We pair formulation science with application support so films
-                perform in the field — not only in the lab.
-              </p>
-              <p className="mt-4 max-w-3xl text-base leading-8 text-slate-100">
-                From zinc-rich primers and high-build epoxies to architectural powders and electrocoat
-                primers, our systems are specified by manufacturers who need predictable protection on
-                critical surfaces.
-              </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
-                {weProvide.slice(0, 4).map((item) => (
-                  <div
-                    key={item.title}
-                    className="rounded-lg bg-white/90 px-4 py-3 text-sm font-medium text-brand-900"
-                  >
-                    {item.title}
-                  </div>
-                ))}
-              </div>
-              <Link
-                href="/about"
-                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-brand-100"
+          <Eyebrow tone="white">Who we are</Eyebrow>
+          <SectionHeading tone="white">
+            Engineered coating solutions for demanding industries.
+          </SectionHeading>
+          <p className="mt-6 max-w-lg text-base leading-8 text-slate-100">
+            VR Coatings develops, manufactures, and supports industrial coating systems for OEM lines
+            and maintenance programmes. We pair formulation science with application support so films
+            perform in the field — not only in the lab.
+          </p>
+          <p className="mt-4 max-w-lg text-base leading-8 text-slate-100">
+            From zinc-rich primers and high-build epoxies to architectural powders and electrocoat
+            primers, our systems are specified by manufacturers who need predictable protection on
+            critical surfaces.
+          </p>
+          <div className="mt-8 grid w-full max-w-sm gap-3 sm:grid-cols-2">
+            {weProvide.slice(0, 4).map((item) => (
+              <div
+                key={item.title}
+                className="w-full rounded-lg bg-white/90 px-4 py-3 text-sm font-medium text-brand-950"
               >
-                About VR Coatings
-                <IconArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
+                {item.title}
+              </div>
+            ))}
           </div>
+          <Link
+            href="/about"
+            className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-brand-100"
+          >
+            About VR Coatings
+            <IconArrowRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </section>
 
