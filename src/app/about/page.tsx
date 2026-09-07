@@ -21,7 +21,16 @@ export default function AboutPage() {
         title="About VR Coatings Pvt. Ltd."
         text="An industrial coatings manufacturer focused on protective performance, process reliability, and long-term partnership."
       />
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 -z-10 overflow-hidden rounded-xl">
+          <img
+            src="/metal-structure.jpg"
+            alt=""
+            aria-hidden="true"
+            className="h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-white/85" />
+        </div>
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <img
             src="/VR-Coatings-Pvt-Ltd-Factory.png"

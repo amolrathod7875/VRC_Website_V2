@@ -1,8 +1,8 @@
-import { getTrustedClients } from "@/lib/clients";
+import { getFeaturedClients } from "@/lib/clients";
 
 export function LogoSlider() {
-  const trusted = getTrustedClients();
-  const logos = [...trusted, ...trusted];
+  const featured = getFeaturedClients();
+  const logos = [...featured, ...featured];
   return (
     <section className="border-y border-slate-200 bg-surface py-10">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -20,7 +20,7 @@ export function LogoSlider() {
                   <img
                     src={client.logo}
                     alt={client.name}
-                    className="h-full w-full object-contain"
+                    className="max-h-10 max-w-[120px] object-contain"
                   />
                 ) : (
                   <span className="px-2 text-center text-xs font-medium uppercase tracking-wide text-slate-500">

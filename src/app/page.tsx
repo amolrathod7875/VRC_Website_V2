@@ -4,14 +4,12 @@ import {
   applications,
   capabilityHighlights,
   certifications,
-  featuredProducts,
   landingProducts,
   performanceAttributes,
   presenceLocations,
   weProvide,
 } from "@/lib/data";
 import { LogoSlider } from "@/components/LogoSlider";
-import { Placeholder } from "@/components/Placeholder";
 import { ProductCard } from "@/components/ProductCard";
 import { TrustStrip } from "@/components/TrustStrip";
 import { PerformanceCard } from "@/components/PerformanceCard";
@@ -378,36 +376,6 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 grid gap-6 lg:grid-cols-[1fr_1.2fr] lg:items-end">
-            <div>
-              <Eyebrow>Portfolio</Eyebrow>
-              <SectionHeading>Featured products.</SectionHeading>
-            </div>
-            <p className="max-w-xl text-base leading-7 text-slate-600">
-              A selection from our protective, powder, primer, marine and electronic coating lines —
-              specified across OEM and maintenance programmes.
-            </p>
-          </div>
-           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {featuredProducts.map((product) => (
-              <Link
-                key={product.slug}
-                href={`/products/${product.slug}`}
-                className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition hover:border-brand-200 hover:shadow-sm"
-              >
-                <Placeholder label={`${product.name} image`} ratio="4 / 3" />
-                <div className="p-5">
-                  <p className="text-xs uppercase tracking-wider text-brand-600">{product.category}</p>
-                  <h3 className="mt-1 text-lg font-semibold text-brand-900">{product.name}</h3>
-                </div>
-              </Link>
-            ))}
           </div>
         </div>
       </section>
