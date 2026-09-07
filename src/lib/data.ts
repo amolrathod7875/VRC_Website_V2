@@ -967,7 +967,7 @@ export const applications = [
   { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield", video: "/Aerospace.mp4" },
   { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit" },
   { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building", video: "/Infrastructure.mp4" },
-  { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship" },
+  { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship", video: "/Marine.mp4" },
   { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap" },
 ];
 
