@@ -347,13 +347,17 @@ export default function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
             <div className="relative overflow-hidden rounded-xl">
-              <Image
-                src="/landing-industrial-coatings.jpg"
-                alt="VR Coatings manufacturing and infrastructure"
-                width={1200}
-                height={900}
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden="true"
                 className="h-full w-full object-cover"
-              />
+              >
+                <source src="/Scale_video.mp4" type="video/mp4" />
+              </video>
             </div>
             <div>
               <Eyebrow>Our Capabilities</Eyebrow>
