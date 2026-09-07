@@ -187,3 +187,47 @@ export function getTrustedClients(): Client[] {
     .filter((c): c is Client => c !== undefined)
     .filter((c): c is Client & { logo: string } => "logo" in c && typeof c.logo === "string");
 }
+
+export const featuredClientNames = [
+  "Mercedes",
+  "Volkswagen",
+  "ZF India",
+  "Toyota",
+  "Honda",
+  "Hyundai Motors",
+  "Volvo",
+  "Ford Motors",
+  "General Motors",
+  "Fiat",
+  "Piaggio",
+  "Cummins",
+  "ABB",
+  "Dow",
+  "Tata Steel",
+  "Tata Motors",
+  "Mahindra & Mahindra",
+  "Indian Oil Corporation (IOC)",
+  "DRDO",
+  "ISRO",
+  "Reliance",
+  "BHEL",
+  "Bajaj",
+  "Ashok Leyland",
+  "Mercedes",
+  "Volkswagen",
+  "ZF India",
+  "Toyota",
+  "Honda",
+  "Hyundai Motors",
+  "Volvo",
+  "Ford Motors",
+  "General Motors",
+] as const;
+
+export function getFeaturedClients(): Client[] {
+  const byName = new Map(clients.map((c) => [c.name.toLowerCase(), c]));
+  return featuredClientNames
+    .map((name) => byName.get(name.toLowerCase()))
+    .filter((c): c is Client => c !== undefined)
+    .filter((c): c is Client & { logo: string } => "logo" in c && typeof c.logo === "string");
+}

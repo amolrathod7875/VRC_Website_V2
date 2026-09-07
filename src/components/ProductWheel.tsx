@@ -9,9 +9,9 @@ const STICKY_TOP = 100;
 const CARD_HEIGHT = 410;
 const TRANSITIONS = 5;
 const SECTION_VH = 520;
-const SCALE_MIN = 0.97;
-const SCALE_PEAK = 1.015;
-const SCALE_PEAK_PROGRESS = 0.82;
+const SCALE_MIN = 0.95;
+const SCALE_PEAK = 1.025;
+const SCALE_PEAK_PROGRESS = 0.88;
 
 function easeInOutCubic(t: number) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -81,7 +81,7 @@ export function ProductWheel({ products }: { products: LandingProduct[] }) {
         {products.map((product) => (
           <div
             key={product.slug}
-            className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_16px_40px_rgba(8,43,76,0.10)]"
+            className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_8px_24px_rgba(8,43,76,0.06)]"
           >
             <div className="grid grid-cols-1 md:grid-cols-[45%_1fr]">
               <div className="relative flex items-center justify-center bg-[#F4F7FA] p-6">
@@ -136,7 +136,7 @@ export function ProductWheel({ products }: { products: LandingProduct[] }) {
   const currentStep = Math.floor(totalProgress);
   const localProgress = totalProgress - currentStep;
 
-  const sectionHeight = window.innerHeight + TRANSITIONS * CARD_HEIGHT * 1.25;
+  const sectionHeight = window.innerHeight + TRANSITIONS * CARD_HEIGHT * 1.6;
 
   return (
     <div
@@ -197,7 +197,7 @@ export function ProductWheel({ products }: { products: LandingProduct[] }) {
 
 function ProductShowcaseCard({ product }: { product: LandingProduct }) {
   return (
-    <div className="h-full w-full overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_16px_40px_rgba(8,43,76,0.10)]">
+    <div className="h-full w-full overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_8px_24px_rgba(8,43,76,0.06)]">
       <div className="grid h-full grid-cols-1 md:grid-cols-[45%_1fr]">
         <div className="relative flex items-center justify-center bg-[#F4F7FA] p-6">
           {product.image ? (

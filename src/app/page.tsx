@@ -131,6 +131,15 @@ export default function HomePage() {
                 Explore our range of engineered coating systems developed for performance, protection and
                 long-term reliability across industrial applications.
               </p>
+              <div className="mt-8">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
+                >
+                  View All Products
+                  <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </Link>
+              </div>
             </div>
 
             <div className="mt-12 lg:mt-0">
@@ -138,7 +147,7 @@ export default function HomePage() {
                 {landingProducts.slice(0, 6).map((product) => (
                   <div
                     key={product.slug}
-                    className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_16px_40px_rgba(8,43,76,0.10)]"
+                    className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_8px_24px_rgba(8,43,76,0.06)]"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-[45%_1fr]">
                       <div className="relative flex items-center justify-center bg-[#F4F7FA] p-6">
@@ -189,15 +198,6 @@ export default function HomePage() {
 
               <div className="hidden lg:block">
                 <ProductWheel products={landingProducts.slice(0, 6)} />
-                <div className="mt-10 flex justify-center lg:justify-start">
-                  <Link
-                    href="/products"
-                    className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-                  >
-                    View All Products
-                    <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                  </Link>
-                </div>
               </div>
             </div>
           </div>

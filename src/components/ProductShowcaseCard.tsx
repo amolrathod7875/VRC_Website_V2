@@ -8,7 +8,7 @@ type ProductShowcaseCardProps = {
 
 export function ProductShowcaseCard({ product }: ProductShowcaseCardProps) {
   return (
-    <div className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_16px_40px_rgba(8,43,76,0.10)]">
+    <div className="overflow-hidden rounded-2xl bg-[#082B4C] shadow-[0_8px_24px_rgba(8,43,76,0.06)]">
       <div className="grid grid-cols-1 md:grid-cols-[45%_1fr]">
         <div className="relative flex items-center justify-center bg-[#F4F7FA] p-6">
           {product.image ? (
