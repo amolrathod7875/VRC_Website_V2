@@ -20,7 +20,7 @@ import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
 import { HeritageSince } from "@/components/HeritageSince";
 import { ServicesCta } from "@/components/ServicesCta";
-import { ProductShowcaseCard } from "@/components/ProductShowcaseCard";
+import { ProductWheel } from "@/components/ProductWheel";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
@@ -124,7 +124,7 @@ export default function HomePage() {
       <section id="products" className="scroll-mt-24 bg-[#F4F7FA]">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="lg:grid lg:grid-cols-[35%_1fr] lg:gap-12">
-            <div className="lg:sticky lg:top-28 lg:self-start">
+            <div className="lg:sticky lg:top-24 lg:self-start">
               <Eyebrow>Our Products</Eyebrow>
               <SectionHeading>Coating systems engineered for performance.</SectionHeading>
               <p className="mt-4 text-base leading-7 text-slate-600">
@@ -134,14 +134,7 @@ export default function HomePage() {
             </div>
 
             <div className="mt-12 lg:mt-0">
-              <div className="space-y-6">
-                {landingProducts.slice(0, 6).map((product) => (
-                  <ProductShowcaseCard
-                    key={product.slug}
-                    product={product}
-                  />
-                ))}
-              </div>
+              <ProductWheel products={landingProducts.slice(0, 6)} />
 
               <div className="mt-10 flex justify-center lg:justify-start">
                 <Link
