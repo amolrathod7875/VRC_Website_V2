@@ -189,16 +189,15 @@ export default function HomePage() {
 
               <div className="hidden lg:block">
                 <ProductWheel products={landingProducts.slice(0, 6)} />
-              </div>
-
-              <div className="mt-10 flex justify-center lg:justify-start">
-                <Link
-                  href="/products"
-                  className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-                >
-                  View All Products
-                  <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-                </Link>
+                <div className="mt-10 flex justify-center lg:justify-start">
+                  <Link
+                    href="/products"
+                    className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
+                  >
+                    View All Products
+                    <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
