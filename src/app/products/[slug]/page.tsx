@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { findProduct, productCategories, type ProductCategory, findCatalogue } from "@/lib/data";
+import { findProduct, productCategories, type ProductCategory, type LandingProduct, landingProducts, findCatalogue, flattenProducts } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
 import { ProductNav } from "@/components/ProductNav";
 import { Placeholder } from "@/components/Placeholder";
@@ -26,22 +26,32 @@ function findCategory(slug: string) {
 }
 
 export function generateStaticParams() {
-  return flattenCategories(productCategories).map(({ node }) => ({ slug: node.slug }));
+  const catSlugs = flattenCategories(productCategories).map(({ node }) => node.slug);
+  const prodSlugs = flattenProducts().map(({ node }) => node.slug);
+  const landingSlugs = landingProducts.map((p) => p.slug);
+  const allSlugs = new Set([...catSlugs, ...prodSlugs, ...landingSlugs]);
+  return Array.from(allSlugs).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const cat = findCategory(slug);
   const prod = findProduct(slug);
-  return { title: cat?.node.name ?? prod?.node.name ?? "Product" };
+  const landing = findLandingProduct(slug);
+  return { title: cat?.node.name ?? prod?.node.name ?? landing?.name ?? "Product" };
+}
+
+function findLandingProduct(slug: string): LandingProduct | undefined {
+  return landingProducts.find((p) => p.slug === slug);
 }
 
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   const cat = findCategory(slug);
   const prod = findProduct(slug);
+  const landing = findLandingProduct(slug);
 
-  if (!cat && !prod) notFound();
+  if (!cat && !prod && !landing) notFound();
 
   if (cat) {
     const { node, trail } = cat;
@@ -69,48 +79,124 @@ export default async function ProductDetailPage({ params }: Props) {
                 />
               )}
             {node.children && node.children.length > 0 ? (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {node.children.map((child) => (
-                  <Link
-                    key={child.slug}
-                    href={`/products/${child.slug}`}
-                    className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-5 transition hover:border-brand-200 hover:shadow-sm"
-                  >
-                    <h2 className="text-lg font-semibold text-brand-900 group-hover:text-brand-700">
-                      {child.name}
-                    </h2>
-                    {child.children && child.children.length > 0 && (
-                      <p className="mt-2 text-sm text-slate-500">
-                        {child.children.length} categor{child.children.length === 1 ? "y" : "ies"}
-                      </p>
-                    )}
-                    {child.catalogue && (
-                      <span
-                        aria-label={`Catalogue available for ${child.name}`}
-                        className="absolute right-2 top-2 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600"
-                      >
-                        PDF
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="prose max-w-none text-sm leading-7 text-slate-600">
-                <p>
-                  Technical data sheets, MSDS, and detailed specifications will be uploaded here. Until
-                  then, this page holds structured product information for {node.name}.
-                </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {node.children.map((child) => (
                 <Link
-                  href="/contact"
-                  className="mt-4 inline-flex items-center gap-1.5 font-semibold text-brand-700"
+                  key={child.slug}
+                  href={`/products/${child.slug}`}
+                  className="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white p-5 transition hover:border-brand-200 hover:shadow-sm"
                 >
-                  Request a datasheet
-                  <IconArrowRight className="h-3.5 w-3.5" />
+                  <h2 className="text-lg font-semibold text-brand-900 group-hover:text-brand-700">
+                    {child.name}
+                  </h2>
+                  {child.children && child.children.length > 0 && (
+                    <p className="mt-2 text-sm text-slate-500">
+                      {child.children.length} categor{child.children.length === 1 ? "y" : "ies"}
+                    </p>
+                  )}
+                  {child.catalogue && (
+                    <span
+                      aria-label={`Catalogue available for ${child.name}`}
+                      className="absolute right-2 top-2 rounded-md bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-600"
+                    >
+                      PDF
+                    </span>
+                  )}
                 </Link>
-                {node.catalogue && <CatalogueLink catalogue={node.catalogue} />}
-              </div>
-            )}
+              ))}
+            </div>
+          ) : (
+            <div className="prose max-w-none text-sm leading-7 text-slate-600">
+              <p>
+                Technical data sheets, MSDS, and detailed specifications will be uploaded here. Until
+                then, this page holds structured product information for {node.name}.
+              </p>
+              <Link
+                href="/contact"
+                className="mt-4 inline-flex items-center gap-1.5 font-semibold text-brand-700"
+              >
+                Request a datasheet
+                <IconArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              {node.catalogue && <CatalogueLink catalogue={node.catalogue} />}
+            </div>
+          )}
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  if (landing) {
+    const breadcrumbs = landing.category ? `Products / ${landing.category}` : "Products";
+    return (
+      <>
+        <PageHero kicker="Products" title={landing.name} text={breadcrumbs} />
+        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[250px_1fr] lg:gap-10 lg:px-8">
+          <nav aria-label="Product Categories" className="pt-px">
+            <ProductNav />
+          </nav>
+          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+            <div className="space-y-6">
+              <p className="text-sm text-slate-500">{breadcrumbs}</p>
+              {landing.description && (
+                <p className="text-sm leading-7 text-slate-600">{landing.description}</p>
+              )}
+              {landing.overview && (
+                <p className="text-sm leading-7 text-slate-600">{landing.overview}</p>
+              )}
+              {landing.features && landing.features.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Key Features</h3>
+                  <ul className="mt-2 list-disc list-inside space-y-1">
+                    {landing.features.map((f) => (
+                      <li key={f} className="text-sm text-slate-600">{f}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {landing.specs && landing.specs.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Technical Specifications</h3>
+                  <table className="mt-2 w-full table-fixed border-collapse text-sm">
+                    <tbody>
+                      {landing.specs.map((spec) => (
+                        <tr key={spec.label} className="border-b border-slate-200">
+                          <td className="w-1/2 py-2 pr-2 font-medium text-slate-600">{spec.label}</td>
+                          <td className="w-1/2 py-2 text-brand-950">{spec.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              {landing.applications && landing.applications.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Applications</h3>
+                  <ul className="mt-2 list-disc list-inside space-y-1">
+                    {landing.applications.map((a) => (
+                      <li key={a} className="text-sm text-slate-600">{a}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {landing.catalogue && <CatalogueLink catalogue={landing.catalogue} />}
+            </div>
+            <div>
+              {landing.image ? (
+                <img
+                  src={landing.image}
+                  alt={landing.name}
+                  className="aspect-[4/3] w-full rounded-xl object-contain object-center"
+                />
+              ) : (
+                <Placeholder
+                  label={`${landing.name} image`}
+                  ratio="4 / 3"
+                  className="rounded-xl"
+                />
+              )}
+            </div>
           </div>
         </section>
       </>

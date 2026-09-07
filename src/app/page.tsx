@@ -20,6 +20,7 @@ import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
 import { HeritageSince } from "@/components/HeritageSince";
 import { ServicesCta } from "@/components/ServicesCta";
+import { ProductShowcaseCard } from "@/components/ProductShowcaseCard";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
@@ -120,34 +121,39 @@ export default function HomePage() {
 
       <BrandStatement />
 
-      <section id="products" className="scroll-mt-24 bg-white">
+      <section id="products" className="scroll-mt-24 bg-[#F4F7FA]">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 max-w-2xl">
-            <Eyebrow>Our Products</Eyebrow>
-            <SectionHeading>Coating systems engineered for performance.</SectionHeading>
-            <p className="mt-4 text-base leading-7 text-slate-600">
-              Explore our range of engineered coating systems developed for performance, protection and
-              long-term reliability across industrial applications.
-            </p>
+          <div className="lg:grid lg:grid-cols-[35%_1fr] lg:gap-12">
+            <div className="lg:sticky lg:top-28 lg:self-start">
+              <Eyebrow>Our Products</Eyebrow>
+              <SectionHeading>Coating systems engineered for performance.</SectionHeading>
+              <p className="mt-4 text-base leading-7 text-slate-600">
+                Explore our range of engineered coating systems developed for performance, protection and
+                long-term reliability across industrial applications.
+              </p>
+            </div>
+
+            <div className="mt-12 lg:mt-0">
+              <div className="space-y-6">
+                {landingProducts.slice(0, 6).map((product) => (
+                  <ProductShowcaseCard
+                    key={product.slug}
+                    product={product}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-10 flex justify-center lg:justify-start">
+                <Link
+                  href="/products"
+                  className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
+                >
+                  View All Products
+                  <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {landingProducts.slice(0, 6).map((product) => (
-              <ProductCard
-                key={product.slug}
-                product={product}
-                href={`/products/${product.slug}`}
-              />
-            ))}
-          </div>
-        <div className="mt-12 flex justify-center">
-          <Link
-            href="/products"
-            className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-          >
-            View All Products
-            <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-          </Link>
-        </div>
         </div>
       </section>
 
