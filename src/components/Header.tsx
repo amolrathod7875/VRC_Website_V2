@@ -365,7 +365,6 @@ export function Header() {
   }, [pathname]);
 
   useEffect(() => {
-    if (pathname !== "/") return;
     const handleScroll = () => setScrolled(window.scrollY > 24);
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -426,202 +425,123 @@ export function Header() {
     setMegaLabel(null);
   };
 
-  if (isHome) {
-    return (
-      <header
-        className={`fixed inset-x-0 z-50 pointer-events-none transition-all duration-300 ${
-          scrolled ? "top-3" : "top-6"
-        }`}
-      >
-        <div className="mx-auto max-w-[1200px] px-4 pointer-events-auto">
-          <div
-            className={`overflow-hidden rounded-2xl bg-white transition-all duration-300 ${
-              scrolled
-                ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
-                : "shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3 px-5 py-3">
-              <Link href="/" className="flex items-center gap-2.5 shrink-0">
-                <Image
-                  src="/vrc-logo.png"
-                  alt="VR Coatings logo"
-                  width={140}
-                  height={36}
-                  priority
-                  className="h-9 w-auto"
-                />
+  return (
+    <header
+      className={`fixed inset-x-0 z-50 pointer-events-none transition-all duration-300 ${
+        scrolled ? "top-3" : "top-6"
+      }`}
+    >
+      <div className="mx-auto max-w-[1300px] px-4 pointer-events-auto">
+        <div
+          className={`overflow-hidden rounded-2xl bg-white transition-all duration-300 ${
+            scrolled
+              ? "shadow-[0_4px_20px_rgba(0,0,0,0.08)]"
+              : "shadow-[0_8px_30px_rgba(0,0,0,0.10)]"
+          }`}
+        >
+          <div className="flex items-center justify-between gap-6 px-5 py-3">
+            <Link href="/" className="flex items-center gap-3 shrink-0">
+              <Image
+                src="/vrc-logo.png"
+                alt="VR Coatings logo"
+                width={140}
+                height={36}
+                priority
+                className="h-9 w-auto"
+              />
+            </Link>
+
+            <div className="hidden md:block h-7 w-px bg-black/[0.08]" />
+
+            <nav className="hidden lg:flex items-center gap-5">
+              {desktopNavItems.map((item) => {
+                const active = isRouteActive(item) || isSectionActive(item.label);
+                const isMega = MEGA_MENU_LABELS.has(item.label);
+                const isOpen = megaOpen && megaLabel === item.label;
+                return (
+                  <div
+                    key={item.label}
+                    className="relative"
+                    onMouseEnter={() => (isMega ? openMega(item.label) : item.children ? setOpenMenu(item.label) : undefined)}
+                    onMouseLeave={() => {
+                      if (isMega) closeMega();
+                      else if (item.children) setOpenMenu(null);
+                    }}
+                  >
+                    <NavLink
+                      label={item.label}
+                      href={item.href}
+                      active={active}
+                      hasChildren={Boolean(item.children)}
+                      compact
+                      mega={isMega}
+                      open={isOpen}
+                    />
+                  </div>
+                );
+              })}
+            </nav>
+
+            <div className="hidden lg:block h-7 w-px bg-black/[0.08]" />
+
+            <div className="flex items-center gap-4">
+              <SearchControl />
+              <Link
+                href="/contact"
+                className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-[#082B4C] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
+              >
+                Contact Us
               </Link>
-
-              <div className="hidden md:block h-7 w-px bg-black/[0.08]" />
-
-              <nav className="hidden lg:flex items-center gap-0.5">
-                {desktopNavItems.map((item) => {
-                  const active = isRouteActive(item) || isSectionActive(item.label);
-                  const isMega = MEGA_MENU_LABELS.has(item.label);
-                  const isOpen = megaOpen && megaLabel === item.label;
-                  return (
-                      <div
-                        key={item.label}
-                        className="relative"
-                        onMouseEnter={() => (isMega ? openMega(item.label) : item.children ? setOpenMenu(item.label) : undefined)}
-                        onMouseLeave={() => {
-                          if (isMega) closeMega();
-                          else if (item.children) setOpenMenu(null);
-                        }}
-                      >
-                      <NavLink
-                        label={item.label}
-                        href={item.href}
-                        active={active}
-                        hasChildren={Boolean(item.children)}
-                        compact
-                        mega={isMega}
-                        open={isOpen}
-                      />
-                    </div>
-                  );
-                })}
-              </nav>
-
-              <div className="hidden lg:block h-7 w-px bg-black/[0.08]" />
-
-              <div className="flex items-center gap-2">
-                <SearchControl />
-                <Link
-                  href="/contact"
-                  className="hidden sm:inline-flex items-center gap-1.5 rounded-lg bg-[#082B4C] px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-                >
-                  Contact Us
-                </Link>
-                <button
-                  type="button"
-                  className="lg:hidden flex h-9 w-9 items-center justify-center rounded-md text-brand-900"
-                  aria-label="Toggle menu"
-                  onClick={() => setMobileOpen((v) => !v)}
-                >
-                  <span className="sr-only">Menu</span>
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-                    {mobileOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-                  </svg>
-                </button>
-              </div>
+              <button
+                type="button"
+                className="lg:hidden flex h-9 w-9 items-center justify-center rounded-md text-brand-900"
+                aria-label="Toggle menu"
+                onClick={() => setMobileOpen((v) => !v)}
+              >
+                <span className="sr-only">Menu</span>
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
+                  {mobileOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
+                </svg>
+              </button>
             </div>
           </div>
-
-          {megaOpen && megaLabel && (
-            <div
-              ref={megaRef}
-              className="mt-2 mx-auto origin-top transition-all duration-200 ease-out"
-              style={{ maxWidth: MEGA_MENU_CONFIG[megaLabel]?.width ?? "auto" }}
-              onMouseEnter={keepMegaOpen}
-              onMouseLeave={closeMega}
-            >
-              <MegaMenuPanel label={megaLabel} onClose={closeMegaNow} />
-            </div>
-          )}
-
-          {mobileOpen && (
-            <div className="mt-2 overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] lg:hidden">
-              <div className="space-y-1 p-4">
-                {navItems.map((item) => {
-                  const active = isRouteActive(item) || isSectionActive(item.label);
-                  return (
-                    <div key={item.label} className="border-b border-slate-200 py-2 last:border-b-0">
-                      <Link
-                        href={item.href}
-                        className={`block py-2 text-sm font-medium transition-colors ${
-                          active ? "text-[#1678C8]" : "text-slate-900 hover:text-[#1678C8]"
-                        }`}
-                      >
-                        {item.label}
-                      </Link>
-                      {item.children?.map((child) => {
-                        const childActive = pathname === child.href;
-                        return (
-                          <Link
-                            key={child.href}
-                            href={child.href}
-                            className={`block py-1.5 pl-3 text-sm transition-colors ${
-                              childActive ? "text-[#1678C8]" : "text-slate-600 hover:text-[#1678C8]"
-                            }`}
-                          >
-                            {child.label}
-                          </Link>
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
-      </header>
-    );
-  }
 
-  return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
-      <div className="mx-auto flex w-[94%] max-w-[1600px] items-center justify-between gap-6 px-4 py-3 sm:px-6 lg:px-10 xl:px-12">
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/vrc-logo.png"
-            alt="VR Coatings logo"
-            width={176}
-            height={44}
-            priority
-            className="h-11 w-auto"
-          />
-          <span className="leading-tight">
-            <span className="block text-sm font-semibold tracking-wide text-brand-900">VR Coatings</span>
-            <span className="block text-[11px] uppercase tracking-[0.18em] text-slate-500">Pvt. Ltd.</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <SearchControl />
-          <button
-            type="button"
-            className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-slate-200 text-brand-900 lg:hidden"
-            aria-label="Toggle menu"
-            onClick={() => setMobileOpen((v) => !v)}
+        {megaOpen && megaLabel && (
+          <div
+            ref={megaRef}
+            className="mt-2 mx-auto origin-top transition-all duration-200 ease-out"
+            style={{ maxWidth: MEGA_MENU_CONFIG[megaLabel]?.width ?? "auto" }}
+            onMouseEnter={keepMegaOpen}
+            onMouseLeave={closeMega}
           >
-            <span className="sr-only">Menu</span>
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-              {mobileOpen ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-            </svg>
-          </button>
-        </div>
-      </div>
-      <nav className="border-t border-slate-200 bg-white">
-        <div className="mx-auto hidden w-[94%] max-w-[1600px] items-center gap-2 px-4 lg:flex lg:px-10 xl:px-12">
-          {navItems.map((item) => {
-            const active = isRouteActive(item) || isSectionActive(item.label);
-            return (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => item.children && setOpenMenu(item.label)}
-                onMouseLeave={() => setOpenMenu(null)}
-              >
-                <NavLink
-                  label={item.label}
-                  href={item.href}
-                  active={active}
-                  hasChildren={Boolean(item.children)}
-                />
-                {item.children && openMenu === item.label && (
-                  <div className="absolute left-0 top-full min-w-56 overflow-hidden rounded-b-md border border-slate-200 bg-white shadow-xl">
-                    {item.children.map((child) => {
+            <MegaMenuPanel label={megaLabel} onClose={closeMegaNow} />
+          </div>
+        )}
+
+        {mobileOpen && (
+          <div className="mt-2 overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_rgba(0,0,0,0.10)] lg:hidden">
+            <div className="space-y-1 p-4">
+              {navItems.map((item) => {
+                const active = isRouteActive(item) || isSectionActive(item.label);
+                return (
+                  <div key={item.label} className="border-b border-slate-200 py-2 last:border-b-0">
+                    <Link
+                      href={item.href}
+                      className={`block py-2 text-sm font-medium transition-colors ${
+                        active ? "text-[#1678C8]" : "text-slate-900 hover:text-[#1678C8]"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                    {item.children?.map((child) => {
                       const childActive = pathname === child.href;
                       return (
                         <Link
                           key={child.href}
                           href={child.href}
-                          className={`block px-4 py-2.5 text-sm transition-colors duration-200 ${
-                            childActive
-                              ? "bg-brand-50 text-[#1678C8]"
-                              : "text-slate-700 hover:bg-brand-50 hover:text-[#1678C8]"
+                          className={`block py-1.5 pl-3 text-sm transition-colors ${
+                            childActive ? "text-[#1678C8]" : "text-slate-600 hover:text-[#1678C8]"
                           }`}
                         >
                           {child.label}
@@ -629,45 +549,12 @@ export function Header() {
                       );
                     })}
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        {mobileOpen && (
-          <div className="space-y-1 border-t border-slate-200 bg-white px-4 py-3 lg:hidden">
-            {navItems.map((item) => {
-              const active = isRouteActive(item) || isSectionActive(item.label);
-              return (
-                <div key={item.label} className="border-b border-slate-200 py-1 last:border-b-0">
-                  <Link
-                    href={item.href}
-                    className={`block py-2 text-sm font-medium transition-colors ${
-                      active ? "text-[#1678C8]" : "text-slate-900 hover:text-[#1678C8]"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                  {item.children?.map((child) => {
-                    const childActive = pathname === child.href;
-                    return (
-                      <Link
-                        key={child.href}
-                        href={child.href}
-                        className={`block py-1.5 pl-3 text-sm transition-colors ${
-                          childActive ? "text-[#1678C8]" : "text-slate-600 hover:text-[#1678C8]"
-                        }`}
-                      >
-                        {child.label}
-                      </Link>
-                    );
-                  })}
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         )}
-      </nav>
+      </div>
     </header>
   );
 }
