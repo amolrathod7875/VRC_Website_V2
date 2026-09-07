@@ -14,7 +14,7 @@ import { LogoSlider } from "@/components/LogoSlider";
 import { ProductCard } from "@/components/ProductCard";
 import { TrustStrip } from "@/components/TrustStrip";
 import { PerformanceCard } from "@/components/PerformanceCard";
-import { ApplicationTile } from "@/components/ApplicationTile";
+import { ApplicationsShowcase } from "@/components/ApplicationsShowcase";
 import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
 import { HeritageSince } from "@/components/HeritageSince";
@@ -187,42 +187,21 @@ export default function HomePage() {
 
       <ServicesCta />
 
-      <section id="applications" className="bg-[#062746] text-white">
+      <section id="applications" className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-100">Applications</p>
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-white sm:text-4xl">
+              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-700">Applications</p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-brand-950 sm:text-4xl">
                 Coatings engineered for demanding environments.
               </h2>
             </div>
-            <p className="max-w-xl text-base leading-7 text-slate-200">
+            <p className="max-w-xl text-base leading-7 text-slate-600">
               Our coating systems are specified across OEM lines, infrastructure programmes and maintenance
               operations where consistent film performance is non-negotiable.
             </p>
           </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {applications.map((app) => {
-              const Icon = getApplicationIcon(app.slug);
-              return (
-                <ApplicationTile
-                  key={app.slug}
-                  icon={<Icon className="h-7 w-7" />}
-                  name={app.name}
-                  text={app.text}
-                />
-              );
-            })}
-          </div>
-          <div className="mt-12 flex justify-center">
-            <Link
-              href="/applications"
-              className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-            >
-              View all applications
-              <IconArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
+          <ApplicationsShowcase applications={applications} />
         </div>
       </section>
 

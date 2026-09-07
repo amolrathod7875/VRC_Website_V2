@@ -4,6 +4,15 @@ export type NavItem = {
   children?: { label: string; href: string }[];
 };
 
+export type Application = {
+  slug: string;
+  name: string;
+  text: string;
+  icon: string;
+  image?: string;
+  video?: string;
+};
+
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   {
@@ -954,10 +963,10 @@ import {
 } from "@/components/Icon";
 
 export const applications = [
-  { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts.", icon: "car" },
-  { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield" },
+  { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts.", icon: "car", video: "/automotive.mp4" },
+  { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield", video: "/Aerospace.mp4" },
   { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit" },
-  { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building" },
+  { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building", video: "/Infrastructure.mp4" },
   { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship" },
   { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap" },
 ];
