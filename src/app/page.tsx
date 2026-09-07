@@ -4,6 +4,7 @@ import {
   applications,
   capabilityHighlights,
   certifications,
+  getApplicationIcon,
   landingProducts,
   performanceAttributes,
   presenceLocations,
@@ -23,11 +24,8 @@ import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
   IconArrowRight,
-  IconBuilding,
-  IconCar,
   IconCert,
   IconChemical,
-  IconCircuit,
   IconCorrosion,
   IconCustom,
   IconDurability,
@@ -35,11 +33,7 @@ import {
   IconPlane,
   IconPrecision,
   IconProtection,
-  IconShield,
-  IconShip,
   IconTemperature,
-  IconZap,
-  type IconProps,
 } from "@/components/Icon";
 
 const PERFORMANCE_ICONS = [
@@ -50,17 +44,6 @@ const PERFORMANCE_ICONS = [
   IconTemperature,
   IconPrecision,
 ];
-
-type IconCmp = (props: IconProps) => React.ReactElement;
-
-const APPLICATION_ICONS: Record<string, IconCmp> = {
-  automotive: IconCar,
-  "defence-aerospace": IconShield,
-  electronics: IconCircuit,
-  infrastructure: IconBuilding,
-  marine: IconShip,
-  energy: IconZap,
-};
 
 export default function HomePage() {
   return (
@@ -220,7 +203,7 @@ export default function HomePage() {
           </div>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {applications.map((app) => {
-              const Icon = APPLICATION_ICONS[app.slug] ?? IconApplication;
+              const Icon = getApplicationIcon(app.slug);
               return (
                 <ApplicationTile
                   key={app.slug}

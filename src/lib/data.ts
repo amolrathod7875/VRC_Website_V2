@@ -938,14 +938,57 @@ export function findIndustry(slug: string) {
   return industries.find((item) => item.slug === slug);
 }
 
+import type { IconProps } from "@/components/Icon";
+import {
+  IconApplication,
+  IconBadgeCheck,
+  IconBuilding,
+  IconCar,
+  IconCircuit,
+  IconFlask,
+  IconGlobe,
+  IconShield,
+  IconShip,
+  IconSupport,
+  IconZap,
+} from "@/components/Icon";
+
 export const applications = [
-  { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts." },
-  { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components." },
-  { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors." },
-  { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection." },
-  { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments." },
-  { slug: "energy", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets." },
+  { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts.", icon: "car" },
+  { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield" },
+  { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit" },
+  { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building" },
+  { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship" },
+  { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap" },
 ];
+
+const applicationIcons: Record<string, React.FC<IconProps>> = {
+  car: IconCar,
+  shield: IconShield,
+  circuit: IconCircuit,
+  building: IconBuilding,
+  ship: IconShip,
+  zap: IconZap,
+};
+
+export function getApplicationIcon(name: string) {
+  return applicationIcons[name] ?? IconApplication;
+}
+
+const weProvideIcons: Record<string, React.FC<IconProps>> = {
+  support: IconSupport,
+  flask: IconFlask,
+  badgeCheck: IconBadgeCheck,
+  globe: IconGlobe,
+};
+
+export function getWeProvideIcon(name: string) {
+  return weProvideIcons[name] ?? IconApplication;
+}
+
+export function findApplication(slug: string) {
+  return applications.find((item) => item.slug === slug);
+}
 
 export const industries = [
   { slug: "manufacturing", name: "Manufacturing" },
