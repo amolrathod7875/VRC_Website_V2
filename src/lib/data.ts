@@ -8,7 +8,7 @@ export type Application = {
   slug: string;
   name: string;
   text: string;
-  icon: string;
+  icon: React.FC<IconProps>;
   image?: string;
   video?: string;
 };
@@ -946,30 +946,74 @@ import {
   IconBuilding,
   IconCar,
   IconCircuit,
+  IconFactory,
   IconFlask,
   IconGlobe,
+  IconPlane,
   IconShield,
   IconShip,
   IconSupport,
   IconZap,
 } from "@/components/Icon";
 
-export const applications = [
-  { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts.", icon: "car", video: "/automotive.mp4" },
-  { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield", video: "/Aerospace.mp4" },
-  { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit", video: "/Electronics.mp4" },
-  { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building", video: "/Infrastructure.mp4" },
-  { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship", video: "/Marine.mp4" },
-  { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap", video: "/Energy.mp4" },
+export const applications: Application[] = [
+  {
+    slug: "automotive",
+    name: "Automotive",
+    text: "E-coat, primers, and durable topcoats for body and underbody parts.",
+    icon: IconCar,
+    image: "/applications/automotive.jpg",
+    video: "/automotive.mp4",
+  },
+  {
+    slug: "defence-aerospace",
+    name: "Defence & Aerospace",
+    text: "Spec-driven coatings for airframes, ground systems, and components.",
+    icon: IconPlane,
+    image: "/applications/defence-aerospace.jpg",
+    video: "/Aerospace.mp4",
+  },
+  {
+    slug: "electronics",
+    name: "Electronics",
+    text: "Protective dielectric films for boards, housings, and connectors.",
+    icon: IconCircuit,
+    image: "/applications/electronics.jpg",
+    video: "/Electronics.mp4",
+  },
+  {
+    slug: "infrastructure",
+    name: "Infrastructure",
+    text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.",
+    icon: IconBuilding,
+    image: "/applications/infrastructure.jpg",
+    video: "/Infrastructure.mp4",
+  },
+  {
+    slug: "marine",
+    name: "Marine",
+    text: "Hull, deck, and offshore steel protection in saline environments.",
+    icon: IconShip,
+    image: "/applications/marine.jpg",
+    video: "/Marine.mp4",
+  },
+  {
+    slug: "energy-process",
+    name: "Energy & Process",
+    text: "Coatings for pipelines, refineries, and power generation assets.",
+    icon: IconFactory,
+    image: "/applications/energy-process.jpg",
+    video: "/Energy.mp4",
+  },
 ];
 
 const applicationIcons: Record<string, React.FC<IconProps>> = {
   car: IconCar,
-  shield: IconShield,
+  "defence-aerospace": IconPlane,
   circuit: IconCircuit,
   building: IconBuilding,
   ship: IconShip,
-  zap: IconZap,
+  "energy-process": IconFactory,
 };
 
 export function getApplicationIcon(name: string) {

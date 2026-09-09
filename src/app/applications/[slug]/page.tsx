@@ -14,25 +14,10 @@ import type { IconProps } from "@/components/Icon";
 import {
   IconApplication,
   IconBadgeCheck,
-  IconBuilding,
-  IconCar,
-  IconCircuit,
   IconFlask,
   IconGlobe,
-  IconShield,
-  IconShip,
   IconSupport,
-  IconZap,
 } from "@/components/Icon";
-
-const APP_ICONS: Record<string, React.FC<IconProps>> = {
-  car: IconCar,
-  shield: IconShield,
-  circuit: IconCircuit,
-  building: IconBuilding,
-  ship: IconShip,
-  zap: IconZap,
-};
 
 const WE_PROVIDE_ICONS: Record<string, React.FC<IconProps>> = {
   support: IconSupport,
@@ -149,7 +134,7 @@ export default async function ApplicationDetailPage({ params }: Props) {
   const found = findApplication(slug);
   if (!found) notFound();
 
-  const AppIcon = APP_ICONS[found.icon] ?? IconApplication;
+  const AppIcon = found.icon;
   const currentIndex = applications.findIndex((a) => a.slug === slug);
   const prevApp = currentIndex > 0 ? applications[currentIndex - 1] : null;
   const nextApp = currentIndex < applications.length - 1 ? applications[currentIndex + 1] : null;

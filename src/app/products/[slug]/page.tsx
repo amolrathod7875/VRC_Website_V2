@@ -15,6 +15,7 @@ import { CatalogueDownloadCTA } from "@/components/CatalogueDownloadCTA";
 import { CatalogueSingleProduct } from "@/components/CatalogueSingleProduct";
 import { CatalogueVariantList, CatalogueSingleProductPage } from "@/components/CataloguePageShell";
 import { conventionalGunVariants, conventionalGunCatalogue } from "@/lib/conventionalGunsData";
+import { manualGunProducts, manualGunCatalogue } from "@/lib/manualGunsData";
 import type { CatalogueVariant } from "@/components/CatalogueVariantRow";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -116,6 +117,28 @@ export default async function ProductDetailPage({ params }: Props) {
       );
     }
 
+    if (node.slug === "manual-guns") {
+      const variants = manualGunProducts.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.description,
+      }));
+
+      return (
+        <CatalogueVariantList
+          title={manualGunCatalogue.name}
+          category={manualGunCatalogue.category}
+          catalogue={manualGunCatalogue.catalogue}
+          description={manualGunCatalogue.description}
+          breadcrumb={breadcrumbs}
+          variants={variants}
+        />
+      );
+    }
+
     if (isLeafCategory(node)) {
       const landingForNode = findLandingProduct(node.slug);
       const specs = landingForNode?.specs?.map((s) => ({ label: s.label, value: s.value }));
@@ -179,6 +202,8 @@ export default async function ProductDetailPage({ params }: Props) {
         alt={landing.name}
         description={landing.description}
         specifications={landing.specs?.map((s) => ({ label: s.label, value: s.value }))}
+        features={landing.features}
+        applications={landing.applications}
         breadcrumb={breadcrumbs}
       />
     );

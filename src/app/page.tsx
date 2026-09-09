@@ -184,7 +184,7 @@ export default function HomePage() {
               operations where consistent film performance is non-negotiable.
             </p>
           </div>
-          <ApplicationsShowcase applications={applications} />
+          <ApplicationsShowcase />
         </div>
       </section>
 

@@ -9,6 +9,8 @@ type CatalogueSingleProductProps = {
   alt: string;
   specifications?: { label: string; value: string }[];
   description?: string;
+  features?: string[];
+  applications?: string[];
   modelLabel?: string;
 };
 
@@ -18,6 +20,8 @@ export function CatalogueSingleProduct({
   alt,
   specifications,
   description,
+  features,
+  applications,
   modelLabel = "Model 01",
 }: CatalogueSingleProductProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -92,6 +96,26 @@ export function CatalogueSingleProduct({
             <p className="mt-6 text-sm leading-7 text-slate-600">
               Detailed technical specifications are available in the product catalogue.
             </p>
+          )}
+          {features && features.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#1678C8]">Key Features</h3>
+              <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-slate-600">
+                {features.map((f, idx) => (
+                  <li key={idx}>{f}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {applications && applications.length > 0 && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#1678C8]">Applications</h3>
+              <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-slate-600">
+                {applications.map((a, idx) => (
+                  <li key={idx}>{a}</li>
+                ))}
+              </ul>
+            </div>
           )}
         </div>
       </div>

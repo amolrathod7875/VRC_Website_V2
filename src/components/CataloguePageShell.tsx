@@ -97,6 +97,8 @@ type CatalogueSingleProductPageProps = {
   alt: string;
   description?: string;
   specifications?: { label: string; value: string }[];
+  features?: string[];
+  applications?: string[];
   breadcrumb?: string;
 };
 
@@ -108,6 +110,8 @@ export function CatalogueSingleProductPage({
   alt,
   description,
   specifications,
+  features,
+  applications,
   breadcrumb,
 }: CatalogueSingleProductPageProps) {
   return (
@@ -124,6 +128,8 @@ export function CatalogueSingleProductPage({
         alt={alt}
         description={description}
         specifications={specifications}
+        features={features}
+        applications={applications}
       />
     </CatalogueProductPage>
   );

@@ -1,286 +1,146 @@
 "use client";
 
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { Application } from "@/lib/data";
+import { applications } from "@/lib/data";
+import { IconArrowRight } from "@/components/Icon";
 
 type ApplicationsShowcaseProps = {
-  applications: Application[];
+  applications?: typeof applications;
 };
 
-const MOBILE_BREAK = 768;
+const STAGGER_MS = 90;
 
-export function ApplicationsShowcase({ applications }: ApplicationsShowcaseProps) {
-  const [activeSlug, setActiveSlug] = useState(applications[0]?.slug ?? null);
-  const [visibleRows, setVisibleRows] = useState<boolean[]>([]);
-  const [measuredHeights, setMeasuredHeights] = useState<Record<string, number>>({});
-  const [animatingHeights, setAnimatingHeights] = useState<Record<string, number>>({});
-  const [animatingOpacities, setAnimatingOpacities] = useState<Record<string, number>>({});
-  const mediaRefs = useRef<Record<string, HTMLDivElement | null>>({});
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const entranceDoneRef = useRef(false);
+function numberFor(index: number): string {
+  return String(index + 1).padStart(2, "0");
+}
+
+export function ApplicationsShowcase({
+  applications: items = applications,
+}: ApplicationsShowcaseProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (entranceDoneRef.current) return;
-    const entries = Array.from(
-      document.querySelectorAll("[data-app-row]") ?? [],
-    );
-    const visible: boolean[] = new Array(entries.length).fill(false);
-    setVisibleRows(visible);
-    const obs = new IntersectionObserver(
-      (items) => {
-        items.forEach((entry) => {
-          const idx = Number(
-            (entry.target as HTMLElement).getAttribute("data-row-index"),
-          );
-          if (entry.isIntersecting && !visible[idx]) {
-            visible[idx] = true;
-            setVisibleRows([...visible]);
-            if (idx === entries.length - 1) obs.disconnect();
-          }
-        });
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
       },
-      { threshold: 0.1 },
+      { threshold: 0.15 }
     );
-    entries.forEach((el) => obs.observe(el));
-    observerRef.current = obs;
-    return () => obs.disconnect();
+    observer.observe(section);
+
+    return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setMeasuredHeights({});
-      setAnimatingHeights({});
-      setAnimatingOpacities({});
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const measureMedia = (slug: string) => {
-    const el = mediaRefs.current[slug];
-    if (!el) return;
-    setMeasuredHeights((prev) => {
-      const h = el.getBoundingClientRect().height;
-      if (prev[slug] === h) return prev;
-      const next = { ...prev, [slug]: h };
-      if (activeSlug === slug) {
-        setAnimatingHeights({ ...next });
-      }
-      return next;
-    });
-  };
-
-  const handleRowMouseEnter = (slug: string) => {
-    if (typeof window !== "undefined" && window.innerWidth >= MOBILE_BREAK) {
-      activateApp(slug);
-    }
-  };
-
-  const handleRowClick = (slug: string) => {
-    activateApp(slug);
-  };
-
-  const activateApp = (slug: string) => {
-    setActiveSlug(slug);
-    requestAnimationFrame(() => measureMedia(slug));
-  };
-
-  const getMediaHeight = (slug: string) => {
-    if (activeSlug !== slug) return 0;
-    const h = measuredHeights[slug];
-    if (typeof h === "number" && h > 0) return h;
-    if (typeof h === "number" && animatingHeights[slug]) return animatingHeights[slug];
-    return 280;
-  };
-
-  const getMediaOpacity = (slug: string) => {
-    if (activeSlug !== slug) return 0;
-    return animatingOpacities[slug] ?? 1;
-  };
 
   return (
-    <>
-      {/* Rows list */}
-      <div className="border-t border-slate-200">
-        {applications.map((app, index) => {
-          const isActive = activeSlug === app.slug;
-          const isVisible = visibleRows[index];
-          const delay = isVisible ? index * 60 : 0;
-          return (
-            <div
-              key={app.slug}
-              data-app-row
-              data-row-index={index}
-              style={
-                {
-                  opacity: isVisible ? 1 : 0,
-                  transform: isVisible ? "translateY(0)" : "translateY(18px)",
-                  transition:
-                    "opacity 500ms cubic-bezier(0.16,1,0.3,1) " +
-                    `${delay}ms, transform 500ms cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
-                } as React.CSSProperties
-              }
-            >
-              <button
-                type="button"
-                onClick={() => handleRowClick(app.slug)}
-                onMouseEnter={() => handleRowMouseEnter(app.slug)}
-                className={[
-                  "group flex w-full items-center justify-between gap-6 px-0 py-5 text-left transition-colors duration-300 sm:py-6 lg:py-[26px]",
-                  isActive
-                    ? "text-brand-950 border-b border-transparent"
-                    : "text-slate-600 hover:text-brand-950 border-b border-slate-200",
-                ].join(" ")}
-                aria-expanded={isActive}
-                aria-controls={`app-media-${app.slug}`}
-              >
-                {/* Left: title + description */}
-                <div className="flex-1 min-w-0">
-                  <Link
-                    href={`/applications/${app.slug}`}
-                    className={[
-                      "block text-xl font-semibold transition-colors duration-300 sm:text-[26px] lg:text-[28px] leading-tight",
-                      isActive
-                        ? "text-[#1678C8]"
-                        : "text-brand-950 group-hover:text-[#1678C8]",
-                    ].join(" ")}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {app.name}
-                  </Link>
-                  <p className="mt-1.5 text-xs leading-6 text-slate-600 sm:text-sm sm:leading-7 lg:max-w-2xl">
-                    {app.text}
-                  </p>
-                </div>
+    <section
+      ref={sectionRef}
+      className="bg-white py-16 sm:py-20"
+    >
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#1678C8]">
+          Applications
+        </p>
+        <h2 className="mt-2 text-3xl font-semibold text-brand-950">
+          Coatings engineered for demanding environments
+        </h2>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-slate-600">
+          Industry uses for VR coating systems—from OEM lines to infrastructure maintenance.
+        </p>
 
-                {/* Right: number */}
-                <span
-                  className={[
-                    "shrink-0 text-sm font-semibold tabular-nums transition-colors duration-300",
-                    isActive
-                      ? "text-[#0B5C97]"
-                      : "text-brand-700 group-hover:text-[#0B5C97]",
-                  ].join(" ")}
-                >
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-              </button>
-
-              {/* Active row bottom accent */}
-              {isActive && (
-                <div className="h-[2px] w-full bg-[#1678C8]" />
-              )}
-
-              {/* Media panel */}
-              <div
-                id={`app-media-${app.slug}`}
-                role="region"
-                aria-label={`${app.name} preview`}
-                className="overflow-hidden"
-                style={
-                  {
-                    height: getMediaHeight(app.slug),
-                    opacity: getMediaOpacity(app.slug),
-                    transition:
-                      "height 550ms cubic-bezier(0.16,1,0.3,1), opacity 450ms cubic-bezier(0.16,1,0.3,1)",
-                  } as React.CSSProperties
-                }
-                onTransitionEnd={() => {
-                  if (activeSlug === app.slug) {
-                    setAnimatingOpacities((prev) => ({ ...prev, [app.slug]: 1 }));
-                  }
-                }}
-              >
-                <div
-                  ref={(el) => {
-                    mediaRefs.current[app.slug] = el;
-                    if (
-                      el &&
-                      !measuredHeights[app.slug] &&
-                      activeSlug === app.slug
-                    ) {
-                      requestAnimationFrame(() => measureMedia(app.slug));
-                    }
-                  }}
-                  className="relative h-[240px] sm:h-[230px] lg:h-[260px]"
-                >
-                  {app.video ? (
-                    <>
-                      <video
-                        src={app.video}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="metadata"
-                        aria-hidden="true"
-                        className="absolute inset-0 h-full w-full object-cover object-top"
-                      />
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(11,92,151,0.10) 0%, rgba(11,92,151,0.04) 100%)",
-                        }}
-                      />
-                    </>
-                  ) : app.image ? (
-                    <>
-                      <img
-                        src={app.image}
-                        alt={`${app.name} industrial coating application`}
-                        className="absolute inset-0 h-full w-full object-cover object-center"
-                      />
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, rgba(11,92,151,0.10) 0%, rgba(11,92,151,0.04) 100%)",
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div
-                        className="absolute inset-0"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #EDF5FA 0%, #E3EEF6 100%)",
-                        }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <p className="text-sm font-medium text-slate-500 tracking-wide">
-                          {app.name}
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-12 lg:gap-y-16">
+          {items.map((item, i) => (
+            <ApplicationColumn
+              key={item.slug}
+              item={item}
+              index={i}
+              number={numberFor(i)}
+              visible={visible}
+            />
+          ))}
+        </div>
       </div>
-
-      {/* View all CTA */}
-      <div className="mt-10 flex justify-center sm:mt-12">
-        <Link
-          href="/applications"
-          className="group inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-        >
-          View all applications
-          <svg
-            viewBox="0 0 20 20"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
-          >
-            <path d="M5 10h10M11 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </Link>
-      </div>
-    </>
+    </section>
   );
+}
+
+function ApplicationColumn({
+  item,
+  index,
+  number,
+  visible,
+}: {
+  item: (typeof applications)[number];
+  index: number;
+  number: string;
+  visible: boolean;
+}) {
+  // Each application now stores its own category-specific icon component
+  // directly, so no string-keyed lookup or fallback is needed at render.
+  const Icon = item.icon;
+
+  return (
+    <div
+      className={`group transition-all duration-700 ease-out ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+      }`}
+      style={{ transitionDelay: `${index * STAGGER_MS}ms` }}
+    >
+      <div className="flex items-center gap-3">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#1678C8] text-xs font-bold text-white">
+          {number}
+        </span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-[8px] bg-[#E8F4FB] text-[#1678C8] transition-colors duration-250 group-hover:text-[#0B5C97]">
+          <Icon className="h-5 w-5" />
+        </span>
+      </div>
+      <h3 className="mt-5 text-[22px] font-semibold leading-[1.15] text-[#082B4C] transition-colors duration-300 group-hover:text-[#1678C8]">
+        {item.name}
+      </h3>
+      <p className="mt-3 min-h-[4.5em] text-[15px] leading-[1.6] text-slate-600">{item.text}</p>
+      <Link
+        href={`/applications/${item.slug}`}
+        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-[#0B5C97]"
+      >
+        Explore
+        <IconArrowRight className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
+      </Link>
+      <div className="mt-5">
+        <div className="relative w-full overflow-hidden rounded-[12px] bg-[#E9EEF3] aspect-[4/3]">
+          <img
+            src={item.image}
+            alt={applicationAltText(item.name)}
+            className="h-full w-full object-cover object-center transition-transform duration-500 ease-out group-hover:scale-[1.025]"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function applicationAltText(name: string): string {
+  switch (name) {
+    case "Automotive":
+      return "Automotive coating and manufacturing application";
+    case "Defence & Aerospace":
+      return "Aerospace and defence industrial coating application";
+    case "Electronics":
+      return "Electronics manufacturing and protective coating application";
+    case "Infrastructure":
+      return "Structural steel and infrastructure coating application";
+    case "Marine":
+      return "Marine and shipyard coating application";
+    case "Energy & Process":
+      return "Industrial process plant and energy coating application";
+    default:
+      return name;
+  }
 }
