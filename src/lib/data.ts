@@ -965,10 +965,10 @@ import {
 export const applications = [
   { slug: "automotive", name: "Automotive", text: "E-coat, primers, and durable topcoats for body and underbody parts.", icon: "car", video: "/automotive.mp4" },
   { slug: "defence-aerospace", name: "Defence & Aerospace", text: "Spec-driven coatings for airframes, ground systems, and components.", icon: "shield", video: "/Aerospace.mp4" },
-  { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit" },
+  { slug: "electronics", name: "Electronics", text: "Protective dielectric films for boards, housings, and connectors.", icon: "circuit", video: "/Electronics.mp4" },
   { slug: "infrastructure", name: "Infrastructure", text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.", icon: "building", video: "/Infrastructure.mp4" },
   { slug: "marine", name: "Marine", text: "Hull, deck, and offshore steel protection in saline environments.", icon: "ship", video: "/Marine.mp4" },
-  { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap" },
+  { slug: "energy-process", name: "Energy & Process", text: "Coatings for pipelines, refineries, and power generation assets.", icon: "zap", video: "/Energy.mp4" },
 ];
 
 const applicationIcons: Record<string, React.FC<IconProps>> = {
