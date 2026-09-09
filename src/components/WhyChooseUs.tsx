@@ -17,36 +17,48 @@ const reasons = [
     number: "01",
     title: "Forged Pressure Components",
     text: "Unique in the world — our pressure components are forged (not cast), providing unmatched strength under extreme operating pressures.",
+    image: "/why_choose_us/Forged Pressure Components.jpg",
+    alt: "Forged industrial pressure component",
     Icon: IconConstruction,
   },
   {
     number: "02",
     title: "100% Stainless Steel Bodies",
     text: "No carbon steel in our pump bodies whatsoever. Complete stainless steel hydraulic bodies for maximum corrosion resistance and longevity.",
+    image: "/why_choose_us/100-percent-stainless-steel-bodies.jpg",
+    alt: "Stainless steel industrial equipment",
     Icon: IconShield,
   },
   {
     number: "03",
     title: "Composite Material Seals",
     text: "Specially developed composite material seals providing superior compatibility with aggressive coatings, solvents, and chemicals.",
+    image: "/why_choose_us/Composite Material Seals.jpg",
+    alt: "Precision engineered composite seal component",
     Icon: IconCircuit,
   },
   {
     number: "04",
     title: "Modular Design",
     text: "Every system is designed modularly, making it easy to change configurations, mixing ratios, and accessories without replacing the entire system.",
+    image: "/why_choose_us/Modular Design.jpg",
+    alt: "Modular industrial equipment system",
     Icon: IconPackage,
   },
   {
     number: "05",
     title: "Application Know-How",
     text: "Thorough technical and application know-how from four decades of serving automotive, marine, aerospace, railways, and many more industries.",
+    image: "/why_choose_us/Application Know-How.jpg",
+    alt: "Engineer performing industrial application work",
     Icon: IconFlask,
   },
   {
     number: "06",
     title: "Easy Maintenance",
     text: "All products designed for easy field maintenance. Wear parts are accessible, standardised, and widely available from our Pune facility.",
+    image: "/why_choose_us/Easy Maintenance.jpg",
+    alt: "Technician maintaining industrial equipment",
     Icon: IconSupport,
   },
 ];
@@ -77,7 +89,7 @@ export function WhyChooseUs() {
     <section
       ref={sectionRef}
       id="why-choose-us"
-      className="scroll-mt-24 bg-white py-16 sm:py-20 lg:min-h-[calc(100vh-80px)] lg:flex lg:flex-col lg:justify-center lg:py-0"
+      className="scroll-mt-24 bg-white py-16 sm:py-20 lg:pt-[80px] lg:pb-0 lg:min-h-[calc(100vh-80px)] lg:flex lg:flex-col lg:justify-center"
     >
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#1678C8]">
@@ -128,7 +140,14 @@ function ReasonColumn({
       </h3>
       <p className="mt-3 min-h-[4.5em] text-[15px] leading-[1.6] text-slate-600">{item.text}</p>
       <div className="mt-5">
-        <div className="relative h-[280px] w-full overflow-hidden rounded-[12px] bg-[#E9EEF3] transition-transform duration-400 ease-out group-hover:scale-[1.015]" />
+        <div className="relative w-full overflow-hidden rounded-[12px] bg-[#E9EEF3] aspect-[4/3] transition-transform duration-400 ease-out group-hover:scale-[1.015]">
+          <img
+            src={item.image}
+            alt={item.alt}
+            className="h-full w-full object-cover object-center"
+            loading="lazy"
+          />
+        </div>
       </div>
     </div>
   );
