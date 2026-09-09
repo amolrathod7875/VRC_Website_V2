@@ -17,23 +17,21 @@ const MEGA_MENU_CONFIG: Record<
   string,
   {
     width?: string;
-    columns: { title?: string; links: { label: string; href: string }[] }[];
+    columns?: { title?: string; links: { label: string; href: string }[] }[];
+    intro?: { paragraphs: string[]; link: { label: string; href: string } };
     image?: { src: string; alt: string };
     cta?: { label: string; href: string };
   }
 > = {
   About: {
     width: "720px",
-    columns: [
-      {
-        title: "Company",
-        links: [
-          { label: "About VR Coatings", href: "/about" },
-          { label: "Why Choose Us", href: "/about/why-choose-us" },
-          { label: "Global Presence", href: "/about/global-presence" },
-        ],
-      },
-    ],
+    intro: {
+      paragraphs: [
+        "VR Coatings Pvt. Ltd. develops and manufactures industrial spray painting, fluid handling and dispensing equipment for demanding production environments.",
+        "Our focus is on reliable engineering, consistent performance and application-focused solutions for industrial customers.",
+      ],
+      link: { label: "Learn more →", href: "/about" },
+    },
     image: {
       src: "/VR-Coatings-Pvt-Ltd-Factory.png",
       alt: "VR Coatings facility",
@@ -250,31 +248,62 @@ function MegaMenuPanel({ label, onClose }: { label: string; onClose: () => void 
       onMouseLeave={onClose}
     >
       <div className={`grid gap-8 p-6 ${config.image ? "lg:grid-cols-[1fr_220px]" : ""}`}>
-        <div className={`grid gap-6 ${colCount === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
-          {columns.map((col) => (
-            <div key={col.title ?? col.links[0]?.label}>
-              {col.title && (
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                  {col.title}
+        {config.intro ? (
+          <div className="max-w-[440px]">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+              Company
+            </p>
+            <div className="space-y-3">
+              {config.intro.paragraphs.map((para, idx) => (
+                <p key={idx} className="text-sm leading-6 text-slate-600">
+                  {para}
                 </p>
-              )}
-              <ul className="space-y-2">
-                {col.links.map((link) => (
-                  <li key={link.href + link.label}>
-                    <Link
-                      href={link.href}
-                      onClick={onClose}
-                      className="group flex items-center gap-2 text-sm font-medium text-slate-700 transition-colors duration-200 hover:text-[#1678C8]"
-                    >
-                      <span className="h-1 w-1 rounded-full bg-slate-300 transition-colors duration-200 group-hover:bg-[#1678C8]" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              ))}
             </div>
-          ))}
-        </div>
+            <Link
+              href={config.intro.link.href}
+              onClick={onClose}
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-[#0B5C97]"
+            >
+              {config.intro.link.label}
+              <svg
+                viewBox="0 0 20 20"
+                className="h-3.5 w-3.5 transition-transform duration-200 ease-out group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path d="M5 10h10M11 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </div>
+        ) : (
+          <div className={`grid gap-6 ${colCount === 2 ? "grid-cols-2" : "grid-cols-1"}`}>
+            {columns.map((col) => (
+              <div key={col.title ?? col.links[0]?.label}>
+                {col.title && (
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    {col.title}
+                  </p>
+                )}
+                <ul className="space-y-2">
+                  {col.links.map((link) => (
+                    <li key={link.href + link.label}>
+                      <Link
+                        href={link.href}
+                        onClick={onClose}
+                        className="group flex items-center gap-2 text-sm font-medium text-slate-700 transition-colors duration-200 hover:text-[#1678C8]"
+                      >
+                        <span className="h-1 w-1 rounded-full bg-slate-300 transition-colors duration-200 group-hover:bg-[#1678C8]" />
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
 
         {config.image && (
           <div className="hidden lg:flex flex-col gap-4">
@@ -294,7 +323,7 @@ function MegaMenuPanel({ label, onClose }: { label: string; onClose: () => void 
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#082B4C] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
               >
                 {config.cta.label}
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M5 10h10M11 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
@@ -310,7 +339,7 @@ function MegaMenuPanel({ label, onClose }: { label: string; onClose: () => void 
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#082B4C] px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
             >
               {config.cta.label}
-              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path d="M5 10h10M11 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>

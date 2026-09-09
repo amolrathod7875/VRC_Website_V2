@@ -15,15 +15,7 @@ export type Application = {
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-  {
-    label: "About",
-    href: "/about",
-    children: [
-      { label: "About Us", href: "/about" },
-      { label: "Why Choose Us", href: "/about/why-choose-us" },
-      { label: "Global Presence", href: "/about/global-presence" },
-    ],
-  },
+{ label: "About", href: "/about" },
   { label: "Products", href: "/products" },
   { label: "Applications", href: "/applications" },
   {

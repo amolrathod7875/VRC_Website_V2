@@ -86,6 +86,125 @@ body {
   }
 }
 
+@keyframes quality-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.quality-animate-in {
+  animation: quality-fade-up 0.6s ease-out both;
+}
+
+@keyframes quality-float-a {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+@keyframes quality-float-b {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.quality-float-a {
+  animation: quality-float-a 5s ease-in-out infinite;
+}
+
+.quality-float-b {
+  animation: quality-float-b 6s ease-in-out infinite;
+}
+
+.quality-card {
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+.quality-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #1678C8;
+  border-radius: 2px 2px 0 0;
+  transition: width 0.3s ease;
+}
+
+.quality-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(22, 120, 200, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.quality-card:hover::before {
+  width: 100%;
+}
+
+@keyframes draw-line {
+  from { stroke-dashoffset: 200; }
+  to { stroke-dashoffset: 0; }
+}
+
+.quality-connection-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+}
+
+.quality-connection-line.animate {
+  animation: draw-line 0.8s ease-out forwards;
+}
+
+.quality-cta {
+  position: relative;
+}
+
+.quality-cta::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #1678C8;
+  transition: width 0.3s ease;
+}
+
+.quality-cta:hover::after {
+  width: 100%;
+}
+
+.quality-cta svg {
+  transition: transform 0.3s ease;
+}
+
+.quality-cta:hover svg {
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quality-float-a,
+  .quality-float-b {
+    animation: none;
+  }
+
+  .quality-animate-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .quality-connection-line.animate {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
 .who-we-are-video-container {
   position: absolute;
   inset: 0;

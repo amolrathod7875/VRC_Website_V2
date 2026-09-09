@@ -3,7 +3,6 @@ import Link from "next/link";
 import {
   applications,
   capabilityHighlights,
-  certifications,
   getApplicationIcon,
   landingProducts,
   weProvide,
@@ -18,13 +17,12 @@ import { HeritageSince } from "@/components/HeritageSince";
 import { ServicesCta } from "@/components/ServicesCta";
 import { ProductWheel } from "@/components/ProductWheel";
 import { ClientFeedback } from "@/components/ClientFeedback";
+import { QualityPerformance } from "@/components/QualityPerformance";
 import { ScrollProgressRail } from "@/components/ScrollProgressRail";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
   IconArrowRight,
-  IconCert,
-  IconCustom,
   IconFactory,
   IconPlane,
 } from "@/components/Icon";
@@ -190,76 +188,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section
-        className="relative overflow-hidden bg-white min-h-screen flex items-center"
-        style={{
-          backgroundImage: "url('/Quality_Background.avif')",
-          backgroundSize: "cover",
-          backgroundPosition: "center center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:pb-12 w-full">
-          <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-            <div>
-              <div className="rounded-xl bg-white/80 p-6">
-                <Eyebrow>Quality & Performance</Eyebrow>
-                <SectionHeading>Designed to perform where it matters.</SectionHeading>
-                <p className="mt-6 text-base leading-8 text-slate-600">
-                  Our quality programme is built around batch traceability, documented test methods, and
-                  continuous production oversight. Standards are referenced across our coating portfolio so
-                  customers can specify with confidence.
-                </p>
-              </div>
-              <div className="mt-8 grid gap-4 sm:grid-cols-2">
-                {certifications.map((cert) => (
-                  <div
-                    key={cert.name}
-                    className="flex items-start gap-4 rounded-lg border border-slate-200 bg-surface px-5 py-4"
-                  >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white text-brand-800">
-                      <IconCert className="h-6 w-6" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-brand-950">{cert.name}</p>
-                      <p className="mt-1 text-xs leading-5 text-slate-500">{cert.scope}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Link
-                href="/resources/certifications"
-                className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
-              >
-                View certifications
-                <IconArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="rounded-xl border border-slate-200 bg-surface p-6">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-white text-brand-800">
-                  <IconFactory className="h-6 w-6" />
-                </div>
-                <p className="text-sm font-semibold text-brand-950">Integrated Supply</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Head office, manufacturing unit and North America operations work as one supply network —
-                  from first trial through serial production.
-                </p>
-              </div>
-              <div className="rounded-xl border border-slate-200 bg-surface p-6">
-                <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-white text-brand-800">
-                  <IconCustom className="h-6 w-6" />
-                </div>
-                <p className="text-sm font-semibold text-brand-950">Custom Formulation</p>
-                <p className="mt-2 text-sm leading-6 text-slate-600">
-                  Recipes developed around your substrate, climate and duty cycle — backed by lab trials
-                  and application replicates.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <QualityPerformance />
 
       <ClientFeedback />
 
