@@ -6,48 +6,34 @@ import {
   certifications,
   getApplicationIcon,
   landingProducts,
-  performanceAttributes,
   presenceLocations,
   weProvide,
 } from "@/lib/data";
 import { LogoSlider } from "@/components/LogoSlider";
 import { ProductCard } from "@/components/ProductCard";
 import { TrustStrip } from "@/components/TrustStrip";
-import { PerformanceCard } from "@/components/PerformanceCard";
 import { ApplicationsShowcase } from "@/components/ApplicationsShowcase";
 import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
 import { HeritageSince } from "@/components/HeritageSince";
 import { ServicesCta } from "@/components/ServicesCta";
 import { ProductWheel } from "@/components/ProductWheel";
+import { ClientFeedback } from "@/components/ClientFeedback";
+import { ScrollProgressRail } from "@/components/ScrollProgressRail";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import {
   IconApplication,
   IconArrowRight,
   IconCert,
-  IconChemical,
-  IconCorrosion,
   IconCustom,
-  IconDurability,
   IconFactory,
   IconPlane,
-  IconPrecision,
-  IconProtection,
-  IconTemperature,
 } from "@/components/Icon";
-
-const PERFORMANCE_ICONS = [
-  IconProtection,
-  IconCorrosion,
-  IconDurability,
-  IconChemical,
-  IconTemperature,
-  IconPrecision,
-];
 
 export default function HomePage() {
   return (
     <>
+      <ScrollProgressRail />
       <section className="relative isolate flex items-center overflow-hidden">
         <div className="who-we-are-video-container">
           <video
@@ -205,32 +191,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="mb-12 max-w-2xl">
-            <Eyebrow>Technical Authority</Eyebrow>
-            <SectionHeading>Built around performance. Engineered for reliability.</SectionHeading>
-            <p className="mt-4 text-base leading-7 text-slate-600">
-              Every system is specified against the conditions it must survive — substrate chemistry,
-              climate, operating temperature and the realities of the application line.
-            </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {performanceAttributes.map((attr, i) => {
-              const Icon = PERFORMANCE_ICONS[i] ?? IconPrecision;
-              return (
-                <PerformanceCard
-                  key={attr.title}
-                  icon={<Icon className="h-7 w-7" />}
-                  title={attr.title}
-                  text={attr.text}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
       <section className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
@@ -302,6 +262,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <ClientFeedback />
 
       <section className="bg-surface">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">

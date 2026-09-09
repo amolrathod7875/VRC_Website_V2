@@ -75,6 +75,17 @@ body {
   animation: fade-slide 0.55s ease;
 }
 
+@keyframes labelIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .who-we-are-video-container {
   position: absolute;
   inset: 0;

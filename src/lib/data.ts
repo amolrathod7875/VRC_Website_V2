@@ -1041,33 +1041,6 @@ export const trustPillars = [
   { title: "Custom Engineering", text: "Formulations matched to substrate, climate and operating requirements." },
 ];
 
-export const performanceAttributes = [
-  {
-    title: "Surface Protection",
-    text: "Barrier and inhibitive systems for steel, aluminium and engineered substrates.",
-  },
-  {
-    title: "Corrosion Resistance",
-    text: "Zinc-rich primers and high-build epoxies for atmospheric and immersion service.",
-  },
-  {
-    title: "Durability",
-    text: "UV-stable polyurethanes and toughened finishes for long service life.",
-  },
-  {
-    title: "Chemical Resistance",
-    text: "Lining systems and high-crosslink-density films for aggressive media.",
-  },
-  {
-    title: "Temperature Performance",
-    text: "Silicone and inorganic coatings engineered for elevated operating temperatures.",
-  },
-  {
-    title: "Application Precision",
-    text: "Powder, liquid and electrocoat systems tuned to OEM process windows.",
-  },
-];
-
 export const capabilityHighlights = [
   { title: "Resin Processing", text: "In-house resin blending for tight polymer specifications." },
   { title: "Mill Rooms", text: "Controlled dispersion for pigment and filler consistency." },
@@ -1075,6 +1048,63 @@ export const capabilityHighlights = [
   { title: "Quality Laboratories", text: "Film, corrosion and mechanical testing against documented methods." },
   { title: "Application Labs", text: "Pilot lines that replicate customer spray, dip and e-coat processes." },
   { title: "Climate-Controlled Storage", text: "Raw material and finished-goods warehousing for batch integrity." },
+];
+
+export type ClientFeedback = {
+  id: string;
+  name: string;
+  role: string;
+  location: string;
+  feedback: string;
+  image: string | null;
+};
+
+export const clientFeedback: ClientFeedback[] = [
+  {
+    id: "sofia-ramirez",
+    name: "Sofia Ramirez",
+    role: "Logistics Lead",
+    location: "Stuttgart, Germany",
+    feedback:
+      "The integration of VR Coatings equipment into our workflow significantly improved throughput and reduced manual handling.",
+    image: "/Sofia Ramirez.avif",
+  },
+  {
+    id: "laura-bennett",
+    name: "Laura Bennett",
+    role: "Tech Lead",
+    location: "Munich, Germany",
+    feedback:
+      "Even under peak load conditions, the equipment operates seamlessly with minimal maintenance, ensuring consistent reliability.",
+    image: "/Laura Bennett.avif",
+  },
+  {
+    id: "tomasz-nowak",
+    name: "Tomasz Nowak",
+    role: "Compliance Officer",
+    location: "Warsaw, Poland",
+    feedback:
+      "VR Coatings' certification process and records made deployment simple and fully compliant, ensuring complete regulatory standards overall.",
+    image: "/Tomasz Nowak.avif",
+  },
+  {
+    id: "hiroshi-tanaka",
+    name: "Hiroshi Tanaka",
+    role: "Engineering Consultant",
+    location: "Eindhoven, Netherlands",
+    feedback:
+      "From design review to launch, the VR Coatings team delivered clear updates and strong technical support, ensuring smooth execution.",
+    image: null,
+  },
+  {
+    id: "marcus-weber",
+    name: "Marcus Weber",
+    role: "Plant Manager",
+    location: "Frankfurt, Germany",
+    feedback:
+      "The VR Coatings spray systems integrated cleanly into our existing production line, cutting coating cycle times and delivering a measurable ROI within the first quarter.",
+    image: null,
+  },
 ];
 
 export type Certification = {
