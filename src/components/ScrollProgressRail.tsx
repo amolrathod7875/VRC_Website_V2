@@ -89,8 +89,11 @@ export function ScrollProgressRail() {
       </span>
       <div className="relative mt-3 h-[65vh] w-px bg-[rgba(8,43,76,0.18)]">
         <div
-          className="absolute inset-x-0 top-0 h-full w-px bg-[#1678C8] origin-top transition-transform duration-150 ease-out"
-          style={{ transform: `scaleY(${scrollProgress})` }}
+          className="absolute left-0 top-0 h-full w-px bg-[#1678C8] origin-top"
+          style={{
+            transform: `scaleY(${scrollProgress})`,
+            willChange: "transform",
+          }}
         />
       </div>
     </nav>

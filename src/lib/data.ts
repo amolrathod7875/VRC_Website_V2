@@ -1094,7 +1094,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Eindhoven, Netherlands",
     feedback:
       "From design review to launch, the VR Coatings team delivered clear updates and strong technical support, ensuring smooth execution.",
-    image: null,
+    image: "/Hiroshi Tanaka.avif",
   },
   {
     id: "marcus-weber",
@@ -1103,7 +1103,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Frankfurt, Germany",
     feedback:
       "The VR Coatings spray systems integrated cleanly into our existing production line, cutting coating cycle times and delivering a measurable ROI within the first quarter.",
-    image: null,
+    image: "/Marcus Weber.avif",
   },
 ];
 

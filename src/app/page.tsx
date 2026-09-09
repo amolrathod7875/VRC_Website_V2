@@ -6,7 +6,6 @@ import {
   certifications,
   getApplicationIcon,
   landingProducts,
-  presenceLocations,
   weProvide,
 } from "@/lib/data";
 import { LogoSlider } from "@/components/LogoSlider";
@@ -191,17 +190,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+      <section
+        className="relative overflow-hidden bg-white min-h-screen flex items-center"
+        style={{
+          backgroundImage: "url('/Quality_Background.avif')",
+          backgroundSize: "cover",
+          backgroundPosition: "center center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:pb-12 w-full">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div>
-              <Eyebrow>Quality & Performance</Eyebrow>
-              <SectionHeading>Designed to perform where it matters.</SectionHeading>
-              <p className="mt-6 text-base leading-8 text-slate-600">
-                Our quality programme is built around batch traceability, documented test methods, and
-                continuous production oversight. Standards are referenced across our coating portfolio so
-                customers can specify with confidence.
-              </p>
+              <div className="rounded-xl bg-white/80 p-6">
+                <Eyebrow>Quality & Performance</Eyebrow>
+                <SectionHeading>Designed to perform where it matters.</SectionHeading>
+                <p className="mt-6 text-base leading-8 text-slate-600">
+                  Our quality programme is built around batch traceability, documented test methods, and
+                  continuous production oversight. Standards are referenced across our coating portfolio so
+                  customers can specify with confidence.
+                </p>
+              </div>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {certifications.map((cert) => (
                   <div
@@ -247,17 +256,6 @@ export default function HomePage() {
                   and application replicates.
                 </p>
               </div>
-              <div className="rounded-xl border border-slate-200 bg-surface p-6 sm:col-span-2">
-                <p className="text-sm font-semibold text-brand-950">Regional presence</p>
-                <ul className="mt-3 grid gap-2 sm:grid-cols-3">
-                  {presenceLocations.map((loc) => (
-                    <li key={loc.title} className="rounded-md bg-white px-4 py-3">
-                      <p className="text-xs uppercase tracking-[0.16em] text-brand-700">{loc.title}</p>
-                      <p className="mt-1 text-sm font-medium text-brand-950">{loc.region}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           </div>
         </div>
@@ -265,10 +263,10 @@ export default function HomePage() {
 
       <ClientFeedback />
 
-      <section className="bg-surface">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
-          <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-            <div className="relative overflow-hidden rounded-xl">
+      <section className="bg-surface lg:h-[calc(100vh-80px)] lg:flex lg:items-center">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-0 w-full">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-center min-h-0">
+            <div className="relative overflow-hidden rounded-xl flex min-h-0 h-full">
               <video
                 autoPlay
                 muted
@@ -276,7 +274,7 @@ export default function HomePage() {
                 playsInline
                 preload="metadata"
                 aria-hidden="true"
-                className="h-full w-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               >
                 <source src="/Scale_video.mp4" type="video/mp4" />
               </video>
@@ -284,15 +282,15 @@ export default function HomePage() {
             <div>
               <Eyebrow>Our Capabilities</Eyebrow>
               <SectionHeading>Engineered for scale.</SectionHeading>
-              <p className="mt-6 text-base leading-8 text-slate-600">
+              <p className="mt-4 text-base leading-7 text-slate-600">
                 Our manufacturing campus is organised for batch traceability, process repeatability and
                 application support — so specification, sampling and fulfilment stay aligned.
               </p>
-              <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
                 {capabilityHighlights.map((item) => (
                   <div
                     key={item.title}
-                    className="rounded-lg border border-slate-200 bg-white px-4 py-3"
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2.5"
                   >
                     <p className="text-sm font-semibold text-brand-950">{item.title}</p>
                     <p className="mt-1 text-xs leading-5 text-slate-500">{item.text}</p>
