@@ -100,11 +100,16 @@ export function CatalogueSingleProduct({
           {features && features.length > 0 && (
             <div className="mt-6">
               <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-[#1678C8]">Key Features</h3>
-              <ul className="mt-2 list-disc list-inside space-y-1 text-sm text-slate-600">
+              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {features.map((f, idx) => (
-                  <li key={idx}>{f}</li>
+                  <div
+                    key={idx}
+                    className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700"
+                  >
+                    {f}
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           {applications && applications.length > 0 && (

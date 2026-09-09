@@ -14,8 +14,26 @@ import { CatalogueVariantRow } from "@/components/CatalogueVariantRow";
 import { CatalogueDownloadCTA } from "@/components/CatalogueDownloadCTA";
 import { CatalogueSingleProduct } from "@/components/CatalogueSingleProduct";
 import { CatalogueVariantList, CatalogueSingleProductPage } from "@/components/CataloguePageShell";
+import { ProductNav } from "@/components/ProductNav";
 import { conventionalGunVariants, conventionalGunCatalogue } from "@/lib/conventionalGunsData";
 import { manualGunProducts, manualGunCatalogue } from "@/lib/manualGunsData";
+import { automaticGunProducts, automaticGunCatalogue } from "@/lib/automaticGunsData";
+import { tigerCatalogue, tigerFeatures } from "@/lib/tigerData";
+import { miniTigerCatalogue, miniTigerFeatures } from "@/lib/miniTigerData";
+import { rhinoCatalogue, rhinoFeatures } from "@/lib/rhinoData";
+import { hippoCatalogue, hippoFeatures } from "@/lib/hippoData";
+import { dragonCatalogue, dragonFeatures } from "@/lib/dragonData";
+import { stirrerCatalogue } from "@/lib/stirrerData";
+import { valveCatalogue } from "@/lib/valvesData";
+import { filterCatalogue } from "@/lib/filtersData";
+import { TigerFeatures, TigerApplications, TigerTechnicalSpecifications } from "@/components/TigerCataloguePage";
+import { MiniTigerApplications, MiniTigerTechnicalSpecifications } from "@/components/MiniTigerCataloguePage";
+import { RhinoApplications, RhinoTechnicalSpecifications } from "@/components/RhinoCataloguePage";
+import { HippoApplications, HippoTechnicalSpecifications } from "@/components/HippoCataloguePage";
+import { DragonApplications, DragonTechnicalSpecifications } from "@/components/DragonCataloguePage";
+import { StirrerCataloguePage } from "@/components/StirrerCataloguePage";
+import { ValvesCataloguePage } from "@/components/ValvesCataloguePage";
+import { FiltersCataloguePage } from "@/components/FiltersCataloguePage";
 import type { CatalogueVariant } from "@/components/CatalogueVariantRow";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -139,6 +157,220 @@ export default async function ProductDetailPage({ params }: Props) {
       );
     }
 
+    if (node.slug === "automatic-guns") {
+      const variants = automaticGunProducts.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.description,
+      }));
+
+      return (
+        <CatalogueVariantList
+          title={automaticGunCatalogue.name}
+          category={automaticGunCatalogue.category}
+          catalogue={automaticGunCatalogue.catalogue}
+          description={automaticGunCatalogue.description}
+          breadcrumb={breadcrumbs}
+          variants={variants}
+        />
+      );
+    }
+
+    if (node.slug === "tiger") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={tigerCatalogue.name}
+            category={tigerCatalogue.category}
+            catalogue={tigerCatalogue.catalogue}
+            description={tigerCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={tigerCatalogue.description}
+                    specifications={[]}
+                    features={tigerFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <TigerApplications />
+          <TigerTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={tigerCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "mini-tiger") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={miniTigerCatalogue.name}
+            category={miniTigerCatalogue.category}
+            catalogue={miniTigerCatalogue.catalogue}
+            description={miniTigerCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={miniTigerCatalogue.description}
+                    specifications={[]}
+                    features={miniTigerFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <MiniTigerApplications />
+          <MiniTigerTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={miniTigerCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "rhino") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={rhinoCatalogue.name}
+            category={rhinoCatalogue.category}
+            catalogue={rhinoCatalogue.catalogue}
+            description={rhinoCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={rhinoCatalogue.description}
+                    specifications={[]}
+                    features={rhinoFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <RhinoApplications />
+          <RhinoTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={rhinoCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "hippo" || node.slug === "hippo-pump") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={hippoCatalogue.name}
+            category={hippoCatalogue.category}
+            catalogue={hippoCatalogue.catalogue}
+            description={hippoCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={hippoCatalogue.description}
+                    specifications={[]}
+                    features={hippoFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <HippoApplications />
+          <HippoTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={hippoCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "dragon") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={dragonCatalogue.name}
+            category={dragonCatalogue.category}
+            catalogue={dragonCatalogue.catalogue}
+            description={dragonCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={dragonCatalogue.description}
+                    specifications={[]}
+                    features={dragonFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <DragonApplications />
+          <DragonTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={dragonCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "pneumatic-stirrer") {
+      return <StirrerCataloguePage />;
+    }
+
+    if (node.slug === "valves") {
+      return <ValvesCataloguePage />;
+    }
+
+    if (node.slug === "filters") {
+      return <FiltersCataloguePage />;
+    }
+
     if (isLeafCategory(node)) {
       const landingForNode = findLandingProduct(node.slug);
       const specs = landingForNode?.specs?.map((s) => ({ label: s.label, value: s.value }));
@@ -152,6 +384,7 @@ export default async function ProductDetailPage({ params }: Props) {
           alt={node.name}
           description={landingForNode?.description || landingForNode?.overview}
           specifications={specs}
+          features={landingForNode?.features}
           breadcrumb={breadcrumbs}
         />
       );
@@ -184,6 +417,7 @@ export default async function ProductDetailPage({ params }: Props) {
         alt={node.name}
         description={landingForNode?.description || landingForNode?.overview}
         specifications={specs}
+        features={landingForNode?.features}
         breadcrumb={breadcrumbs}
       />
     );
