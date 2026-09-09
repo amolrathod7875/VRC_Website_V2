@@ -1,12 +1,27 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { findProduct, productCategories, type ProductCategory, type LandingProduct, landingProducts, findCatalogue, flattenProducts } from "@/lib/data";
+import {
+  findProduct,
+  productCategories,
+  type ProductCategory,
+  type LandingProduct,
+  landingProducts,
+  findCatalogue,
+  flattenProducts,
+} from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
 import { ProductNav } from "@/components/ProductNav";
 import { Placeholder } from "@/components/Placeholder";
 import { IconArrowRight } from "@/components/Icon";
 import { CatalogueLink } from "@/components/CatalogueLink";
+import { ProductCatalogueHero } from "@/components/ProductCatalogueHero";
+import { CatalogueVariantCard } from "@/components/CatalogueVariantCard";
+import { CatalogueVariantRow, type CatalogueVariant as CatalogueVariantRowType } from "@/components/CatalogueVariantRow";
+import { CatalogueDownloadCTA } from "@/components/CatalogueDownloadCTA";
+import { SingleProductCatalogue } from "@/components/SingleProductCatalogue";
+import { conventionalGunVariants, conventionalGunCatalogue } from "@/lib/conventionalGunsData";
+import type { CatalogueVariant } from "@/components/CatalogueVariantCard";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -25,6 +40,37 @@ function findCategory(slug: string) {
   return flattenCategories(productCategories).find((entry) => entry.node.slug === slug);
 }
 
+function findLandingProduct(slug: string): LandingProduct | undefined {
+  return landingProducts.find((p) => p.slug === slug);
+}
+
+function isLeafCategory(node: ProductCategory): boolean {
+  return !node.children || node.children.length === 0;
+}
+
+function allChildrenAreLeaves(node: ProductCategory): boolean {
+  if (!node.children || node.children.length === 0) return false;
+  return node.children.every((child) => !child.children || child.children.length === 0);
+}
+
+function buildVariantFromCategoryNode(node: ProductCategory): CatalogueVariant {
+  const landing = findLandingProduct(node.slug);
+  const specs = landing?.specs?.map((spec) => ({ label: spec.label, value: spec.value })) || [];
+
+  return {
+    id: node.slug,
+    name: node.name.toUpperCase(),
+    image: node.image || "/Product_png_s/Flamingo 11817.png",
+    alt: `${node.name} product image`,
+    catalogueNote: landing?.overview || "Detailed technical specifications are available in the product catalogue.",
+    specifications: specs,
+  };
+}
+
+function getCategoryBreadcrumb(trail: ProductCategory[]): string {
+  return trail.map((item) => item.name).join(" / ");
+}
+
 export function generateStaticParams() {
   const catSlugs = flattenCategories(productCategories).map(({ node }) => node.slug);
   const prodSlugs = flattenProducts().map(({ node }) => node.slug);
@@ -41,10 +87,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: cat?.node.name ?? prod?.node.name ?? landing?.name ?? "Product" };
 }
 
-function findLandingProduct(slug: string): LandingProduct | undefined {
-  return landingProducts.find((p) => p.slug === slug);
-}
-
 export default async function ProductDetailPage({ params }: Props) {
   const { slug } = await params;
   const cat = findCategory(slug);
@@ -55,7 +97,119 @@ export default async function ProductDetailPage({ params }: Props) {
 
   if (cat) {
     const { node, trail } = cat;
-    const breadcrumbs = trail.map((item) => item.name).join(" / ");
+    const breadcrumbs = getCategoryBreadcrumb(trail);
+    const catalogue = findCatalogue(node.slug);
+
+    if (node.slug === "conventional-guns") {
+      const variants = conventionalGunVariants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.catalogueNote,
+      }));
+
+      return (
+        <>
+          <ProductCatalogueHero
+            title={conventionalGunCatalogue.name}
+            category={conventionalGunCatalogue.category}
+            catalogue={conventionalGunCatalogue.catalogue}
+            description={conventionalGunCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  {variants.map((variant, i) => (
+                    <div key={variant.id} className="flex flex-col">
+                      <CatalogueVariantRow variant={variant} index={i} />
+                      {i < variants.length - 1 && (
+                        <div className="my-8 h-px w-full bg-[rgba(22,120,200,0.20)]" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+          <CatalogueDownloadCTA catalogue={conventionalGunCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (isLeafCategory(node) && catalogue) {
+      const landingForNode = findLandingProduct(node.slug);
+      return (
+        <>
+          <ProductCatalogueHero
+            title={node.name.toUpperCase()}
+            category={breadcrumbs}
+            catalogue={catalogue}
+             description={landingForNode?.description || ""}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <SingleProductCatalogue
+                  title={node.name}
+                  category={breadcrumbs}
+                  catalogue={catalogue}
+                  image={node.image}
+                  alt={node.name}
+                  description={landingForNode?.description}
+                  overview={landingForNode?.overview}
+                  features={landingForNode?.features}
+                  specifications={landingForNode?.specs?.map((s) => ({ label: s.label, value: s.value }))}
+                  applications={landingForNode?.applications}
+                />
+              </div>
+            </div>
+          </section>
+          <CatalogueDownloadCTA catalogue={catalogue} />
+        </>
+      );
+    }
+
+    if (allChildrenAreLeaves(node)) {
+      const variants = node.children!.map((child) => buildVariantFromCategoryNode(child));
+      return (
+        <>
+          <ProductCatalogueHero
+            title={`${node.name.toUpperCase()} CATALOGUE`}
+            category={breadcrumbs}
+            catalogue={catalogue || ""}
+             description={`Explore the ${node.name} product family.`}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {variants.map((variant, i) => (
+                    <CatalogueVariantCard key={variant.id} variant={variant} index={i} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+          {catalogue && <CatalogueDownloadCTA catalogue={catalogue} />}
+        </>
+      );
+    }
+
     return (
       <>
         <PageHero kicker="Products" title={node.name} text={breadcrumbs} />
@@ -129,76 +283,39 @@ export default async function ProductDetailPage({ params }: Props) {
 
   if (landing) {
     const breadcrumbs = landing.category ? `Products / ${landing.category}` : "Products";
+    const catalogue = findCatalogue(landing.slug);
+
     return (
       <>
-        <PageHero kicker="Products" title={landing.name} text={breadcrumbs} />
-        <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[250px_1fr] lg:gap-10 lg:px-8">
-          <nav aria-label="Product Categories" className="pt-px">
-            <ProductNav />
-          </nav>
-          <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-6">
-              <p className="text-sm text-slate-500">{breadcrumbs}</p>
-              {landing.description && (
-                <p className="text-sm leading-7 text-slate-600">{landing.description}</p>
-              )}
-              {landing.overview && (
-                <p className="text-sm leading-7 text-slate-600">{landing.overview}</p>
-              )}
-              {landing.features && landing.features.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Key Features</h3>
-                  <ul className="mt-2 list-disc list-inside space-y-1">
-                    {landing.features.map((f) => (
-                      <li key={f} className="text-sm text-slate-600">{f}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {landing.specs && landing.specs.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Technical Specifications</h3>
-                  <table className="mt-2 w-full table-fixed border-collapse text-sm">
-                    <tbody>
-                      {landing.specs.map((spec) => (
-                        <tr key={spec.label} className="border-b border-slate-200">
-                          <td className="w-1/2 py-2 pr-2 font-medium text-slate-600">{spec.label}</td>
-                          <td className="w-1/2 py-2 text-brand-950">{spec.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-              {landing.applications && landing.applications.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-brand-700">Applications</h3>
-                  <ul className="mt-2 list-disc list-inside space-y-1">
-                    {landing.applications.map((a) => (
-                      <li key={a} className="text-sm text-slate-600">{a}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {landing.catalogue && <CatalogueLink catalogue={landing.catalogue} />}
-            </div>
-            <div>
-              {landing.image ? (
-                <img
-                  src={landing.image}
-                  alt={landing.name}
-                  className="aspect-[4/3] w-full rounded-xl object-contain object-center"
-                />
-              ) : (
-                <Placeholder
-                  label={`${landing.name} image`}
-                  ratio="4 / 3"
-                  className="rounded-xl"
-                />
-              )}
+        <ProductCatalogueHero
+          title={landing.name.toUpperCase()}
+          category={breadcrumbs}
+          catalogue={catalogue || ""}
+          description={landing.description}
+        />
+        <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+            <nav aria-label="Product Categories" className="pt-8">
+              <ProductNav />
+            </nav>
+            <div className="py-8">
+              <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+              <SingleProductCatalogue
+                title={landing.name}
+                category={breadcrumbs}
+                catalogue={catalogue || ""}
+                image={landing.image || null}
+                alt={landing.name}
+                description={landing.description}
+                overview={landing.overview}
+                features={landing.features}
+                specifications={landing.specs?.map((s) => ({ label: s.label, value: s.value }))}
+                applications={landing.applications}
+              />
             </div>
           </div>
         </section>
+        {catalogue && <CatalogueDownloadCTA catalogue={catalogue} />}
       </>
     );
   }
@@ -206,43 +323,36 @@ export default async function ProductDetailPage({ params }: Props) {
   if (!prod) notFound();
 
   const { node, trail } = prod;
+  const breadcrumbs = trail.map((item: { name: string }) => item.name).join(" / ");
+  const catalogue = findCatalogue(node.slug);
+
   return (
     <>
-      <PageHero kicker="Products" title={node.name} text={node.summary} />
-      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[250px_1fr] lg:gap-10 lg:px-8">
-        <nav aria-label="Product Categories" className="pt-px">
-          <ProductNav />
-        </nav>
-        <div>
-          <p className="mb-4 text-sm text-slate-500">
-            {trail.map((item: { name: string }) => item.name).join(" / ")}
-          </p>
-          {node.image ? (
-            <img
-              src={node.image}
+      <ProductCatalogueHero
+        title={node.name.toUpperCase()}
+        category={breadcrumbs}
+        catalogue={catalogue || ""}
+        description={node.summary || ""}
+      />
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+          <nav aria-label="Product Categories" className="pt-8">
+            <ProductNav />
+          </nav>
+          <div className="py-8">
+            <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+            <SingleProductCatalogue
+              title={node.name}
+              category={breadcrumbs}
+              catalogue={catalogue || ""}
+              image={node.image || null}
               alt={node.name}
-              className="mb-8 aspect-[16/9] w-full rounded-xl object-contain object-center"
+              description={node.summary}
             />
-          ) : (
-            <Placeholder
-              label={`${node.name} image`}
-              ratio="16 / 9"
-              className="mb-8 rounded-xl"
-            />
-          )}
-          <div className="prose max-w-none text-sm leading-7 text-slate-600">
-            <p>{node.summary || "Detailed technical specifications coming soon."}</p>
-            <Link
-              href="/contact"
-              className="mt-4 inline-flex items-center gap-1.5 font-semibold text-brand-700"
-            >
-              Request a datasheet
-              <IconArrowRight className="h-3.5 w-3.5" />
-            </Link>
-            {findCatalogue(node.slug) && <CatalogueLink catalogue={findCatalogue(node.slug)} />}
           </div>
         </div>
       </section>
+      {catalogue && <CatalogueDownloadCTA catalogue={catalogue} />}
     </>
   );
 }

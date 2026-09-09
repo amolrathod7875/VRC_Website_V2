@@ -7,6 +7,7 @@ import {
   weProvide,
 } from "@/lib/data";
 import { PageHero } from "@/components/PageHero";
+import { GetInTouchSection } from "@/components/GetInTouchSection";
 import { Eyebrow, SectionHeading } from "@/components/SectionHeading";
 import { IconArrowRight } from "@/components/Icon";
 import type { IconProps } from "@/components/Icon";
@@ -280,29 +281,10 @@ export default async function ApplicationDetailPage({ params }: Props) {
       </section>
 
       {/* Contact CTA */}
-      <section className="bg-brand-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
-            <div>
-              <Eyebrow tone="white">Get in touch</Eyebrow>
-              <SectionHeading tone="white">Discuss your application requirements</SectionHeading>
-              <p className="mt-4 text-base leading-7 text-slate-200">
-                Talk to our team about the right coating system for your application, substrate and operating
-                environment.
-              </p>
-            </div>
-            <div className="mt-8 lg:mt-0">
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-[#1678C8] px-8 py-4 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
-              >
-                Discuss Your Requirement
-                <IconArrowRight className="h-4 w-4" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <GetInTouchSection
+        title="Discuss your application requirements"
+        text="Talk to our team about the right coating system for your application, substrate and operating environment."
+      />
 
       {/* Previous / Next Navigation */}
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
