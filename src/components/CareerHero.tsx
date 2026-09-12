@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { IconArrowRight } from "./Icon";
 
 type CareerHeroProps = {
