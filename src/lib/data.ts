@@ -32,7 +32,6 @@ export const navItems: NavItem[] = [
     href: "/resources/blog",
     children: [
       { label: "Blog", href: "/resources/blog" },
-      { label: "News", href: "/resources/news" },
       { label: "Certifications", href: "/resources/certifications" },
       { label: "Career", href: "/resources/career" },
       { label: "FAQs", href: "/resources/faqs" },
@@ -1352,7 +1351,6 @@ export const searchIndex = [
   { title: "Clients", href: "/assets/clients", keywords: "clients customers industries" },
   { title: "Industries We Serve", href: "/assets/industries", keywords: "industries served" },
   { title: "Blog", href: "/resources/blog", keywords: "blog articles" },
-  { title: "News", href: "/resources/news", keywords: "news press" },
   { title: "Certifications", href: "/resources/certifications", keywords: "iso certification quality" },
   { title: "Career", href: "/resources/career", keywords: "jobs career hiring" },
   { title: "FAQs", href: "/resources/faqs", keywords: "faq questions" },

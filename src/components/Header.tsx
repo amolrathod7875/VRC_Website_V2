@@ -69,7 +69,6 @@ const MEGA_MENU_CONFIG: Record<
         title: "Learn",
         links: [
           { label: "Blog", href: "/resources/blog" },
-          { label: "News", href: "/resources/news" },
         ],
       },
       {
