@@ -21,7 +21,7 @@ export const filterProducts: FilterProduct[] = [
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },
       { label: "INLET, OUTLET, DRAIN PORTS", value: '1/2" BSP(F), 3/8"BSP(F), 1/4" BSP(F)' },
-      { label: "FILTER CASSETTE SIZE", value: "Ø27MM X 145MM LONG" },
+      { label: "FILTER CASSETTE SIZE", value: "27MM X 145MM LONG" },
       { label: "WETTED PARTS", value: "304 STAINLESS STEEL, PTFE SEAL RING" },
     ],
   },
@@ -43,7 +43,7 @@ export const filterProducts: FilterProduct[] = [
     image: "/Product_png_s/slimline filter.png",
     alt: "Filter cassette L145",
     specifications: [
-      { label: "SIZE", value: "Ø 27MM X L 145 MM" },
+      { label: "SIZE", value: "27MM X L 145 MM" },
       { label: "TOTAL FILL VOLUME", value: "83 CC" },
       { label: "MESH SIZES", value: "60, 80, 100, 120, 125, 150, 200, 250, 400, 600" },
       { label: "CONSTRUCTION MATERIAL", value: "304 STAINLESS STEEL" },
@@ -69,7 +69,7 @@ export const filterProducts: FilterProduct[] = [
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },
       { label: "INLET, OUTLET, DRAIN PORTS", value: '1/2" BSP(F), 3/8"BSP(F), 1/4" BSP(F)' },
-      { label: "FILTER CASSETTE SIZE", value: "Ø27MM X 145MM LONG" },
+      { label: "FILTER CASSETTE SIZE", value: "27MM X 145MM LONG" },
       { label: "WETTED PARTS", value: "304 STAINLESS STEEL, PTFE SEAL RING" },
     ],
   },
@@ -81,7 +81,7 @@ export const filterProducts: FilterProduct[] = [
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BAR" },
       { label: "INLET, OUTLET, DRAIN PORTS", value: '1/2 BSP(F), 1/4" BSP(F)' },
-      { label: "FILTER CASSETTE SIZE", value: "Ø27MM X 114MM LONG" },
+      { label: "FILTER CASSETTE SIZE", value: "27MM X 114MM LONG" },
       { label: "WETTED PARTS", value: "304 STAINLESS STEEL, PTFE SEAL RING" },
     ],
   },
@@ -93,7 +93,7 @@ export const filterProducts: FilterProduct[] = [
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "120 BAR" },
       { label: "INLET, OUTLET, DRAIN PORTS", value: '3/8" BSP(F), 3/8" BSP(F), 1/4" BSP(F)' },
-      { label: "FILTER CASSETTE SIZE", value: "Ø27MM X 145MM LONG" },
+      { label: "FILTER CASSETTE SIZE", value: "27MM X 145MM LONG" },
       { label: "WETTED PARTS", value: "304 STAINLESS STEEL, PTFE SEAL RING" },
     ],
   },
@@ -105,7 +105,7 @@ export const filterProducts: FilterProduct[] = [
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "24 BAR" },
       { label: "INLET, OUTLET, DRAIN PORTS", value: '3/8" BSP(F), 3/8" BSP(F), 1/4" BSP(F)' },
-      { label: "FILTER CASSETTE SIZE", value: "Ø27MM X 145MM LONG" },
+      { label: "FILTER CASSETTE SIZE", value: "27MM X 145MM LONG" },
       { label: "WETTED PARTS", value: "ALUMINIUM, PTFE RING" },
     ],
   },

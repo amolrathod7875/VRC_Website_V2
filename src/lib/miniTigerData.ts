@@ -36,7 +36,7 @@ export const miniTigerSpecRows: MiniTigerSpecRow[] = [
   { label: "TYPE", values: ["15:16", "15:30", "25:16", "28:20", "28:40", "30:70"] },
   { label: "PRESSURE RATIO", values: ["15:1", "15:1", "25:1", "28:1", "28:1", "30:1"] },
   { label: "DISCHARGE PER CYCLE (CC)", values: ["16", "30", "16", "20", "40", "70"] },
-  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["Ø 60", "Ø 80", "Ø 80", "Ø 80", "Ø 80", "Ø 125"] },
+  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["60", "80", "80", "80", "80", "125"] },
   { label: "STROKE LENGTH (MM)", values: ["50", "50", "50", "70", "120", "120"] },
   { label: "RECOMMENDED SPRAY VOLUME @15 CYCLES/MIN (LPM)", values: ["0.24", "0.45", "0.24", "0.3", "0.6", "1.05"] },
   { label: "AIR INLET PRESSURE MAXIMUM (BAR)", values: ["6", "6", "6", "6", "6", "6"] },

@@ -23,17 +23,36 @@ import { miniTigerCatalogue, miniTigerFeatures } from "@/lib/miniTigerData";
 import { rhinoCatalogue, rhinoFeatures } from "@/lib/rhinoData";
 import { hippoCatalogue, hippoFeatures } from "@/lib/hippoData";
 import { dragonCatalogue, dragonFeatures } from "@/lib/dragonData";
-import { stirrerCatalogue } from "@/lib/stirrerData";
+import { stirrerCatalogue, stirrerFeatures } from "@/lib/stirrerData";
 import { valveCatalogue } from "@/lib/valvesData";
-import { filterCatalogue } from "@/lib/filtersData";
+import { filterCatalogue, filterFeatures } from "@/lib/filtersCatalogueData";
+import { polyureaCatalogue, polyureaFeatures } from "@/lib/polyureaData";
+import { cheetahCatalogue, cheetahFeatures } from "@/lib/cheetahData";
+import { vrcMixHpCatalogue, vrcMixHpFeatures } from "@/lib/vrcMixHpData";
+import { barrelPumpCatalogue, barrelPumpFeatures } from "@/lib/barrelPumpData";
+import { portablePressureFeedPotCatalogue, portablePressureFeedPotFeatures } from "@/lib/portablePressureFeedPotData";
+import { cubCatalogue, cubFeatures } from "@/lib/cubData";
+import { elephantCatalogue, elephantFeatures } from "@/lib/elephantData";
+import { turbineCatalogue, turbineFeatures } from "@/lib/turbineData";
 import { TigerFeatures, TigerApplications, TigerTechnicalSpecifications } from "@/components/TigerCataloguePage";
 import { MiniTigerApplications, MiniTigerTechnicalSpecifications } from "@/components/MiniTigerCataloguePage";
 import { RhinoApplications, RhinoTechnicalSpecifications } from "@/components/RhinoCataloguePage";
 import { HippoApplications, HippoTechnicalSpecifications } from "@/components/HippoCataloguePage";
 import { DragonApplications, DragonTechnicalSpecifications } from "@/components/DragonCataloguePage";
+import { PolyureaApplications, PolyureaTechnicalSpecifications } from "@/components/PolyureaCataloguePage";
+import { CheetahFeatures, CheetahApplications, CheetahTechnicalSpecifications } from "@/components/CheetahCataloguePage";
+import { VrcMixHpFeatures, VrcMixHpApplications, VrcMixHpTechnicalSpecifications, VrcMixHpFaultTable } from "@/components/VrcMixHpCataloguePage";
+import { CubFeatures, CubApplications, CubTechnicalSpecifications } from "@/components/CubCataloguePage";
+import { ElephantFeatures, ElephantApplications, ElephantTechnicalSpecifications } from "@/components/ElephantCataloguePage";
+import { TurbineFeatures, TurbineApplications, TurbineTechnicalSpecifications } from "@/components/TurbineCataloguePage";
+import { BarrelPumpFeatures, BarrelPumpApplications, BarrelPumpTechnicalSpecifications } from "@/components/BarrelPumpCataloguePage";
+import { PortablePressureFeedPotFeatures, PortablePressureFeedPotApplications, PortablePressureFeedPotTechnicalSpecifications } from "@/components/PortablePressureFeedPotCataloguePage";
+import { drumCatalogue, drumFeatures, drumApplications, drumSpecRows, drumSpecColumns } from "@/lib/drumData";
+import { DrumApplications, DrumTechnicalSpecifications } from "@/components/DrumCataloguePage";
 import { StirrerCataloguePage } from "@/components/StirrerCataloguePage";
+import { PneumaticStirrerFeatures, PneumaticStirrerVariants } from "@/components/PneumaticStirrerCataloguePage";
+import { FiltersFeatures, FiltersTechnicalSpecifications } from "@/components/FiltersCataloguePage";
 import { ValvesCataloguePage } from "@/components/ValvesCataloguePage";
-import { FiltersCataloguePage } from "@/components/FiltersCataloguePage";
 import type { CatalogueVariant } from "@/components/CatalogueVariantRow";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -288,6 +307,7 @@ export default async function ProductDetailPage({ params }: Props) {
     }
 
     if (node.slug === "hippo" || node.slug === "hippo-pump") {
+      const hippoImage = "/Product_png_s/Hippo.png";
       return (
         <>
           <ProductCatalogueHero
@@ -306,7 +326,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <div className="flex flex-col">
                   <CatalogueSingleProduct
                     title={node.name}
-                    image={node.image}
+                    image={hippoImage}
                     alt={node.name}
                     description={hippoCatalogue.description}
                     specifications={[]}
@@ -359,8 +379,367 @@ export default async function ProductDetailPage({ params }: Props) {
       );
     }
 
+    if (node.slug === "polyurea") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={polyureaCatalogue.name}
+            category={polyureaCatalogue.category}
+            catalogue={polyureaCatalogue.catalogue}
+            description={polyureaCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={polyureaCatalogue.description}
+                    specifications={[]}
+                    features={polyureaFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <PolyureaApplications />
+          <PolyureaTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={polyureaCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "cheetah") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={cheetahCatalogue.name}
+            category={cheetahCatalogue.category}
+            catalogue={cheetahCatalogue.catalogue}
+            description={cheetahCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={cheetahCatalogue.description}
+                    specifications={[]}
+                    features={cheetahFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <CheetahApplications />
+          <CheetahTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={cheetahCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "vrc-mix-hp") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={vrcMixHpCatalogue.name}
+            category={vrcMixHpCatalogue.category}
+            catalogue={vrcMixHpCatalogue.catalogue}
+            description={vrcMixHpCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={vrcMixHpCatalogue.description}
+                    specifications={[]}
+                    features={vrcMixHpFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <VrcMixHpApplications />
+          <VrcMixHpTechnicalSpecifications />
+          <VrcMixHpFaultTable />
+          <CatalogueDownloadCTA catalogue={vrcMixHpCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "barrel-pump") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={barrelPumpCatalogue.name}
+            category={barrelPumpCatalogue.category}
+            catalogue={barrelPumpCatalogue.catalogue}
+            description={barrelPumpCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={barrelPumpCatalogue.description}
+                    specifications={[]}
+                    features={barrelPumpFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <BarrelPumpFeatures />
+          <BarrelPumpApplications />
+          <BarrelPumpTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={barrelPumpCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "portable-pressure-feed-pot") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={portablePressureFeedPotCatalogue.name}
+            category={portablePressureFeedPotCatalogue.category}
+            catalogue={portablePressureFeedPotCatalogue.catalogue}
+            description={portablePressureFeedPotCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={portablePressureFeedPotCatalogue.description}
+                    specifications={[]}
+                    features={portablePressureFeedPotFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <PortablePressureFeedPotFeatures />
+          <PortablePressureFeedPotApplications />
+          <PortablePressureFeedPotTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={portablePressureFeedPotCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "cub") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={cubCatalogue.name}
+            category={cubCatalogue.category}
+            catalogue={cubCatalogue.catalogue}
+            description={cubCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={cubCatalogue.description}
+                    specifications={[]}
+                    features={cubFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <CubApplications />
+          <CubTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={cubCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "drum-press") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={drumCatalogue.name}
+            category={drumCatalogue.category}
+            catalogue={drumCatalogue.catalogue}
+            description={drumCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={drumCatalogue.description}
+                    specifications={[]}
+                    features={drumFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <DrumApplications />
+          <DrumTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={drumCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "elephant") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={elephantCatalogue.name}
+            category={elephantCatalogue.category}
+            catalogue={elephantCatalogue.catalogue}
+            description={elephantCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={elephantCatalogue.description}
+                    specifications={[]}
+                    features={elephantFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <ElephantApplications />
+          <ElephantTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={elephantCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "turbine-stirrer") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={turbineCatalogue.name}
+            category={turbineCatalogue.category}
+            catalogue={turbineCatalogue.catalogue}
+            description={turbineCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={turbineCatalogue.description}
+                    specifications={[]}
+                    features={turbineFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <TurbineApplications />
+          <TurbineTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={turbineCatalogue.catalogue} />
+        </>
+      );
+    }
+
     if (node.slug === "pneumatic-stirrer") {
-      return <StirrerCataloguePage />;
+      return (
+        <>
+          <ProductCatalogueHero
+            title={stirrerCatalogue.name}
+            category={stirrerCatalogue.category}
+            catalogue={stirrerCatalogue.catalogue}
+            description={stirrerCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={stirrerCatalogue.description}
+                    specifications={[]}
+                    features={stirrerFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <PneumaticStirrerFeatures />
+          <PneumaticStirrerVariants />
+          <CatalogueDownloadCTA catalogue={stirrerCatalogue.catalogue} />
+        </>
+      );
     }
 
     if (node.slug === "valves") {
@@ -368,7 +747,39 @@ export default async function ProductDetailPage({ params }: Props) {
     }
 
     if (node.slug === "filters") {
-      return <FiltersCataloguePage />;
+      return (
+        <>
+          <ProductCatalogueHero
+            title={filterCatalogue.name}
+            category={filterCatalogue.category}
+            catalogue={filterCatalogue.catalogue}
+            description={filterCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={filterCatalogue.description}
+                    specifications={[]}
+                    features={filterFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <FiltersFeatures />
+          <FiltersTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={filterCatalogue.catalogue} />
+        </>
+      );
     }
 
     if (isLeafCategory(node)) {

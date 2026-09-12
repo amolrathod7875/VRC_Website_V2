@@ -49,7 +49,7 @@ export const tigerSpecRows: TigerSpecRow[] = [
   { label: "TYPE", values: ["30:150", "35:70", "40:110", "45:150", "60:70", "60:110"] },
   { label: "PRESSURE RATIO", values: ["30:1", "35:1", "40:1", "45:1", "60:1", "60:1"] },
   { label: "OUTPUT PER CYCLE (CC)", values: ["150", "70", "110", "150", "70", "110"] },
-  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["Ø 160", "Ø 125", "Ø 160", "Ø 200", "Ø 160", "Ø 200"] },
+  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["160", "125", "160", "200", "160", "200"] },
   { label: "STROKE LENGTH (MM)", values: ["120", "120", "120", "120", "120", "120"] },
   { label: "RECOMMENDED SPRAY VOLUME @15 CYCLES PER MINUTE (LITRES)", values: ["2.2", "1.0", "1.6", "2.2", "1.0", "1.6"] },
   { label: "AIR INLET PRESSURE MAXIMUM (BAR)", values: ["6", "6", "6", "6", "6", "6"] },

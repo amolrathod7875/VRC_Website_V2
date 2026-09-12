@@ -10,7 +10,7 @@ import {
 import { LogoSlider } from "@/components/LogoSlider";
 import { ProductCard } from "@/components/ProductCard";
 import { TrustStrip } from "@/components/TrustStrip";
-import { ApplicationsShowcase } from "@/components/ApplicationsShowcase";
+import { ApplicationsShowcaseVideo } from "@/components/ApplicationsShowcaseVideo";
 import { CtaBanner } from "@/components/CtaBanner";
 import { BrandStatement } from "@/components/BrandStatement";
 import { HeritageSince } from "@/components/HeritageSince";
@@ -184,7 +184,7 @@ export default function HomePage() {
               operations where consistent film performance is non-negotiable.
             </p>
           </div>
-          <ApplicationsShowcase />
+          <ApplicationsShowcaseVideo />
         </div>
       </section>
 

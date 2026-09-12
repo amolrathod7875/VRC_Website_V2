@@ -41,7 +41,7 @@ export const hippoSpecRows: HippoSpecRow[] = [
   { label: "TYPE", values: ["1:170", "3:400", "3:900", "5:900", "12:400"] },
   { label: "PRESSURE RATIO", values: ["1:1", "3:1", "3:1", "5:1", "12:1"] },
   { label: "DISCHARGE PER CYCLE (CC)", values: ["170", "400", "900", "900", "400"] },
-  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["-", "Ø 80", "Ø 125", "Ø 160", "Ø 80"] },
+  { label: "AIR MOTOR PISTON DIAMETER (MM)", values: ["-", "80", "125", "160", "80"] },
   { label: "STROKE LENGTH (MM)", values: ["-", "120", "120", "120", "120"] },
   { label: "RECOMMENDED SPRAY VOLUME @15 CYCLES/MIN (LPM)", values: ["6.8 liter @40 cycle/min", "6", "13.5", "13.5", "6"] },
   { label: "MAXIMUM INLET AIR PRESSURE (BAR)", values: ["6", "6", "6", "6", "6"] },
