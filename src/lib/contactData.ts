@@ -24,6 +24,9 @@ export type Office = {
   contacts: OfficeContact[];
   mapEmbedUrl: string;
   googleMapsUrl: string;
+  /** Verified site photograph used on the About / Global Presence office cards. */
+  image: string;
+  imageAlt: string;
 };
 
 function embedUrl(address: string): string {
@@ -72,6 +75,8 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(HEAD_OFFICE_ADDRESS),
     googleMapsUrl: mapsSearchUrl(HEAD_OFFICE_ADDRESS),
+    image: "/About/HEAD OFFICE.jpg",
+    imageAlt: "Head Office facility – Pune, India",
   },
   {
     id: "factory",
@@ -92,6 +97,8 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(FACTORY_ADDRESS),
     googleMapsUrl: mapsSearchUrl(FACTORY_ADDRESS),
+    image: "/About/MANUFACTURING.jpg",
+    imageAlt: "Manufacturing facility – Bhosari, Pune",
   },
   {
     id: "north-america",
@@ -110,6 +117,8 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(NORTH_AMERICA_ADDRESS),
     googleMapsUrl: mapsSearchUrl(NORTH_AMERICA_ADDRESS),
+    image: "/About/NORTH AMERICA.jpg",
+    imageAlt: "North America office – Barrie, Ontario, Canada",
   },
   {
     id: "wai-midc",
@@ -126,6 +135,8 @@ export const offices: Office[] = [
     contacts: [],
     mapEmbedUrl: embedUrl(WAI_MIDC_ADDRESS),
     googleMapsUrl: mapsSearchUrl(WAI_MIDC_ADDRESS),
+    image: "/About/WAI MIDC.jpg",
+    imageAlt: "Wai MIDC facility – Wai, Maharashtra",
   },
 ];
 

@@ -11,7 +11,7 @@ const SECTION_TO_NAV: Record<string, string> = {
   applications: "Applications",
 };
 
-const MEGA_MENU_LABELS = new Set(["About", "Our Assets", "Resources"]);
+const MEGA_MENU_LABELS = new Set(["About", "Products", "Applications", "Our Assets", "Resources", "Catalog"]);
 
 const MEGA_MENU_CONFIG: Record<
   string,
@@ -39,6 +39,42 @@ const MEGA_MENU_CONFIG: Record<
     cta: {
       label: "Contact Us",
       href: "/contact",
+    },
+  },
+  Products: {
+    width: "720px",
+    intro: {
+      paragraphs: [
+        "Explore VR Coatings' comprehensive range of industrial spray painting equipment, transfer pumps, spray guns, dispensing systems, stirrers and accessories.",
+        "Every product is engineered for demanding production environments with ISO, TUV, ATEX & CE certified quality since 1985.",
+      ],
+      link: { label: "Explore Products →", href: "/products" },
+    },
+    image: {
+      src: "/Product_png_s/Category_wise_products/Rhino Pump/Rhino 4040.jpg",
+      alt: "VR Coatings Rhino heavy-duty spray pump",
+    },
+    cta: {
+      label: "Explore Products →",
+      href: "/products",
+    },
+  },
+  Applications: {
+    width: "720px",
+    intro: {
+      paragraphs: [
+        "Built for demanding industrial environments across automotive, defence & aerospace, electronics, infrastructure, marine, and energy & process industries.",
+        "Explore coating and equipment applications tailored to your specific substrate, process and operating conditions.",
+      ],
+      link: { label: "Explore Applications →", href: "/applications" },
+    },
+    image: {
+      src: "/applications/automotive.jpg",
+      alt: "Automotive coating application",
+    },
+    cta: {
+      label: "Explore Applications →",
+      href: "/applications",
     },
   },
   "Our Assets": {
@@ -86,6 +122,24 @@ const MEGA_MENU_CONFIG: Record<
     },
     cta: {
       label: "View Catalog",
+      href: "/catalog",
+    },
+  },
+  Catalog: {
+    width: "720px",
+    intro: {
+      paragraphs: [
+        "Access VR Coatings product catalogues, technical data and downloadable product information for spray systems, transfer pumps, spray guns and accessories.",
+        "Technical catalogues and product documentation engineered for your specification and procurement needs.",
+      ],
+      link: { label: "View Catalog →", href: "/catalog" },
+    },
+    image: {
+      src: "/Product_png_s/Category_wise_products/Cheetah/Cheetah 14301.jpg",
+      alt: "VR Coatings product catalogue",
+    },
+    cta: {
+      label: "View Catalog →",
       href: "/catalog",
     },
   },

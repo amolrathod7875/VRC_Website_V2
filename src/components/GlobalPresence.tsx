@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { GlobalFootprintMap } from "@/components/GlobalFootprintMap";
-import { offices, type Office } from "@/lib/contactData";
+import { offices } from "@/lib/contactData";
 
 const STAGGER_MS = 120;
 
@@ -46,7 +46,7 @@ export function GlobalPresence() {
 
   return (
     <section ref={sectionRef} id="global-presence" className="scroll-mt-24 bg-surface py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className={`mb-10 ${visible ? "quality-animate-in" : "opacity-0"}`}>
           <h2 className="text-3xl font-semibold text-brand-950 sm:text-4xl lg:text-5xl">
             Global presence
@@ -78,7 +78,7 @@ export function GlobalPresence() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-4">
           {offices.map((office, i) => {
             const eyebrow = eyebrowMap[office.label] || office.label.toUpperCase();
             const region = regionMap[office.label] || "";
@@ -87,7 +87,7 @@ export function GlobalPresence() {
             return (
               <article
                 key={office.id}
-                className={`group relative min-h-[360px] md:min-h-[460px] overflow-hidden rounded-2xl bg-[#082B4C] px-6 py-7 text-white border border-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-white/20 hover:shadow-xl ${
+                className={`group relative flex h-full flex-col overflow-hidden rounded-2xl bg-[#082B4C] px-5 py-6 text-white border border-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-white/20 hover:shadow-xl sm:px-7 sm:py-8 ${
                   visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
                 }`}
                 style={
@@ -105,36 +105,40 @@ export function GlobalPresence() {
                   {eyebrow}
                 </span>
 
-                <h3 className="mt-2 text-3xl font-semibold text-white sm:text-4xl">{region}</h3>
+                <h3 className="mt-2 text-3xl font-semibold leading-[1.15] text-white sm:text-4xl">
+                  {region}
+                </h3>
 
-                <div className="mt-6 flex-1" />
+                <p className="mt-6 text-sm font-semibold text-white/90">{office.name}</p>
 
-                <div className="relative flex items-end justify-between gap-4">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-white/90">{office.name}</p>
-                    {office.addressLines.map((line) => (
-                      <p key={line} className="mt-1 text-sm text-white/65">
-                        {line}
-                      </p>
-                    ))}
-                    {office.contacts.length > 0 && (
-                      <a
-                        href={office.contacts[0].href}
-                        className="mt-4 inline-block text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-white"
-                      >
-                        {office.contacts[0].value}
-                      </a>
-                    )}
-                  </div>
+                <div className="mt-1 space-y-0.5">
+                  {office.addressLines.map((line) => (
+                    <p key={line} className="text-[15px] leading-6 text-white/70">
+                      {line}
+                    </p>
+                  ))}
+                </div>
 
-                  <div
-                    className={`hidden sm:block h-[130px] w-[170px] shrink-0 rounded-lg bg-white/10 transition-transform duration-300 ease-out group-hover:-translate-y-1 ${rotation}`}
+                {office.contacts.length > 0 && (
+                  <a
+                    href={office.contacts[0].href}
+                    className="mt-4 inline-block whitespace-nowrap text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-white"
                   >
-                    <div className="flex h-full w-full items-center justify-center">
-                      <span className="text-xs font-medium uppercase tracking-widest text-white/40">
-                        Photo
-                      </span>
-                    </div>
+                    {office.contacts[0].value}
+                  </a>
+                )}
+
+                <div className="mt-auto pt-6">
+                  <div
+                    className={`overflow-hidden rounded-xl transition-transform duration-300 ease-out group-hover:-translate-y-1 ${rotation}`}
+                  >
+                    <img
+                      src={office.image}
+                      alt={office.imageAlt}
+                      loading="lazy"
+                      decoding="async"
+                      style={{ width: "100%", height: 190, objectFit: "cover", objectPosition: "center" }}
+                    />
                   </div>
                 </div>
               </article>
