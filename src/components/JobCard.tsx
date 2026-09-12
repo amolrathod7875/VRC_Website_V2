@@ -136,11 +136,11 @@ export function JobCard({
           <MetaRow label="Qualification" value={role.qualification} />
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-slate-600 line-clamp-3">
+<p className="mt-4 text-sm leading-6 text-slate-600 line-clamp-2">
           {role.summary}
         </p>
 
-        <div className="mt-3 flex flex-wrap gap-1.5">
+<div className="mt-3 flex flex-wrap gap-1.5">
           {role.skills.slice(0, 6).map((skill) => (
             <span
               key={skill}
@@ -151,7 +151,7 @@ export function JobCard({
           ))}
         </div>
 
-        <JobDetails role={role} />
+        <JobDetails role={role} expanded={expanded} />
 
         <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
           <button

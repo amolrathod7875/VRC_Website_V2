@@ -74,8 +74,7 @@ function FooterAnchor({ label, href, productSlug }: { label: string; href: strin
 
 export function Footer() {
   const year = new Date().getFullYear();
-  const headOffice = offices[0];
-  const address = headOffice ? headOffice.lines.slice(1).join(", ") : "";
+  const headOfficeAddress = "J - 138, Bhosari Industrial Area, Bhosari, Pune - 411 026, Maharashtra, India";
   const social = socialLinks.slice(0, 3);
 
   return (
@@ -85,7 +84,7 @@ export function Footer() {
           <h2 className="text-xl font-bold text-white">VR Coatings Pvt. Ltd.</h2>
           <p className="max-w-xs text-sm leading-6 text-slate-300">
             India&apos;s leading manufacturer of industrial spray painting equipment, dispensing
-            machines, transfer pumps, and fluid handling systems. ISO, TUV, ATEX &amp; CE
+            machines, transfer pumps, and fluid handling systems. ISO, TUV, ATEX & CE
             certified since 1985.
           </p>
           <div className="flex flex-wrap gap-3">
@@ -140,13 +139,13 @@ export function Footer() {
       <div className="border-t border-slate-600">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-5 text-xs text-slate-400 sm:px-6 lg:px-8">
           <span>
-            © {year} VR Coatings Pvt. Ltd. · {address}
+            © {year} VR Coatings Pvt. Ltd. · {headOfficeAddress}
           </span>
           <span className="flex flex-wrap items-center gap-2">
             <span>Made in India</span>
             <span className="text-slate-500">·</span>
             <a
-              href="https://www.vrcoatings.com"
+              href={WEBSITE_URL}
               target="_blank"
               rel="noreferrer"
               className="hover:text-[#1678C8]"
@@ -154,8 +153,8 @@ export function Footer() {
               www.vrcoatings.com
             </a>
             <span className="text-slate-500">·</span>
-            <a href={`mailto:${companyEmail}`} className="hover:text-[#1678C8]">
-              {companyEmail}
+            <a href={`mailto:${SALES_EMAIL}`} className="hover:text-[#1678C8]">
+              {SALES_EMAIL}
             </a>
           </span>
         </div>

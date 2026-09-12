@@ -111,23 +111,7 @@ export const roles: CareerRole[] = [
       "We are looking for an experienced Production Supervisor to manage daily operations at our Bhosari manufacturing facility.",
     skills: ["Production Planning", "Team Management", "Quality Control", "ERP/SAP", "5S / Lean"],
   },
-  {
-    id: "web-developer-frontend",
-    title: "Web Developer (Frontend)",
-    department: "IT",
-    location: "Pune / Remote",
-    type: "Full-time",
-    experience: "1–3 years",
-    salary: "3–6 LPA",
-    qualification: "B.E. / BCA / Any Computer Science degree",
-    posted: "05 Mar 2026",
-    summary:
-      "Maintain and improve our company website and internal tools, building responsive, SEO-friendly front-end interfaces with HTML, CSS, JavaScript and version control.",
-    description:
-      "We are looking for a Frontend Web Developer to maintain and improve our company website and internal tools.",
-    skills: ["HTML/CSS", "JavaScript", "Responsive Design", "SEO", "Git"],
-  },
-  {
+{
     id: "hr-executive",
     title: "HR Executive",
     department: "HR",
@@ -168,8 +152,8 @@ export const roles: CareerRole[] = [
     experience: "3–5 years",
     qualification:
       "Diploma / B.E. / B.Tech. – Mechanical / Production / Industrial Engineering",
-    summary:
-      "Plan and control production schedules, material availability, capacity and SAP-based production orders to ensure timely customer deliveries while optimising manpower, machine capacity and material availability.",
+summary:
+      "Plan and control production schedules, materials and capacity using SAP-based production planning to support timely customer deliveries.",
     description:
       "The PPC Engineer will be responsible for planning, scheduling, monitoring and controlling production activities to ensure timely completion of customer orders while optimising manpower, machine capacity and material availability.",
     skills: ["PPC", "SAP", "MRP", "Capacity Planning", "Production Scheduling", "BOM / Routing"],

@@ -27,14 +27,38 @@ function DetailBlock({ title, items }: { title: string; items?: string[] }) {
   );
 }
 
-export function JobDetails({ role }: { role: CareerRole }) {
+export function JobDetails({
+  role,
+  expanded = false,
+}: {
+  role: CareerRole;
+  expanded?: boolean;
+}) {
   const hasLocations = role.locations && role.locations.length > 0;
   const hasResponsibilities = role.responsibilities && role.responsibilities.length > 0;
   const hasFullDescription = Boolean(role.fullDescription);
   const hasSections = role.sections && role.sections.length > 0;
 
-  if (!hasLocations && !hasResponsibilities && !hasFullDescription && !hasSections) {
+  if ((!expanded && !hasLocations) || (!hasLocations && !hasResponsibilities && !hasFullDescription && !hasSections)) {
     return null;
+  }
+
+  if (!expanded) {
+    return hasLocations ? (
+      <div className="mt-5 scroll-mt-32 border-t border-slate-100 pt-5">
+        <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1678C8]">
+          Open Locations
+        </h4>
+        <ul className="mt-2 space-y-1">
+          {role.locations!.map((loc) => (
+            <li key={loc} className="flex gap-2.5 text-sm leading-6 text-slate-600">
+              <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#1678C8]/60" />
+              <span className="pt-px">{loc}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : null;
   }
 
   return (
