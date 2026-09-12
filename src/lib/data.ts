@@ -84,53 +84,53 @@ export const socialLinks = [
   { name: "WhatsApp", href: "https://wa.me/912027412200", icon: "wa" },
 ];
 
-export type FooterLink = { label: string; href: string };
+export type FooterLink = { label: string; href: string; productSlug?: string };
 export type FooterColumn = { title: string; links: FooterLink[] };
 
 export const footerProductColumns: FooterColumn[] = [
   {
     title: "SPRAY SYSTEMS",
     links: [
-      { label: "DRAGON \u2014 PFP System", href: "/products" },
-      { label: "CHEETAH \u2014 2K Hot Airless", href: "/products" },
-      { label: "RHINO \u2014 Heavy Duty", href: "/products" },
-      { label: "TIGER \u2014 Low/Medium Duty", href: "/products" },
-      { label: "MINI TIGER \u2014 Air-Assisted", href: "/products" },
-      { label: "POLYUREA System", href: "/products" },
-      { label: "VRC-MIX HP", href: "/products" },
-      { label: "VRC MIX (L/M)", href: "/products" },
-      { label: "LEOPARD \u2014 Electric Pump", href: "/products" },
-      { label: "TUBE/VARNISH COATING", href: "/products" },
+      { label: "DRAGON \u2014 PFP System", href: "/products/dragon", productSlug: "dragon" },
+      { label: "CHEETAH \u2014 2K Hot Airless", href: "/products/cheetah", productSlug: "cheetah" },
+      { label: "RHINO \u2014 Heavy Duty", href: "/products/rhino", productSlug: "rhino" },
+      { label: "TIGER \u2014 Low/Medium Duty", href: "/products/tiger", productSlug: "tiger" },
+      { label: "MINI TIGER \u2014 Air-Assisted", href: "/products/mini-tiger", productSlug: "mini-tiger" },
+      { label: "POLYUREA System", href: "/products/polyurea", productSlug: "polyurea" },
+      { label: "VRC-MIX HP", href: "/products/vrc-mix-hp", productSlug: "vrc-mix-hp" },
+      { label: "VRC MIX (L/M)", href: "/products/vrc-mix-lp", productSlug: "vrc-mix-lp" },
+      { label: "LEOPARD \u2014 Electric Pump", href: "/products/leopard-electric", productSlug: "leopard-electric" },
+      { label: "TUBE/VARNISH COATING", href: "/products/tube-varnish-coating-system", productSlug: "tube-varnish-coating-system" },
     ],
   },
   {
     title: "TRANSFER PUMPS",
     links: [
-      { label: "ELEPHANT \u2014 High Volume", href: "/products" },
-      { label: "HIPPO \u2014 Low Pressure", href: "/products" },
-      { label: "BARREL PUMP \u2014 20L", href: "/products" },
-      { label: "CUB \u2014 Four-Ball Piston", href: "/products" },
-      { label: "DRUM PRESS", href: "/products" },
+      { label: "ELEPHANT \u2014 High Volume", href: "/products/elephant", productSlug: "elephant" },
+      { label: "HIPPO \u2014 Low Pressure", href: "/products/hippo", productSlug: "hippo" },
+      { label: "BARREL PUMP \u2014 20L", href: "/products/barrel-pump", productSlug: "barrel-pump" },
+      { label: "CUB \u2014 Four-Ball Piston", href: "/products/cub", productSlug: "cub" },
+      { label: "DRUM PRESS", href: "/products/drum-press", productSlug: "drum-press" },
     ],
   },
   {
     title: "SPRAY GUNS",
     links: [
-      { label: "Manual Spray Guns", href: "/products" },
-      { label: "Automatic Spray Guns", href: "/products" },
-      { label: "KINGFISHER \u2014 Conventional", href: "/products" },
+      { label: "Manual Spray Guns", href: "/products/manual-guns", productSlug: "manual-guns" },
+      { label: "Automatic Spray Guns", href: "/products/automatic-guns", productSlug: "automatic-guns" },
+      { label: "KINGFISHER \u2014 Conventional", href: "/products/conventional-guns", productSlug: "conventional-guns" },
     ],
   },
   {
     title: "ACCESSORIES",
     links: [
-      { label: "Ball Valves \u2014 up to 500 BAR", href: "/products" },
-      { label: "Pressure Regulators HP/LP", href: "/products" },
-      { label: "Inline Filters HP/LP", href: "/products" },
-      { label: "Turbine Stirrers", href: "/products" },
-      { label: "Pneumatic Stirrer", href: "/products" },
-      { label: "Pressure Feed Pot", href: "/products" },
-      { label: "Pulsation Dampner", href: "/products" },
+      { label: "Ball Valves \u2014 up to 500 BAR", href: "/products/valves", productSlug: "valves" },
+      { label: "Pressure Regulators HP/LP", href: "/products/pressure-regulator", productSlug: "pressure-regulator" },
+      { label: "Inline Filters HP/LP", href: "/products/filters", productSlug: "filters" },
+      { label: "Turbine Stirrers", href: "/products/turbine-stirrer", productSlug: "turbine-stirrer" },
+      { label: "Pneumatic Stirrer", href: "/products/pneumatic-stirrer", productSlug: "pneumatic-stirrer" },
+      { label: "Pressure Feed Pot", href: "/products/portable-pressure-feed-pot", productSlug: "portable-pressure-feed-pot" },
+      { label: "Pulsation Dampner", href: "/products/diaphragm-pump", productSlug: "diaphragm-pump" },
     ],
   },
 ];

@@ -6,6 +6,7 @@ import {
   footerProductColumns,
   footerCompanyLinks,
 } from "@/lib/data";
+import { IconArrowRight } from "./Icon";
 
 function SocialIcon({ icon }: { icon: string }) {
   const common = "h-4 w-4";
@@ -44,20 +45,28 @@ function SocialIcon({ icon }: { icon: string }) {
   );
 }
 
-function FooterAnchor({ label, href }: { label: string; href: string }) {
+function FooterAnchor({ label, href, productSlug }: { label: string; href: string; productSlug?: string }) {
   const isExternal = href.startsWith("http");
+  const isProduct = Boolean(productSlug);
   const className =
-    "text-sm text-slate-300 transition-colors duration-150 hover:text-[#1678C8]";
+    "group inline-flex items-center gap-1 text-sm text-slate-300 transition-colors duration-200 hover:text-[#1678C8]";
+
   if (isExternal) {
     return (
       <a href={href} target="_blank" rel="noreferrer" className={className}>
-        {label}
+        <span>{label}</span>
       </a>
     );
   }
+
+  if (!isProduct) {
+    return <span className="text-sm text-slate-300">{label}</span>;
+  }
+
   return (
     <Link href={href} className={className}>
-      {label}
+      <span>{label}</span>
+      <IconArrowRight className="h-3.5 w-3.5 -translate-x-1.5 opacity-0 transition-all duration-200 ease-out group-hover:translate-x-0 group-hover:opacity-100" />
     </Link>
   );
 }
@@ -102,7 +111,11 @@ export function Footer() {
             <ul className="space-y-2.5">
               {column.links.map((link) => (
                 <li key={link.label}>
-                  <FooterAnchor label={link.label} href={link.href} />
+                  <FooterAnchor
+                    label={link.label}
+                    href={link.href}
+                    productSlug={link.productSlug}
+                  />
                 </li>
               ))}
             </ul>
