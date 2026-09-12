@@ -2,18 +2,10 @@ type CareerRole = {
   id: string;
   title: string;
   responsibilities?: string[];
-  requirements?: string[];
-  preferredSkills?: string[];
-  roleDescription?: string;
+  fullDescription?: string;
 };
 
-function DetailBlock({
-  title,
-  items,
-}: {
-  title: string;
-  items?: string[];
-}) {
+function DetailBlock({ title, items }: { title: string; items?: string[] }) {
   if (!items || items.length === 0) return null;
   return (
     <div className="border-t border-slate-100 pt-5 first:border-t-0 first:pt-0">
@@ -33,29 +25,24 @@ function DetailBlock({
 }
 
 export function JobDetails({ role }: { role: CareerRole }) {
-  const hasAny =
-    role.roleDescription ||
-    (role.responsibilities && role.responsibilities.length > 0) ||
-    (role.requirements && role.requirements.length > 0) ||
-    (role.preferredSkills && role.preferredSkills.length > 0);
+  const hasResponsibilities = role.responsibilities && role.responsibilities.length > 0;
+  const hasFullDescription = Boolean(role.fullDescription);
 
-  if (!hasAny) return null;
+  if (!hasResponsibilities && !hasFullDescription) return null;
 
   return (
     <div className="mt-5 scroll-mt-32 space-y-5 border-t border-slate-100 pt-5">
-      {role.roleDescription && (
+      {hasResponsibilities && (
+        <DetailBlock title="Key Responsibilities" items={role.responsibilities} />
+      )}
+      {hasFullDescription && (
         <div>
           <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1678C8]">
-            Role Description
+            Full Description
           </h4>
-          <p className="mt-2 text-sm leading-6 text-slate-600">{role.roleDescription}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">{role.fullDescription}</p>
         </div>
       )}
-      <div className="grid gap-5 sm:grid-cols-2">
-        <DetailBlock title="Key Responsibilities" items={role.responsibilities} />
-        <DetailBlock title="Requirements" items={role.requirements} />
-      </div>
-      <DetailBlock title="Preferred Skills" items={role.preferredSkills} />
     </div>
   );
 }

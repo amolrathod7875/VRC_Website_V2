@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { CareerHero } from "@/components/CareerHero";
 import { CultureStrip } from "@/components/CultureStrip";
 import { FilterBar } from "@/components/FilterBar";
 import { JobCard } from "@/components/JobCard";
 import { CareerCta } from "@/components/CareerCta";
 import { GetInTouchSection } from "@/components/GetInTouchSection";
-import { listDepartments, roles } from "@/lib/careerData";
+import { listDepartments, roles, type CareerRole } from "@/lib/careerData";
+import { setSelectedCareerRole } from "@/lib/selectedCareerRole";
 
 const cultureItems = [
   {
@@ -47,6 +49,7 @@ const cultureItems = [
 ];
 
 export function CareerPage() {
+  const router = useRouter();
   const [department, setDepartment] = useState("All");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -56,6 +59,11 @@ export function CareerPage() {
 
   const handleToggle = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const handleApply = (role: CareerRole) => {
+    setSelectedCareerRole(role);
+    router.push("/contact");
   };
 
   return (
@@ -110,6 +118,7 @@ export function CareerPage() {
                     role={role}
                     expanded={expandedId === role.id}
                     onToggle={handleToggle}
+                    onApply={handleApply}
                   />
                 </div>
               ))}

@@ -1,12 +1,8 @@
 /**
  * Career listing data.
  *
- * The three roles below are the original career listings. Their `title`,
- * `location` and `type` values are preserved byte-for-byte. The additional
- * fields (department, experience, salary, qualification, skills, description
- * and the supporting detail sections) are standard recruitment listing fields
- * used to render the redesigned premium cards. They contain no fabricated
- * company claims.
+ * Single source of truth for the VR Coatings careers page. The card grid,
+ * department filters and opening count all derive from this array.
  */
 
 export type EmploymentType = "Full-time" | "Internship" | "Part-time" | "Contract";
@@ -24,9 +20,7 @@ export type CareerRole = {
   description: string;
   skills: string[];
   responsibilities?: string[];
-  requirements?: string[];
-  preferredSkills?: string[];
-  roleDescription?: string;
+  fullDescription?: string;
 };
 
 export const DEPARTMENTS = [
@@ -40,85 +34,97 @@ export const DEPARTMENTS = [
 
 export const roles: CareerRole[] = [
   {
-    id: "coatings-chemist",
-    title: "Coatings Chemist",
-    department: "Engineering",
-    location: "Pune, India",
-    type: "Full-time",
-    experience: "3–5 years",
-    salary: "4–7 LPA",
-    qualification: "B.E. / B.Sc. (Chemistry / Chemical)",
-    posted: "Posted 2 weeks ago",
-    description:
-      "Develop and refine coating formulations for protective, industrial and specialty systems. Work closely with manufacturing to ensure batch consistency and reliable field performance.",
-    skills: ["Formulation", "Resin Systems", "QC Testing", "Technical Data Sheets"],
-    responsibilities: [
-      "Formulate and refine coating systems for protective, industrial and specialty applications.",
-      "Support scale-up from lab batches to production volumes.",
-      "Maintain formulation records and technical documentation.",
-    ],
-    requirements: [
-      "B.E. or B.Sc. in Chemistry, Chemical Engineering or a related discipline.",
-      "3–5 years of hands-on formulation or coatings R&D experience.",
-      "Working knowledge of resin systems and curing chemistry.",
-    ],
-    preferredSkills: ["Epoxy Systems", "Polyurethane", "Lab Testing Equipment"],
-    roleDescription:
-      "The Coatings Chemist works inside our formulation group, turning substrate, climate and duty-cycle requirements into repeatable coating systems.",
-  },
-  {
-    id: "application-engineer",
-    title: "Application Engineer",
-    department: "Engineering",
-    location: "Troy, MI",
+    id: "sales-executive",
+    title: "Sales Executive",
+    department: "Sales",
+    location: "Pune",
     type: "Full-time",
     experience: "2–5 years",
-    salary: "5–8 LPA",
-    qualification: "B.E. (Mechanical / Chemical)",
-    posted: "Posted 1 week ago",
+    salary: "3.5–6 LPA",
+    qualification: "B.E. / MBA / Any Graduate",
+    posted: "15 Mar 2026",
     description:
-      "Support customers in selecting and applying spray equipment and coating systems. Provide on-site application guidance and troubleshoot field issues across the product range.",
-    skills: ["Spray Systems", "Field Support", "Customer Training", "Troubleshooting"],
-    responsibilities: [
-      "Guide customers through spray equipment selection and system setup.",
-      "Deliver on-site application training and technical support.",
-      "Troubleshoot field application issues and recommend corrective actions.",
-    ],
-    requirements: [
-      "B.E. in Mechanical, Chemical or a related engineering discipline.",
-      "2–5 years in application engineering, field support or technical sales.",
-      "Comfortable working on-site with spray and fluid handling equipment.",
-    ],
-    preferredSkills: ["Airless Systems", "2K Mixing", "Customer Demonstration"],
-    roleDescription:
-      "The Application Engineer is the technical link between our equipment range and the customer's production line, ensuring systems are specified and applied correctly.",
+      "We are looking for a driven Sales Executive to expand our industrial client base across Maharashtra and beyond.",
+    skills: ["B2B Sales", "Lead Generation", "Industrial Products", "Negotiation", "MS Office"],
   },
   {
-    id: "quality-analyst",
-    title: "Quality Analyst",
+    id: "mechanical-design-engineer",
+    title: "Mechanical Design Engineer",
+    department: "Engineering",
+    location: "Pune",
+    type: "Full-time",
+    experience: "1–4 years",
+    salary: "4–8 LPA",
+    qualification: "B.E. / Diploma in Mechanical Engineering",
+    posted: "10 Mar 2026",
+    description:
+      "We seek a Mechanical Design Engineer to design and develop components for our spray equipment range. You will work with the R&D team on product improvements and new product development.",
+    skills: ["SolidWorks", "AutoCAD", "GD&T", "Sheet Metal Design", "Manufacturing Processes"],
+    responsibilities: [
+      "Design mechanical components using SolidWorks / AutoCAD",
+      "Prepare manufacturing drawings and BOMs",
+      "Coordinate with production team for prototype development",
+      "Conduct design reviews and FMEA analysis",
+      "Support after-sales technical issues",
+    ],
+    fullDescription:
+      "We seek a Mechanical Design Engineer to design and develop components for our spray equipment range. You will work with the R&D team on product improvements and new product development.",
+  },
+  {
+    id: "production-supervisor",
+    title: "Production Supervisor",
     department: "Production",
-    location: "Chakan Factory",
+    location: "Pune (Bhosari)",
+    type: "Full-time",
+    experience: "3–7 years",
+    salary: "4–7 LPA",
+    qualification: "B.E. / Diploma in Mechanical / Production Engineering",
+    posted: "08 Mar 2026",
+    description:
+      "We are looking for an experienced Production Supervisor to manage daily operations at our Bhosari manufacturing facility.",
+    skills: ["Production Planning", "Team Management", "Quality Control", "ERP/SAP", "5S / Lean"],
+  },
+  {
+    id: "web-developer-frontend",
+    title: "Web Developer (Frontend)",
+    department: "IT",
+    location: "Pune / Remote",
     type: "Full-time",
     experience: "1–3 years",
-    salary: "3–5 LPA",
-    qualification: "B.Sc. / Diploma (Quality)",
-    posted: "Posted this week",
+    salary: "3–6 LPA",
+    qualification: "B.E. / BCA / Any Computer Science degree",
+    posted: "05 Mar 2026",
     description:
-      "Perform film, adhesion and corrosion testing on incoming and finished batches. Maintain documented QC records and certification traceability across production runs.",
-    skills: ["Film Testing", "Corrosion Testing", "Documentation", "ISO 9001"],
-    responsibilities: [
-      "Carry out film, adhesion and corrosion tests on incoming and finished batches.",
-      "Record QC results and maintain certification traceability.",
-      "Flag non-conforming material and coordinate corrective action.",
-    ],
-    requirements: [
-      "B.Sc. or Diploma in a quality, chemical or materials discipline.",
-      "1–3 years in manufacturing quality control.",
-      "Familiarity with standard film and corrosion test methods.",
-    ],
-    preferredSkills: ["ISO 9001", "Lab Instrumentation", "Batch Records"],
-    roleDescription:
-      "The Quality Analyst works on the production floor, verifying that every batch meets documented film performance and traceability standards before release.",
+      "We are looking for a Frontend Web Developer to maintain and improve our company website and internal tools.",
+    skills: ["HTML/CSS", "JavaScript", "Responsive Design", "SEO", "Git"],
+  },
+  {
+    id: "hr-executive",
+    title: "HR Executive",
+    department: "HR",
+    location: "Pune",
+    type: "Full-time",
+    experience: "1–3 years",
+    salary: "2.5–4.5 LPA",
+    qualification: "MBA HR / MSW / PGDM HR",
+    posted: "01 Mar 2026",
+    description:
+      "We are hiring an HR Executive to manage recruitment, onboarding, and day-to-day HR operations at VR Coatings.",
+    skills: ["Recruitment", "HRMS / Greytip", "Payroll", "MS Excel", "Communication"],
+  },
+  {
+    id: "marketing-intern",
+    title: "Marketing Intern",
+    department: "Marketing",
+    location: "Pune / Remote",
+    type: "Internship",
+    experience: "Fresher",
+    salary: "8,000–12,000 / month",
+    qualification: "BBA / MBA Marketing (Pursuing or Completed)",
+    posted: "20 Feb 2026",
+    description:
+      "Exciting internship opportunity for marketing students to work on digital marketing, social media, and content creation for an established industrial company.",
+    skills: ["Social Media", "Content Writing", "Canva", "MS Office", "Google Analytics"],
   },
 ];
 

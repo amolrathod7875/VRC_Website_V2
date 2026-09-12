@@ -1,29 +1,10 @@
 import Link from "next/link";
 import { IconArrowRight } from "./Icon";
 import { JobDetails } from "./JobDetails";
+import type { CareerRole } from "@/lib/careerData";
 
-type EmploymentType = "Full-time" | "Internship" | "Part-time" | "Contract";
-
-type CareerRole = {
-  id: string;
-  title: string;
-  department: string;
-  location: string;
-  type: EmploymentType;
-  experience: string;
-  salary: string;
-  qualification: string;
-  posted: string;
-  description: string;
-  skills: string[];
-  responsibilities?: string[];
-  requirements?: string[];
-  preferredSkills?: string[];
-  roleDescription?: string;
-};
-
-function Badge({ type }: { type: EmploymentType }) {
-  const styles: Record<EmploymentType, string> = {
+function Badge({ type }: { type: CareerRole["type"] }) {
+  const styles: Record<CareerRole["type"], string> = {
     "Full-time": "bg-[#DCEAF7] text-[#0B5C97]",
     Internship: "bg-[#E2F3E7] text-[#1F7A45]",
     "Part-time": "bg-[#F1ECE4] text-[#7A6B4F]",
@@ -72,13 +53,19 @@ export function JobCard({
   role,
   expanded = false,
   onToggle,
+  onApply,
 }: {
   role: CareerRole;
   expanded?: boolean;
   onToggle?: (id: string) => void;
+  onApply?: (role: CareerRole) => void;
 }) {
   const handleToggle = () => {
     if (onToggle) onToggle(role.id);
+  };
+
+  const handleApply = () => {
+    if (onApply) onApply(role);
   };
 
   return (
@@ -145,13 +132,14 @@ export function JobCard({
         <JobDetails role={role} />
 
         <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
-          <Link
-            href="/contact"
+          <button
+            type="button"
+            onClick={handleApply}
             className="inline-flex items-center gap-1.5 rounded-md bg-[#082B4C] px-4 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-[#1678C8]"
           >
             Apply Now
             <IconArrowRight className="h-3.5 w-3.5" />
-          </Link>
+          </button>
           <button
             type="button"
             onClick={handleToggle}
