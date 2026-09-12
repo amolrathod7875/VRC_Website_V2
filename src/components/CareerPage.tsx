@@ -73,7 +73,8 @@ export function CareerPage() {
         copy="Join a team working across engineering, manufacturing, application support, sales and technology to solve real industrial challenges."
         ctaLabel="View Open Positions"
         openingsCount={roles.length}
-        imageAlt="VR Coatings manufacturing facility — image placeholder to be added"
+        imageAlt="Industrial manufacturing facility"
+        imageSrc="/Facility image.jpg"
       />
 
       <CultureStrip items={cultureItems} />
@@ -103,7 +104,7 @@ export function CareerPage() {
       />
 
       <section className="bg-[#F4F7FA] pb-16">
-        <div className="mx-auto max-w-[1320px] px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1320px] px-4 pt-5 sm:pt-6 sm:px-6 lg:pt-7 lg:px-8">
           {filtered.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-white py-16 text-center">
               <p className="text-sm font-medium text-slate-500">

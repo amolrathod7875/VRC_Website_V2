@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { IconArrowRight } from "./Icon";
+﻿import { IconArrowRight } from "./Icon";
 import { JobDetails } from "./JobDetails";
 import type { CareerRole } from "@/lib/careerData";
 
@@ -49,6 +48,29 @@ function IconCircle({ children }: { children: React.ReactNode }) {
   );
 }
 
+function LocationLabel({ role }: { role: CareerRole }) {
+  if (role.locations && role.locations.length > 1) {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        <IconCircle>
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
+          <circle cx="12" cy="10" r="3" />
+        </IconCircle>
+        <span>Multiple Locations</span>
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <IconCircle>
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
+        <circle cx="12" cy="10" r="3" />
+      </IconCircle>
+      <span>{role.location}</span>
+    </span>
+  );
+}
+
 export function JobCard({
   role,
   expanded = false,
@@ -68,6 +90,8 @@ export function JobCard({
     if (onApply) onApply(role);
   };
 
+  const showSalary = Boolean(role.salary && role.salary.trim().length > 0);
+
   return (
     <article
       id={`job-${role.id}`}
@@ -77,14 +101,18 @@ export function JobCard({
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-wrap items-center gap-2">
             <Badge type={role.type} />
-            <span className="text-xs text-slate-400">|</span>
-            <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <rect x="3" y="4" width="18" height="18" rx="2" />
-                <path d="M3 10h18M8 2v4M16 2v4" />
-              </svg>
-              {role.posted}
-            </span>
+            {role.posted ? (
+              <>
+                <span className="text-xs text-slate-400">|</span>
+                <span className="inline-flex items-center gap-1.5 text-xs text-slate-500">
+                  <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                    <rect x="3" y="4" width="18" height="18" rx="2" />
+                    <path d="M3 10h18M8 2v4M16 2v4" />
+                  </svg>
+                  {role.posted}
+                </span>
+              </>
+            ) : null}
           </div>
         </div>
 
@@ -99,27 +127,21 @@ export function JobCard({
             </IconCircle>
             <span>{role.department}</span>
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <IconCircle>
-              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
-              <circle cx="12" cy="10" r="3" />
-            </IconCircle>
-            <span>{role.location}</span>
-          </span>
+          <LocationLabel role={role} />
         </div>
 
         <div className="mt-5 grid grid-cols-1 gap-3 border-t border-slate-100 pt-4 sm:grid-cols-3">
           <MetaRow label="Experience" value={role.experience} />
-          <MetaRow label="Salary" value={role.salary} />
+          {showSalary ? <MetaRow label="Salary" value={role.salary as string} /> : null}
           <MetaRow label="Qualification" value={role.qualification} />
         </div>
 
-        <p className="mt-4 text-sm leading-6 text-slate-600 line-clamp-2">
-          {role.description}
+        <p className="mt-4 text-sm leading-6 text-slate-600 line-clamp-3">
+          {role.summary}
         </p>
 
         <div className="mt-3 flex flex-wrap gap-1.5">
-          {role.skills.map((skill) => (
+          {role.skills.slice(0, 6).map((skill) => (
             <span
               key={skill}
               className="rounded-md border border-slate-200 bg-[#F7F9FC] px-2.5 py-1 text-[11px] font-medium text-slate-600"

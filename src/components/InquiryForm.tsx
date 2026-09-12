@@ -2,14 +2,21 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { getSelectedCareerRole } from "@/lib/selectedCareerRole";
+import type { CareerRole } from "@/lib/careerData";
 
 export function InquiryForm() {
   const [sent, setSent] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<CareerRole | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<string>("");
 
   useEffect(() => {
     const role = getSelectedCareerRole();
-    setSelectedRole(role ? role.title : null);
+    setSelectedRole(role);
+    if (role && role.locations && role.locations.length > 0) {
+      setSelectedLocation(role.locations[0]);
+    } else if (role) {
+      setSelectedLocation(role.location);
+    }
   }, []);
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -24,6 +31,9 @@ export function InquiryForm() {
       </div>
     );
   }
+
+  const multiLocation =
+    selectedRole && selectedRole.locations && selectedRole.locations.length > 1;
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -78,11 +88,30 @@ export function InquiryForm() {
         </select>
       </label>
       {selectedRole && (
-        <div className="rounded-lg border border-[#1678C8]/20 bg-[#F4F7FA] px-4 py-3 text-sm">
+        <div className="rounded-lg border border-[#1678C8]/20 bg-[#F4F7FA] p-4 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.14em] text-[#1678C8]">
             Selected role
           </span>
-          <p className="mt-1 text-sm font-medium text-[#082B4C]">{selectedRole}</p>
+          <p className="mt-1 text-sm font-medium text-[#082B4C]">{selectedRole.title}</p>
+          {multiLocation && (
+            <label className="mt-3 block">
+              <span className="mb-1.5 block text-xs font-medium text-[#082B4C]">
+                Preferred location
+              </span>
+              <select
+                name="location"
+                value={selectedLocation}
+                onChange={(e) => setSelectedLocation(e.target.value)}
+                className="h-10 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-800 outline-none transition-all duration-200 focus:border-[#1678C8] focus:ring-4 focus:ring-[#1678C8]/10"
+              >
+                {selectedRole.locations!.map((loc) => (
+                  <option key={loc} value={loc}>
+                    {loc}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
       )}
       <label className="block">
@@ -92,7 +121,9 @@ export function InquiryForm() {
           name="message"
           defaultValue={
             selectedRole
-              ? `I am applying for the ${selectedRole} position.`
+              ? multiLocation
+                ? `I am applying for the ${selectedRole.title} position, preferably at the ${selectedLocation} location.`
+                : `I am applying for the ${selectedRole.title} position.`
               : ""
           }
           rows={5}

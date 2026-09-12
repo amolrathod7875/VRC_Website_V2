@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { IconArrowRight } from "./Icon";
 
 type CareerHeroProps = {
@@ -6,6 +7,7 @@ type CareerHeroProps = {
   ctaLabel: string;
   openingsCount: number;
   imageAlt: string;
+  imageSrc: string;
 };
 
 export function CareerHero({
@@ -14,6 +16,7 @@ export function CareerHero({
   ctaLabel,
   openingsCount,
   imageAlt,
+  imageSrc,
 }: CareerHeroProps) {
   return (
     <section className="relative overflow-hidden bg-white">
@@ -56,31 +59,16 @@ export function CareerHero({
             <div
               className="relative overflow-hidden rounded-2xl border border-slate-200 bg-[#F4F7FA] shadow-[0_18px_50px_rgba(8,43,76,0.08)]"
               style={{ aspectRatio: "4 / 3" }}
-              role="img"
-              aria-label={imageAlt}
             >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-white text-[#1678C8] shadow-sm">
-                    <svg
-                      viewBox="0 0 24 24"
-                      className="h-7 w-7"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={1.8}
-                    >
-                      <path d="M3 17l6-6 4 4 8-8" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M14 7h7v7" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-                    Facility image
-                  </p>
-                  <p className="px-4 text-[11px] leading-5 text-slate-400">
-                    Image placeholder — to be added later
-                  </p>
-                </div>
-              </div>
+              <Image
+                src={imageSrc}
+                alt={imageAlt}
+                fill
+                sizes="(min-width: 1024px) 55vw, 100vw"
+                className="object-cover"
+                style={{ objectPosition: "center center" }}
+                priority
+              />
             </div>
           </div>
         </div>

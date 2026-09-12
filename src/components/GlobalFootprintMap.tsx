@@ -10,8 +10,9 @@ type Marker = {
 };
 
 const markers: Marker[] = [
-  { cx: 620, cy: 230, label: "Pune / Chakan, India", tooltip: "Head Office & Manufacturing" },
-  { cx: 240, cy: 200, label: "Troy, MI, USA", tooltip: "North America" },
+  { cx: 620, cy: 230, label: "Pune (Bhosari), India", tooltip: "Head Office & Factory" },
+  { cx: 635, cy: 255, label: "Wai MIDC, India", tooltip: "Wai MIDC Facility" },
+  { cx: 240, cy: 180, label: "Barrie, Ontario, Canada", tooltip: "North America" },
   { cx: 470, cy: 190, label: "Germany", tooltip: "European Reach" },
   { cx: 590, cy: 250, label: "Middle East", tooltip: "Export Network" },
 ];

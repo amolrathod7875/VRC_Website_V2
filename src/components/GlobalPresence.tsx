@@ -2,23 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { GlobalFootprintMap } from "@/components/GlobalFootprintMap";
-import { offices } from "@/lib/data";
+import { offices, type Office } from "@/lib/contactData";
 
 const STAGGER_MS = 120;
 
 const eyebrowMap: Record<string, string> = {
-  "Head Office": "HEAD OFFICE",
-  Factory: "MANUFACTURING",
-  "North America": "NORTH AMERICA",
+  "HEAD OFFICE": "HEAD OFFICE",
+  "FACTORY": "MANUFACTURING",
+  "NORTH AMERICA": "NORTH AMERICA",
+  "WAI MIDC": "WAI MIDC",
 };
 
 const regionMap: Record<string, string> = {
-  "Head Office": "Pune, India",
-  Factory: "Chakan, India",
-  "North America": "Troy, MI, USA",
+  "HEAD OFFICE": "Pune, India",
+  "FACTORY": "Pune (Bhosari), India",
+  "NORTH AMERICA": "Barrie, Ontario, Canada",
+  "WAI MIDC": "Wai, Maharashtra, India",
 };
 
-const rotations = ["-rotate-2", "rotate-2", "-rotate-2"];
+const rotations = ["-rotate-2", "rotate-2", "-rotate-2", "rotate-2"];
 
 export function GlobalPresence() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -76,15 +78,15 @@ export function GlobalPresence() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {offices.map((office, i) => {
-            const eyebrow = eyebrowMap[office.title] || office.title.toUpperCase();
-            const region = regionMap[office.title] || "";
+            const eyebrow = eyebrowMap[office.label] || office.label.toUpperCase();
+            const region = regionMap[office.label] || "";
             const rotation = rotations[i % rotations.length];
 
             return (
               <article
-                key={office.title}
+                key={office.id}
                 className={`group relative min-h-[360px] md:min-h-[460px] overflow-hidden rounded-2xl bg-[#082B4C] px-6 py-7 text-white border border-white/10 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-white/20 hover:shadow-xl ${
                   visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
                 }`}
@@ -109,18 +111,20 @@ export function GlobalPresence() {
 
                 <div className="relative flex items-end justify-between gap-4">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-white/90">{office.lines[0]}</p>
-                    {office.lines.slice(1).map((line) => (
+                    <p className="text-sm font-medium text-white/90">{office.name}</p>
+                    {office.addressLines.map((line) => (
                       <p key={line} className="mt-1 text-sm text-white/65">
                         {line}
                       </p>
                     ))}
-                    <a
-                      href={office.phoneHref}
-                      className="mt-4 inline-block text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-white"
-                    >
-                      {office.phone}
-                    </a>
+                    {office.contacts.length > 0 && (
+                      <a
+                        href={office.contacts[0].href}
+                        className="mt-4 inline-block text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-white"
+                      >
+                        {office.contacts[0].value}
+                      </a>
+                    )}
                   </div>
 
                   <div

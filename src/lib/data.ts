@@ -45,43 +45,53 @@ export const offices = [
   {
     title: "Head Office",
     lines: [
-      "VR Coatings Pvt. Ltd.",
-      "Plot 42, Industrial Estate, MIDC",
-      "Pune, Maharashtra 411019, India",
+      "V R Coatings Pvt. Ltd.",
+      "J - 138, Bhosari Industrial Area",
+      "Bhosari, Pune - 411 026, Maharashtra, India",
     ],
-    phone: "+91 20 2741 2200",
-    phoneHref: "tel:+912027412200",
+    phone: "+91 8237086924",
+    phoneHref: "tel:+918237086924",
   },
   {
     title: "Factory",
     lines: [
-      "VR Coatings Manufacturing Unit",
-      "Gat No. 318, Chakan Industrial Area",
-      "Pune, Maharashtra 410501, India",
+      "V R Coatings Pvt. Ltd.",
+      "Sector No. 7, Plot No. 136",
+      "PCNTDA Industrial Area, Bhosari, Pune - 411 026, Maharashtra, India",
     ],
-    phone: "+91 20 2768 4410",
-    phoneHref: "tel:+912027684410",
+    phone: "+91 8237086903",
+    phoneHref: "tel:+918237086903",
   },
   {
     title: "North America",
     lines: [
-      "VR Coatings NA Inc.",
-      "1850 Commerce Drive, Suite 210",
-      "Troy, MI 48083, USA",
+      "V R Coatings (North America) Ltd.",
+      "648, Welham Rd, Barrie",
+      "Ontario L4N 9A1, Canada",
     ],
-    phone: "+1 248 555 0148",
-    phoneHref: "tel:+12485550148",
+    phone: "+1-705-739-0609",
+    phoneHref: "tel:+17057390609",
+  },
+  {
+    title: "Wai MIDC",
+    lines: [
+      "V R Coatings Pvt. Ltd.",
+      "D-91, Wai MIDC, Unnamed Road",
+      "Maharashtra Industrial Development Corporation, Lohare, Wai Rural, Maharashtra - 412803, India",
+    ],
+    phone: "",
+    phoneHref: "",
   },
 ];
 
-export const companyEmail = "info@vrcoatings.com";
+export const companyEmail = "sales@vrcoatings.com";
 
 export const socialLinks = [
   { name: "LinkedIn", href: "https://www.linkedin.com", icon: "in" },
   { name: "YouTube", href: "https://www.youtube.com", icon: "yt" },
   { name: "Instagram", href: "https://www.instagram.com", icon: "ig" },
   { name: "Facebook", href: "https://www.facebook.com", icon: "fb" },
-  { name: "WhatsApp", href: "https://wa.me/912027412200", icon: "wa" },
+  { name: "WhatsApp", href: "https://wa.me/918237086924", icon: "wa" },
 ];
 
 export type FooterLink = { label: string; href: string; productSlug?: string };
@@ -1030,7 +1040,7 @@ export function findApplication(slug: string) {
 }
 
 export const industries = [
-  { slug: "manufacturing", name: "Manufacturing" },
+  { slug: "manufacturing", name: "Manufacturing", region: "Pune (Bhosari), India" },
   { slug: "automotive", name: "Automotive" },
   { slug: "shipyard-marine", name: "Shipyard & Marine" },
   { slug: "defence", name: "Defence" },
@@ -1046,6 +1056,7 @@ export const industries = [
   { slug: "electronics", name: "Electronics" },
   { slug: "wind-energy", name: "Wind Energy" },
   { slug: "infrastructure", name: "Infrastructure" },
+  { slug: "north-america", name: "North America", region: "Barrie, Ontario, Canada" },
 ];
 
 export const weProvide = [

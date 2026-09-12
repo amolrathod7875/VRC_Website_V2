@@ -1,11 +1,12 @@
 import Link from "next/link";
 import {
-  companyEmail,
-  offices,
+  SALES_EMAIL,
+  HEAD_OFFICE_PHONE,
+  WEBSITE_URL,
   socialLinks,
   footerProductColumns,
   footerCompanyLinks,
-} from "@/lib/data";
+} from "@/lib/contactData";
 import { IconArrowRight } from "./Icon";
 
 function SocialIcon({ icon }: { icon: string }) {

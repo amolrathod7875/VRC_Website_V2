@@ -1,5 +1,5 @@
 /**
- * Selected role store.
+ * Selected role + optional location store.
  *
  * Keeps the most recently selected career role in memory so the application
  * form can pre-select it when the careers page is extended. The value is
