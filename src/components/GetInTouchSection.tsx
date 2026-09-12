@@ -23,8 +23,8 @@ export function GetInTouchSection({
   text = "Talk to our team about the right coating system for your application, substrate and operating environment.",
   primaryHref = "/contact",
   primaryLabel = "Discuss Your Requirement",
-  secondaryHref = "/catalog",
-  secondaryLabel = "Request Catalog",
+  secondaryHref = "/contact",
+  secondaryLabel = "Contact Us",
 }: GetInTouchSectionProps) {
   return (
     <section className="relative bg-[#062746] text-white min-h-screen flex flex-col">

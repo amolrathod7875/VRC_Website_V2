@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { PageHero } from "@/components/PageHero";
-import { FaqAccordion } from "@/components/FaqAccordion";
+import { FaqPage } from "@/components/FaqPage";
+import { faqSchema } from "@/lib/faqs";
 
-export const metadata: Metadata = { title: "FAQs" };
+export const metadata: Metadata = {
+  title: "FAQs",
+  description:
+    "Find answers about VR Coatings products, applications, technical support, sales, exports and service.",
+};
 
 export default function FaqsPage() {
   return (
     <>
-      <PageHero
-        kicker="Resources"
-        title="FAQs"
-        text="Common questions about products, customization, and commercial engagement."
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <section className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-        <FaqAccordion />
-      </section>
+      <FaqPage />
     </>
   );
 }

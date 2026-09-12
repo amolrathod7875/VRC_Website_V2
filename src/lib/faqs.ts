@@ -3,6 +3,45 @@ export type FaqCategory = { title: string; questions: FaqItem[] };
 
 export const FAQ_VISIBLE = 6;
 
+/** Stable anchors for the category navigation (matches the category titles). */
+export const faqCategorySlugs: Record<string, string> = {
+  General: "general",
+  "Products & Solutions": "products-solutions",
+  "Sales & Exports": "sales-exports",
+  "Service & Support": "service-support",
+};
+
+/** Short category descriptions derived from the existing category context. */
+export const faqCategoryDescriptions: Record<string, string> = {
+  General: "Questions about VR Coatings, locations and company.",
+  "Products & Solutions": "Questions about spray systems, pumps, dosers and accessories.",
+  "Sales & Exports": "Questions about ordering, quotes, exports and deliveries.",
+  "Service & Support": "Questions about installation, training, spares and AMC.",
+};
+
+/** Existing questions surfaced as the "Most Asked" featured block. */
+export const featuredFaqSlugs = [
+  "general:what-does-vr-coatings-do",
+  "general:which-industries-use-your-products",
+  "sales-exports:how-can-i-request-a-quote",
+  "service-support:do-you-provide-installation-and-commissioning",
+] as const;
+
+export function findFaqItem(slug: string): { category: FaqCategory; item: FaqItem } | undefined {
+  const [categoryTitle, id] = slug.split(":");
+  const category = faqCategories.find((c) => c.title === categoryTitle);
+  if (!category) return undefined;
+  const item = category.questions.find((q) => slugifyQuestion(q.q) === id);
+  return item ? { category, item } : undefined;
+}
+
+export function slugifyQuestion(question: string): string {
+  return question
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export const faqCategories: FaqCategory[] = [
   {
     title: "General",
@@ -209,3 +248,32 @@ export const faqCategories: FaqCategory[] = [
     ],
   },
 ];
+
+/** Stable display order for the category navigation and sections. */
+export const faqCategoryOrder = [
+  "General",
+  "Products & Solutions",
+  "Sales & Exports",
+  "Service & Support",
+] as const;
+
+/** Build the FAQPage structured data from the same source used by the UI. */
+export function buildFaqPageSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqCategories.flatMap((category) =>
+      category.questions.map((item) => ({
+        "@type": "Question",
+        name: item.q,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: item.a,
+        },
+      }))
+    ),
+  };
+}
+
+/** Pre-built FAQPage structured data, generated from the same `faqCategories` source. */
+export const faqSchema = buildFaqPageSchema();

@@ -35,12 +35,6 @@ export function HeroCarousel() {
             >
               Explore Products
             </Link>
-            <Link
-              href="/catalog"
-              className="rounded-md border border-white/30 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/10"
-            >
-              Request Catalog
-            </Link>
           </div>
           <div className="mt-10 flex gap-2">
             {upcomingProducts.map((item, i) => (

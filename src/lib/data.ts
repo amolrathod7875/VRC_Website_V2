@@ -37,7 +37,6 @@ export const navItems: NavItem[] = [
       { label: "FAQs", href: "/resources/faqs" },
     ],
   },
-  { label: "Catalog", href: "/catalog" },
   { label: "Contact Us", href: "/contact" },
 ];
 
@@ -1295,7 +1294,6 @@ export const searchIndex = [
   { title: "Certifications", href: "/resources/certifications", keywords: "iso certification quality" },
   { title: "Career", href: "/resources/career", keywords: "jobs career hiring" },
   { title: "FAQs", href: "/resources/faqs", keywords: "faq questions" },
-  { title: "Catalog", href: "/catalog", keywords: "catalog brochure pdf" },
   { title: "Contact Us", href: "/contact", keywords: "contact inquiry phone email" },
   ...flattenProducts().map(({ node }) => ({
     title: node.name,
