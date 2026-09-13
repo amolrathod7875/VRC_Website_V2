@@ -10,6 +10,10 @@ export type CatalogueVariant = {
   alt: string;
   specifications: { label: string; value: string }[];
   description?: string;
+  variantTable?: {
+    columns: string[];
+    rows: { name: string; values: string[] }[];
+  };
 };
 
 type CatalogueVariantRowProps = {
@@ -87,6 +91,38 @@ export function CatalogueVariantRow({ variant, index }: CatalogueVariantRowProps
           )}
           <div className="mt-6 w-full">
             <SpecificationTable specifications={variant.specifications} />
+            {variant.variantTable && (
+              <div className="mt-6 overflow-x-auto">
+                <table className="min-w-[800px] border-collapse text-left text-sm">
+                  <thead>
+                    <tr className="bg-[#0B5C97] text-white">
+                      <th className="whitespace-nowrap px-4 py-3 font-semibold uppercase tracking-wide">
+                        {variant.variantTable.columns[0]}
+                      </th>
+                      {variant.variantTable.columns.slice(1).map((col, idx) => (
+                        <th key={idx} className="whitespace-nowrap px-4 py-3 font-semibold text-center uppercase tracking-wide">
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {variant.variantTable.rows.map((row, rowIdx) => (
+                      <tr key={row.name} className={rowIdx % 2 === 0 ? "bg-white" : "bg-[#F4F7FA]"} >
+                        <td className="whitespace-nowrap px-4 py-3 font-semibold text-[#082B4C]">
+                          {row.name}
+                        </td>
+                        {row.values.map((value, valIdx) => (
+                          <td key={valIdx} className="px-4 py-3 text-slate-700 text-center">
+                            {value}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </div>
       </div>

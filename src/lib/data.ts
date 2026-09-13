@@ -1159,7 +1159,7 @@ export const productCategories: ProductCategory[] = [
       { slug: "elephant", name: "Elephant", catalogue: "/Catalogue/Elephant.pdf", image: "/Product_png_s/Elephant 14398.jpg" },
       { slug: "cub", name: "Cub", catalogue: "/Catalogue/cub.pdf", image: "/Product_png_s/Category_wise_products/Cub/Cub pump.jpg" },
       { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/Catalogue/Barrel Pump.pdf", image: "/Product_png_s/Barrel Transfer Pump.png" },
-      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/Catalogue/pulsing dampner.pdf", image: "/Product_png_s/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
+      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/Catalogue/diaphragm pump.pdf", image: "/Product_png_s/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
       { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf", image: "/Product_png_s/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg" },
     ],
   },
@@ -1236,7 +1236,7 @@ export const productCategories: ProductCategory[] = [
           { slug: "pneumatic-tube", name: "Pneumatic Tube" },
         ],
       },
-      { slug: "other-accessories", name: "Other Accessories" },
+      { slug: "other-accessories", name: "Other Accessories", catalogue: "/Catalogue/Other Accessories.pdf" },
     ],
   },
 ];

@@ -27,6 +27,7 @@ import { stirrerCatalogue, stirrerFeatures } from "@/lib/stirrerData";
 import { valveCatalogue } from "@/lib/valvesData";
 import { filterCatalogue, filterVariants } from "@/lib/filtersCatalogueData";
 import { regulatorCatalogue, regulatorVariants } from "@/lib/regulatorData";
+import { otherAccessoryCatalogue, otherAccessoryVariants } from "@/lib/otherAccessoriesData";
 import { polyureaCatalogue, polyureaFeatures } from "@/lib/polyureaData";
 import { cheetahCatalogue, cheetahFeatures } from "@/lib/cheetahData";
 import { tubeVarnishCatalogue, tubeVarnishFeatures } from "@/lib/tubeVarnishData";
@@ -34,6 +35,11 @@ import { TubeVarnishFeatures, TubeVarnishApplications, TubeVarnishTechnicalSpeci
 import { vrcMixHpCatalogue, vrcMixHpFeatures } from "@/lib/vrcMixHpData";
 import { barrelPumpCatalogue, barrelPumpFeatures } from "@/lib/barrelPumpData";
 import { diaphragmPumpCatalogue, diaphragmPumpFeatures, diaphragmPumpSpecs } from "@/lib/diaphragmPumpData";
+import {
+  DiaphragmPumpFeatures,
+  DiaphragmPumpApplications,
+  DiaphragmPumpTechnicalSpecifications,
+} from "@/components/DiaphragmPumpCataloguePage";
 import { portablePressureFeedPotCatalogue, portablePressureFeedPotFeatures } from "@/lib/portablePressureFeedPotData";
 import { cubCatalogue, cubFeatures } from "@/lib/cubData";
 import { elephantCatalogue, elephantFeatures } from "@/lib/elephantData";
@@ -253,6 +259,29 @@ export default async function ProductDetailPage({ params }: Props) {
           category={regulatorCatalogue.category}
           catalogue={regulatorCatalogue.catalogue}
           description={regulatorCatalogue.description}
+          breadcrumb={breadcrumbs}
+          variants={variants}
+        />
+      );
+    }
+
+    if (node.slug === "other-accessories") {
+      const variants = otherAccessoryVariants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.description,
+        variantTable: v.variantTable,
+      }));
+
+      return (
+        <CatalogueVariantList
+          title={otherAccessoryCatalogue.name}
+          category={otherAccessoryCatalogue.category}
+          catalogue={otherAccessoryCatalogue.catalogue}
+          description={otherAccessoryCatalogue.description}
           breadcrumb={breadcrumbs}
           variants={variants}
         />
@@ -615,6 +644,8 @@ export default async function ProductDetailPage({ params }: Props) {
               </div>
             </div>
           </section>
+          <DiaphragmPumpApplications />
+          <DiaphragmPumpTechnicalSpecifications />
           <CatalogueDownloadCTA catalogue={diaphragmPumpCatalogue.catalogue} />
         </>
       );
