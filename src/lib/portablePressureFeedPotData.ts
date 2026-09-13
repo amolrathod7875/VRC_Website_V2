@@ -39,6 +39,11 @@ export const portablePressureFeedPotApplications: PortablePressureFeedPotApplica
     description:
       "Pneumatically operated design safe for transferring explosive liquids in hazardous environments.",
   },
+  {
+    title: "Two-Component Paint Handling",
+    description:
+      "Clamping arrangement with PTFE Gasket to avoid jamming due to two-component paints; Nylon outlet tube uses even last 20cc of paint.",
+  },
 ];
 
 export const portablePressureFeedPotSpecRows: PortablePressureFeedPotSpecRow[] = [

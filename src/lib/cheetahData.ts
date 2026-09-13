@@ -36,6 +36,16 @@ export const cheetahApplications: CheetahApplication[] = [
     description:
       "Ideal for high-pressure two-component (2K) paint applications with precise ratio control.",
   },
+  {
+    title: "Marine Coating Application",
+    description:
+      "Suitable for marine coating applications with high-viscosity, solventless, and semi-solid coatings.",
+  },
+  {
+    title: "Semi-Solid & Solventless Protective Coatings",
+    description:
+      "Designed for all types of protective coatings including semi-solid and solventless coating systems.",
+  },
 ];
 
 export const cheetahSpecColumns = [

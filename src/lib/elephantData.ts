@@ -23,14 +23,24 @@ export const elephantFeatures: ElephantFeature[] = [
 
 export const elephantApplications: ElephantApplication[] = [
   {
-    title: "High-Volume Fluid Transfer",
+    title: "Paint Materials, Oils & Explosive Liquids Transfer",
+    description:
+      "Engineered for reliable transfer of paint materials, oils, and explosive liquids in industrial environments.",
+  },
+  {
+    title: "Multiple Spray Guns & Paint Circulation Systems Feed",
+    description:
+      "Ideal for feeding multiple spray guns and supporting paint circulation systems with high-volume delivery up to 120 L/min.",
+  },
+  {
+    title: "Large Volume Fluid Transfer",
     description:
       "Designed for transferring large volumes of fluids like paints, adhesives, solvents, petrol, and diesel with ease.",
   },
   {
-    title: "Demanding Industrial Environments",
+    title: "High-Volume Delivery for Demanding Environments",
     description:
-      "Rugged construction ensures reliable performance in demanding industrial environments.",
+      "Rugged construction ensures reliable performance in demanding industrial environments with delivery up to 120+ L/min.",
   },
 ];
 

@@ -47,6 +47,11 @@ export const turbineApplications: TurbineApplication[] = [
     description:
       "Mounting options on pneumatic hoist (20/200 Ltr pail) for ease of operation. Can mix varying quantities of material in standard pails.",
   },
+  {
+    title: "Hand-Held & Laboratory Applications",
+    description:
+      "TB-70 best suited for hand-held stirrer for smaller pails; optional laboratory application stirrer with pneumatic motors for low viscous materials.",
+  },
 ];
 
 export const turbineSpecRows: TurbineSpecRow[] = [

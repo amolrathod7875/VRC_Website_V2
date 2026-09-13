@@ -38,6 +38,16 @@ export const vrcMixHpApplications: VrcMixHpApplication[] = [
     description:
       "Maximum flow rate 6.8 L/min, maximum fluid pressure 450 bar.",
   },
+  {
+    title: "High Viscosity Material Handling",
+    description:
+      "Designed for dispensing and transferring grease, sealants, and other high-viscosity materials. Ensures efficient material flow directly from standard drums with minimal wastage.",
+  },
+  {
+    title: "Material Usage Reporting & Pot Life Monitoring",
+    description:
+      "Online system health checking with accumulative/daily consumption reporting and pot life monitoring of mixed material.",
+  },
 ];
 
 export const vrcMixHpSpecRows: VrcMixHpSpecRow[] = [

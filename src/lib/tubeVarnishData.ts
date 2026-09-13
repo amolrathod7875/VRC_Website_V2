@@ -39,6 +39,11 @@ export const tubeVarnishApplications: TubeVarnishApplication[] = [
     description:
       "External pipe coating application for varnish, enamel and water solvent based pipe coatings.",
   },
+  {
+    title: "Post Heating Oven for Pipe Coating",
+    description:
+      "Customised design post heating oven as per pipe size and length. Suitable for diameter 1\" to 8\" & length 4mtr to 8mtr, up to 4\" to 12\" & length 4mtr to 12mtr.",
+  },
 ];
 
 export const tubeVarnishSpecColumns = ["Parameter"];

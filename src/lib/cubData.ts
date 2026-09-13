@@ -31,6 +31,21 @@ export const cubApplications: CubApplication[] = [
     description:
       "Ideal for compact setups requiring continuous, smooth paint circulation. Provides pulsation-free transfer, ensuring consistent flow and finish quality.",
   },
+  {
+    title: "Paint Materials, Oils & Explosive Liquids Transfer",
+    description:
+      "Suitable for transferring paint materials, oils, and explosive liquids with four-ball piston technology.",
+  },
+  {
+    title: "Multiple Spray Guns Feed & Paint Circulation",
+    description:
+      "Designed to feed multiple spray guns and support paint circulation systems with high delivery up to 16 L/min.",
+  },
+  {
+    title: "Four-Ball Piston High-Delivery Transfer",
+    description:
+      "Four-ball piston type paint transfer pump designed for high delivery up to 16 L/min in industrial applications.",
+  },
 ];
 
 export const cubSpecColumns = ["CUB 2:400", "CUB 4:400", "CUB 6:400"];

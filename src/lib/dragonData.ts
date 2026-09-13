@@ -42,6 +42,21 @@ export const dragonApplications: DragonApplication[] = [
     description:
       "Designed for applying intumescent fireproof coatings with high build and precision. Ideal for passive fire protection in structural steel and industrial projects.",
   },
+  {
+    title: "Intumescent Paint Coating Application",
+    description:
+      "Specifically designed for seamless application of intumescent paint coatings with modular configuration for custom mixing ratios.",
+  },
+  {
+    title: "Passive Fire Protection for Structural Steel",
+    description:
+      "Ideal for passive fire protection of structural steel in industrial and infrastructure projects.",
+  },
+  {
+    title: "Passive Fire Protection for Industrial Projects",
+    description:
+      "Suitable for fire protection of industrial facilities including oil & gas, petrochemical, and offshore platforms.",
+  },
 ];
 
 export const dragonVariants: DragonVariant[] = [

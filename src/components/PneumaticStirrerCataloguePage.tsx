@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { stirrerFeatures, stirrerVariants } from "@/lib/stirrerData";
+import { stirrerVariants, stirrerApplications } from "@/lib/stirrerData";
 
-export function PneumaticStirrerFeatures() {
+export function PneumaticStirrerApplications() {
   const sectionRef = useRef<HTMLElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -24,20 +24,24 @@ export function PneumaticStirrerFeatures() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-white py-16 sm:py-20">
+    <section ref={sectionRef} className="bg-[#F4F7FA] py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#1678C8]">Why Pneumatic Stirrer</p>
-        <h2 className="mt-3 text-3xl font-semibold text-[#082B4C]">Key Features</h2>
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#1678C8]">Applications</p>
+        <h2 className="mt-3 text-3xl font-semibold text-[#082B4C]">Where Pneumatic Stirrer performs</h2>
         <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {stirrerFeatures.map((feature, i) => (
+          {stirrerApplications.map((app, i) => (
             <div
               key={i}
-              className={`rounded-xl border border-slate-200 bg-white p-5 transition-all duration-600 ease-out ${
+              className={`rounded-xl border border-slate-200 bg-white p-6 transition-all duration-600 ease-out ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
               }`}
               style={{ transitionDelay: `${i * 80}ms` }}
             >
-              <p className="text-sm font-medium leading-6 text-slate-700">{feature.text}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#1678C8]">
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 className="mt-2 text-lg font-semibold text-[#082B4C]">{app.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{app.description}</p>
             </div>
           ))}
         </div>

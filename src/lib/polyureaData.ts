@@ -33,6 +33,21 @@ export const polyureaApplications: PolyureaApplication[] = [
     description:
       "Specialized in spraying polyurea paints for durable floor coatings and protective layers. Also used for spraying and dispensing polyurethane foam for insulation and sealing applications.",
   },
+  {
+    title: "Polyurea Floor Coatings & Protective Layers",
+    description:
+      "Spraying polyurea paints for durable floor coatings and protective layers in demanding environments.",
+  },
+  {
+    title: "Polyurethane Foam Insulation & Sealing",
+    description:
+      "Spraying and dispensing polyurethane foam for insulation and sealing applications.",
+  },
+  {
+    title: "Waterproofing Coating Application",
+    description:
+      "Suitable for two-component high-viscosity solvent-less waterproofing coatings and PU foam applications.",
+  },
 ];
 
 export const polyureaSpecColumns = ["50:1", "38:1", "72:1", "54:1"];

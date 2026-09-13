@@ -23,6 +23,21 @@ export const drumApplications = [
     description:
       "Designed for dispensing and transferring grease, sealants, and other high-viscosity materials. Ensures efficient material flow directly from standard drums with minimal wastage.",
   },
+  {
+    title: "Semi-Solid & Pasty Materials Dispensing",
+    description:
+      "Equipped with medium and heavy duty pumps suitable for semi-solid and pasty materials.",
+  },
+  {
+    title: "Drum Press Dispensing & Transfer",
+    description:
+      "High flow rate pumps with priming piston (shovel) type suction for high viscous fluids, drum capacity up to 200 liters.",
+  },
+  {
+    title: "Twin Pail Switchover & Custom Drum Systems",
+    description:
+      "Auto shut off on drum empty, option for twin pail switchover system, and custom built systems for non-standard drum sizes.",
+  },
 ];
 
 export const drumSpecColumns = [

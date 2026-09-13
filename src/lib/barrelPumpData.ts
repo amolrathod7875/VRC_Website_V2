@@ -23,24 +23,24 @@ export const barrelPumpFeatures: BarrelPumpFeature[] = [
 
 export const barrelPumpApplications: BarrelPumpApplication[] = [
   {
-    title: "Drum and Barrel Transfer",
+    title: "Oil, Paint, Chemicals & Grease Transfer from Barrels",
     description:
-      "Extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste and residue.",
+      "Used for transferring oil, paint, chemicals, and grease directly from 200L/210L barrels with minimal waste.",
   },
   {
-    title: "Industrial Paint Supply",
+    title: "Polyol & Isocyanate Handling",
     description:
-      "Reliable transfer of industrial coatings, primers, and finish paints from containers to spray equipment.",
+      "Specially designed models available for handling Polyol and Isocyanate safely in two-component systems.",
   },
   {
-    title: "Viscous Fluid Handling",
+    title: "Lubricating, Rust Proof & Undercoating Fluids Spraying",
     description:
-      "Handles high-viscosity liquids efficiently, making it ideal for heavy-duty coating applications.",
+      "Suitable for spraying lubricating, rust proof, and undercoating fluids (oil, grease, wax, glue, etc.).",
   },
   {
-    title: "Hazardous Area Operations",
+    title: "Drum & Barrel Transfer with Minimal Waste",
     description:
-      "Pneumatically operated design ensures safe operation in environments where electrical equipment is restricted.",
+      "Pneumatically operated transfer pump for extracting fluids from 200L steel drums and 210L plastic barrels with minimal residue.",
   },
 ];
 

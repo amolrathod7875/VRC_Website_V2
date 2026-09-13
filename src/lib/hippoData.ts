@@ -33,6 +33,16 @@ export const hippoApplications: HippoApplication[] = [
     description:
       "Used to feed paint reliably to spray guns in automotive painting processes.",
   },
+  {
+    title: "Paint Circulation Systems Feed",
+    description:
+      "Can feed multiple spray guns in paint circulation systems with high delivery up to 15 L/min.",
+  },
+  {
+    title: "Explosive Liquids Transfer",
+    description:
+      "Suitable for transferring explosive liquids safely in hazardous area environments.",
+  },
 ];
 
 export const hippoSpecColumns = ["1:170", "3:400", "3:900", "5:900", "12:400"];

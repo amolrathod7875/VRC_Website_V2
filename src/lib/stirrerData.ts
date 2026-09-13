@@ -12,6 +12,34 @@ export type StirrerFeature = {
   text: string;
 };
 
+export type StirrerApplication = {
+  title: string;
+  description: string;
+};
+
+export const stirrerApplications: StirrerApplication[] = [
+  {
+    title: "Paint Agitation",
+    description:
+      "Pneumatic stirrers designed for paint agitation, ensuring uniform consistency and preventing settling in paint containers.",
+  },
+  {
+    title: "Material Mixing",
+    description:
+      "Efficient mixing of materials and coatings using vane type and axial piston type pneumatic motor driven configurations.",
+  },
+  {
+    title: "Container Mixing",
+    description:
+      "Suitable for containers of 45-60 ltrs, 100, and 200 litres, accommodating various batch sizes for industrial use.",
+  },
+  {
+    title: "Customized & Geared Stirrer Solutions",
+    description:
+      "Customized specifications available on request; geared stirrers with pneumatic/electrically driven options for specialized applications.",
+  },
+];
+
 export const stirrerFeatures: StirrerFeature[] = [
   { text: "Vane type pneumatic motor driven" },
   { text: "Axial piston type pneumatic motor driven" },

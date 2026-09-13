@@ -33,6 +33,8 @@ import { cheetahCatalogue, cheetahFeatures } from "@/lib/cheetahData";
 import { tubeVarnishCatalogue, tubeVarnishFeatures } from "@/lib/tubeVarnishData";
 import { TubeVarnishFeatures, TubeVarnishApplications, TubeVarnishTechnicalSpecifications } from "@/components/TubeVarnishCataloguePage";
 import { vrcMixHpCatalogue, vrcMixHpFeatures } from "@/lib/vrcMixHpData";
+import { vrcMixLpCatalogue, vrcMixLpFeatures } from "@/lib/vrcMixLpData";
+import { VrcMixLpFeatures, VrcMixLpApplications, VrcMixLpTechnicalSpecifications, VrcMixLpFaultTable } from "@/components/VrcMixLpCataloguePage";
 import { barrelPumpCatalogue, barrelPumpFeatures } from "@/lib/barrelPumpData";
 import { diaphragmPumpCatalogue, diaphragmPumpFeatures, diaphragmPumpSpecs } from "@/lib/diaphragmPumpData";
 import {
@@ -60,7 +62,7 @@ import { PortablePressureFeedPotFeatures, PortablePressureFeedPotApplications, P
 import { drumCatalogue, drumFeatures, drumApplications, drumSpecRows, drumSpecColumns } from "@/lib/drumData";
 import { DrumApplications, DrumTechnicalSpecifications } from "@/components/DrumCataloguePage";
 import { StirrerCataloguePage } from "@/components/StirrerCataloguePage";
-import { PneumaticStirrerFeatures, PneumaticStirrerVariants } from "@/components/PneumaticStirrerCataloguePage";
+import { PneumaticStirrerApplications, PneumaticStirrerVariants } from "@/components/PneumaticStirrerCataloguePage";
 import { ValvesCataloguePage } from "@/components/ValvesCataloguePage";
 import type { CatalogueVariant } from "@/components/CatalogueVariantRow";
 
@@ -578,6 +580,43 @@ export default async function ProductDetailPage({ params }: Props) {
       );
     }
 
+    if (node.slug === "vrc-mix-lp" || node.slug === "vrc-mix-lp-fixed") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={vrcMixLpCatalogue.name}
+            category={vrcMixLpCatalogue.category}
+            catalogue={vrcMixLpCatalogue.catalogue}
+            description={vrcMixLpCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={vrcMixLpCatalogue.description}
+                    specifications={[]}
+                    features={vrcMixLpFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <VrcMixLpApplications />
+          <VrcMixLpTechnicalSpecifications />
+          <VrcMixLpFaultTable />
+          <CatalogueDownloadCTA catalogue={vrcMixLpCatalogue.catalogue} />
+        </>
+      );
+    }
+
     if (node.slug === "barrel-pump") {
       return (
         <>
@@ -861,7 +900,7 @@ export default async function ProductDetailPage({ params }: Props) {
               </div>
             </div>
           </section>
-          <PneumaticStirrerFeatures />
+          <PneumaticStirrerApplications />
           <PneumaticStirrerVariants />
           <CatalogueDownloadCTA catalogue={stirrerCatalogue.catalogue} />
         </>

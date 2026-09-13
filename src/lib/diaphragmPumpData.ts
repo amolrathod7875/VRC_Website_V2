@@ -24,34 +24,24 @@ export const diaphragmPumpFeatures: DiaphragmPumpFeature[] = [
 
 export const diaphragmPumpApplications: DiaphragmPumpApplication[] = [
   {
-    title: "Water-Based Paint Transfer",
+    title: "Pulsation-Free Paint Spray Applications",
     description:
-      "Reliable low-pressure transfer of water-based paints and coatings in continuous circulation and dispensing systems.",
+      "Specially designed for pulsation-free paint spray applications ensuring smooth finish.",
   },
   {
-    title: "Solvent-Based Coating Transfer",
+    title: "Oil, Paint, Chemicals & Industrial Fluids Transfer",
     description:
-      "Suitable for transferring solvent-based coatings, varnishes, and primers with chemical-resistant wetted parts.",
+      "Used for transferring oil, paint, chemicals, and other industrial fluids efficiently.",
   },
   {
-    title: "Chemical Dosing and Transfer",
+    title: "Water-Based & Light Chemical Fluids Transfer",
     description:
-      "Handles corrosive and abrasive chemicals with PTFE, EPDM, and FKM diaphragm options for safe fluid handling.",
+      "Suitable for water-based and light chemical fluids with corrosion-resistant build and consistent output.",
   },
   {
-    title: "Adhesive and Sealant Dispensing",
+    title: "Smooth Fluid Transfer in Industrial Environments",
     description:
-      "Self-priming, pulse-free delivery ideal for dispensing adhesives, sealants, and inks in production environments.",
-  },
-  {
-    title: "Ink Transfer",
-    description:
-      "Smooth, pulse-free flow for ink transfer applications in printing and packaging lines.",
-  },
-  {
-    title: "Low-Pressure Circulation Systems",
-    description:
-      "Designed for low-pressure circulation of paints, coatings, and water-based materials in supply systems.",
+      "Compact, high-efficiency design for smooth fluid transfer under moderate pressure and temperature conditions.",
   },
 ];
 

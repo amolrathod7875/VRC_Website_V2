@@ -28,6 +28,21 @@ export const miniTigerApplications: MiniTigerApplication[] = [
     description:
       "Airless and air-assisted spray system ideal for woodworking applications. Perfect for spraying lacquer, clear coat, varnish, and sealer coats with fine finish.",
   },
+  {
+    title: "Sprayable Primers & Finishing Paints",
+    description:
+      "Suitable for spraying all kinds of sprayable primers and finish paints with consistent results.",
+  },
+  {
+    title: "Medium-Viscosity Liquid Coatings",
+    description:
+      "Purpose-built for reliable and efficient spraying of medium-viscosity liquids containing medium-sized particles.",
+  },
+  {
+    title: "Air-Assisted Airless Fine Finish Applications",
+    description:
+      "Delivers fine finish quality for lacquer, clear coat, and sealer applications in workshop environments.",
+  },
 ];
 
 export const miniTigerSpecColumns = ["15:16", "15:30", "25:16", "28:20", "28:40", "30:70"];
