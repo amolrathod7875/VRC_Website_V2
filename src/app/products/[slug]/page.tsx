@@ -26,6 +26,7 @@ import { dragonCatalogue, dragonFeatures } from "@/lib/dragonData";
 import { stirrerCatalogue, stirrerFeatures } from "@/lib/stirrerData";
 import { valveCatalogue } from "@/lib/valvesData";
 import { filterCatalogue, filterVariants } from "@/lib/filtersCatalogueData";
+import { regulatorCatalogue, regulatorVariants } from "@/lib/regulatorData";
 import { polyureaCatalogue, polyureaFeatures } from "@/lib/polyureaData";
 import { cheetahCatalogue, cheetahFeatures } from "@/lib/cheetahData";
 import { tubeVarnishCatalogue, tubeVarnishFeatures } from "@/lib/tubeVarnishData";
@@ -36,8 +37,6 @@ import { portablePressureFeedPotCatalogue, portablePressureFeedPotFeatures } fro
 import { cubCatalogue, cubFeatures } from "@/lib/cubData";
 import { elephantCatalogue, elephantFeatures } from "@/lib/elephantData";
 import { turbineCatalogue, turbineFeatures } from "@/lib/turbineData";
-import { backPressureRegulatorCatalogue } from "@/lib/backPressureRegulatorData";
-import { BackPressureRegulatorFeatures, BackPressureRegulatorApplications, BackPressureRegulatorTechnicalSpecifications } from "@/components/BackPressureRegulatorCataloguePage";
 import { TigerFeatures, TigerApplications, TigerTechnicalSpecifications } from "@/components/TigerCataloguePage";
 import { MiniTigerApplications, MiniTigerTechnicalSpecifications } from "@/components/MiniTigerCataloguePage";
 import { RhinoApplications, RhinoTechnicalSpecifications } from "@/components/RhinoCataloguePage";
@@ -238,38 +237,24 @@ export default async function ProductDetailPage({ params }: Props) {
     }
 
     if (node.slug === "regulator") {
+      const variants = regulatorVariants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.description,
+      }));
+
       return (
-        <>
-          <ProductCatalogueHero
-            title={backPressureRegulatorCatalogue.name}
-            category={backPressureRegulatorCatalogue.category}
-            catalogue={backPressureRegulatorCatalogue.catalogue}
-            description={backPressureRegulatorCatalogue.description}
-          />
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
-              <nav aria-label="Product Categories" className="pt-8">
-                <ProductNav />
-              </nav>
-              <div className="py-8">
-                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
-                <div className="flex flex-col">
-                  <CatalogueSingleProduct
-                    title={node.name}
-                    image={node.image}
-                    alt={node.name}
-                    description={backPressureRegulatorCatalogue.description}
-                    specifications={[]}
-                    features={[]}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-          <BackPressureRegulatorApplications />
-          <BackPressureRegulatorTechnicalSpecifications />
-          <CatalogueDownloadCTA catalogue={backPressureRegulatorCatalogue.catalogue} />
-        </>
+        <CatalogueVariantList
+          title={regulatorCatalogue.name}
+          category={regulatorCatalogue.category}
+          catalogue={regulatorCatalogue.catalogue}
+          description={regulatorCatalogue.description}
+          breadcrumb={breadcrumbs}
+          variants={variants}
+        />
       );
     }
 
