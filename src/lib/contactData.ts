@@ -207,7 +207,7 @@ export const footerProductColumns: FooterColumn[] = [
 
 export const footerCompanyLinks: FooterLink[] = [
   { label: "About VR Coatings", href: "/about" },
-  { label: "Industries Served", href: "/assets/industries" },
+  { label: "Industries Served", href: "/industries" },
   { label: "Product Videos", href: "/products" },
   { label: "Careers", href: "/resources/career" },
   { label: "Vendor Registration", href: "/contact" },

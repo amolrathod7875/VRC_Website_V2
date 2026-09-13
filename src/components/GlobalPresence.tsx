@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { GlobalFootprintMap } from "@/components/GlobalFootprintMap";
 import { offices } from "@/lib/contactData";
 
 const STAGGER_MS = 120;
@@ -73,8 +72,17 @@ export function GlobalPresence() {
             </div>
           </div>
 
-          <div className="relative mt-8 h-[260px] sm:h-[300px] lg:h-[360px] w-full">
-            <GlobalFootprintMap visible={visible} />
+          <div className="relative mt-8 flex justify-center">
+            <div className="w-full max-w-[1150px] rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_18px_50px_-22px_rgba(8,43,76,0.35)] sm:p-5 lg:p-6">
+              <img
+                src="/About/Global_Presence.png"
+                alt="VR Coatings global presence showing India, Canada and international partner locations"
+                loading="lazy"
+                decoding="async"
+                className="h-auto w-full max-w-full"
+                style={{ objectFit: "contain" }}
+              />
+            </div>
           </div>
         </div>
 

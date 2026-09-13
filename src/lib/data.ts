@@ -15,18 +15,12 @@ export type Application = {
 
 export const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-{ label: "About", href: "/about" },
+  { label: "About", href: "/about" },
   { label: "Products", href: "/products" },
   { label: "Applications", href: "/applications" },
-  {
-    label: "Our Assets",
-    href: "/assets/clients",
-    children: [
-      { label: "Partners", href: "/assets/partners" },
-      { label: "Clients", href: "/assets/clients" },
-      { label: "Industries We Serve", href: "/assets/industries" },
-    ],
-  },
+  { label: "Industries", href: "/industries" },
+  { label: "Partners", href: "/partners" },
+  { label: "Clients", href: "/clients" },
   {
     label: "Resources",
     href: "/resources/blog",
@@ -1287,9 +1281,9 @@ export const searchIndex = [
   { title: "Global Presence", href: "/about/global-presence", keywords: "global offices export" },
   { title: "Products", href: "/products", keywords: "epoxy powder polyurethane zinc" },
   { title: "Applications", href: "/applications", keywords: "automotive aerospace marine" },
-  { title: "Partners", href: "/assets/partners", keywords: "partners distributors" },
-  { title: "Clients", href: "/assets/clients", keywords: "clients customers industries" },
-  { title: "Industries We Serve", href: "/assets/industries", keywords: "industries served" },
+  { title: "Partners", href: "/partners", keywords: "partners distributors" },
+  { title: "Clients", href: "/clients", keywords: "clients customers industries" },
+  { title: "Industries", href: "/industries", keywords: "industries served" },
   { title: "Blog", href: "/resources/blog", keywords: "blog articles" },
   { title: "Certifications", href: "/resources/certifications", keywords: "iso certification quality" },
   { title: "Career", href: "/resources/career", keywords: "jobs career hiring" },

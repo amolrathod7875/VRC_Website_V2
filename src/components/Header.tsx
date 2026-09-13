@@ -11,7 +11,7 @@ const SECTION_TO_NAV: Record<string, string> = {
   applications: "Applications",
 };
 
-const MEGA_MENU_LABELS = new Set(["About", "Products", "Applications", "Our Assets", "Resources"]);
+const MEGA_MENU_LABELS = new Set(["About", "Products", "Applications", "Partners", "Clients", "Industries", "Resources"]);
 
 const MEGA_MENU_CONFIG: Record<
   string,
@@ -77,25 +77,55 @@ const MEGA_MENU_CONFIG: Record<
       href: "/applications",
     },
   },
-  "Our Assets": {
+  Partners: {
     width: "640px",
-    columns: [
-      {
-        title: "Assets",
-        links: [
-          { label: "Partners", href: "/assets/partners" },
-          { label: "Clients", href: "/assets/clients" },
-          { label: "Industries We Serve", href: "/assets/industries" },
-        ],
-      },
-    ],
+    intro: {
+      paragraphs: [
+        "Collaboration with established technology manufacturers supporting coating, pumping and fluid-handling solutions.",
+      ],
+      link: { label: "View Partners →", href: "/partners" },
+    },
     image: {
-      src: "/VR-Coatings-Pvt-Ltd-Factory.png",
-      alt: "VR Coatings operations",
+      src: "/partners/ASAHI_SUNAC.svg",
+      alt: "Global technology partners",
     },
     cta: {
-      label: "Contact Us",
-      href: "/contact",
+      label: "View Partners",
+      href: "/partners",
+    },
+  },
+  Clients: {
+    width: "640px",
+    intro: {
+      paragraphs: [
+        "A broad industrial customer base across manufacturing, automotive, defence, electronics, energy and related sectors.",
+      ],
+      link: { label: "View Clients →", href: "/clients" },
+    },
+    image: {
+      src: "/client_list/Manufacturing/tata-steel.png",
+      alt: "Trusted across industry",
+    },
+    cta: {
+      label: "View Clients",
+      href: "/clients",
+    },
+  },
+  Industries: {
+    width: "640px",
+    intro: {
+      paragraphs: [
+        "Explore the industrial sectors and applications supported by VR Coatings systems.",
+      ],
+      link: { label: "Explore Industries →", href: "/industries" },
+    },
+    image: {
+      src: "/applications/automotive.jpg",
+      alt: "Industries we serve",
+    },
+    cta: {
+      label: "Explore Industries",
+      href: "/industries",
     },
   },
   Resources: {
@@ -502,18 +532,19 @@ export function Header() {
           <div className="flex items-center justify-between gap-6 px-5 py-3">
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
-                src="/vrc-logo.png"
+                src="/logo/VRC Logo_nobg (2).png"
                 alt="VR Coatings logo"
-                width={140}
-                height={36}
+                width={80}
+                height={45}
                 priority
-                className="h-9 w-auto"
+                className="h-11 w-auto"
+                style={{ objectFit: "contain" }}
               />
             </Link>
 
             <div className="hidden md:block h-7 w-px bg-black/[0.08]" />
 
-            <nav className="hidden lg:flex items-center gap-5">
+            <nav className="hidden lg:flex items-center gap-3.5">
               {desktopNavItems.map((item) => {
                 const active = isRouteActive(item) || isSectionActive(item.label);
                 const isMega = MEGA_MENU_LABELS.has(item.label);
