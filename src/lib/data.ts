@@ -770,6 +770,38 @@ export const landingProducts: LandingProduct[] = [
       "Auto flushing cycle with programmable sequential air/solvent purge",
     ],
   },
+  {
+slug: "regulator",
+    name: "Back Pressure Regulator",
+    description: "Back pressure regulator designed for precise pressure control in paint circulation systems and fluid supply lines. Ensures consistent flow and prevents pressure fluctuations in industrial coating applications.",
+    catalogue: "/Catalogue/regulator.pdf",
+    image: "",
+    overview: "Back pressure regulator designed for precise pressure control in paint circulation systems and fluid supply lines. Ensures consistent flow and prevents pressure fluctuations in industrial coating applications.",
+    features: [
+      "Precise back pressure control for consistent fluid delivery",
+      "Suitable for high and low pressure applications",
+      "Durable construction for industrial environments",
+      "Easy adjustment and maintenance",
+    ],
+    specs: [
+      { label: "MODEL", value: "BPR-01" },
+      { label: "MAXIMUM WORKING PRESSURE", value: "—" },
+      { label: "REGULATING PRESSURE RANGE", value: "—" },
+      { label: "INLET PORT", value: "—" },
+      { label: "OUTLET PORT", value: "—" },
+      { label: "WETTED PARTS", value: "—" },
+      { label: "BODY MATERIAL", value: "—" },
+      { label: "SEAL MATERIAL", value: "—" },
+      { label: "FLOW RATE", value: "—" },
+      { label: "WEIGHT", value: "—" },
+      { label: "DIMENSIONS", value: "—" },
+    ],
+    applications: [
+      "Paint Circulation Systems",
+      "Fluid Supply Lines",
+      "Spray Painting Equipment",
+    ],
+  },
 ];
 
 export type ProductNode = {
@@ -1233,13 +1265,12 @@ export const productCategories: ProductCategory[] = [
       { slug: "two-component-mixers", name: "Two Component Mixers", image: "/Product_png_s/Mixing Manifold 14427.png" },
       { slug: "filters", name: "Filters", catalogue: "/Catalogue/filters.pdf", image: "/Product_png_s/slimline filter.png" },
       { slug: "heating-accessories", name: "Heating Accessories", image: "/Product_png_s/elecric3.png" },
-      { slug: "guns", name: "Guns", catalogue: "/Catalogue/GUNS.pdf", image: "/Product_png_s/king.png" },
       {
         slug: "pressure-regulator",
         name: "Pressure Regulator",
         image: "/Product_png_s/LP regulator 4219.png",
         children: [
-          { slug: "back-pressure-regulator", name: "Back Pressure Regulator", catalogue: "/Catalogue/regulator.pdf" },
+          { slug: "regulator", name: "Back Pressure Regulator", catalogue: "/Catalogue/regulator.pdf" },
         ],
         catalogue: "/Catalogue/regulator.pdf",
       },
