@@ -889,7 +889,7 @@ export const applications: Application[] = [
     text: "E-coat, primers, and durable topcoats for body and underbody parts.",
     icon: IconCar,
     image: "/applications/automotive.jpg",
-    video: "/automotive.mp4",
+    video: "/Vids_imgs/automotive.mp4",
   },
   {
     slug: "defence-aerospace",
@@ -897,7 +897,7 @@ export const applications: Application[] = [
     text: "Spec-driven coatings for airframes, ground systems, and components.",
     icon: IconPlane,
     image: "/applications/defence-aerospace.jpg",
-    video: "/Aerospace.mp4",
+    video: "/Vids_imgs/Aerospace.mp4",
   },
   {
     slug: "electronics",
@@ -905,7 +905,7 @@ export const applications: Application[] = [
     text: "Protective dielectric films for boards, housings, and connectors.",
     icon: IconCircuit,
     image: "/applications/electronics.jpg",
-    video: "/Electronics.mp4",
+    video: "/Vids_imgs/Electronics.mp4",
   },
   {
     slug: "infrastructure",
@@ -913,7 +913,7 @@ export const applications: Application[] = [
     text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.",
     icon: IconBuilding,
     image: "/applications/infrastructure.jpg",
-    video: "/Infrastructure.mp4",
+    video: "/Vids_imgs/Infrastructure.mp4",
   },
   {
     slug: "marine",
@@ -921,7 +921,7 @@ export const applications: Application[] = [
     text: "Hull, deck, and offshore steel protection in saline environments.",
     icon: IconShip,
     image: "/applications/marine.jpg",
-    video: "/Marine.mp4",
+    video: "/Vids_imgs/Marine.mp4",
   },
   {
     slug: "energy-process",
@@ -929,7 +929,7 @@ export const applications: Application[] = [
     text: "Coatings for pipelines, refineries, and power generation assets.",
     icon: IconFactory,
     image: "/applications/energy-process.jpg",
-    video: "/Energy.mp4",
+    video: "/Vids_imgs/Energy.mp4",
   },
 ];
 
@@ -1030,7 +1030,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Stuttgart, Germany",
     feedback:
       "The integration of VR Coatings equipment into our workflow significantly improved throughput and reduced manual handling.",
-    image: "/Sofia Ramirez.avif",
+    image: "/Vids_imgs/Sofia Ramirez.avif",
   },
   {
     id: "laura-bennett",
@@ -1039,7 +1039,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Munich, Germany",
     feedback:
       "Even under peak load conditions, the equipment operates seamlessly with minimal maintenance, ensuring consistent reliability.",
-    image: "/Laura Bennett.avif",
+    image: "/Vids_imgs/Laura Bennett.avif",
   },
   {
     id: "tomasz-nowak",
@@ -1048,7 +1048,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Warsaw, Poland",
     feedback:
       "VR Coatings' certification process and records made deployment simple and fully compliant, ensuring complete regulatory standards overall.",
-    image: "/Tomasz Nowak.avif",
+    image: "/Vids_imgs/Tomasz Nowak.avif",
   },
   {
     id: "hiroshi-tanaka",
@@ -1057,7 +1057,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Eindhoven, Netherlands",
     feedback:
       "From design review to launch, the VR Coatings team delivered clear updates and strong technical support, ensuring smooth execution.",
-    image: "/Hiroshi Tanaka.avif",
+    image: "/Vids_imgs/Hiroshi Tanaka.avif",
   },
   {
     id: "marcus-weber",
@@ -1066,7 +1066,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Frankfurt, Germany",
     feedback:
       "The VR Coatings spray systems integrated cleanly into our existing production line, cutting coating cycle times and delivering a measurable ROI within the first quarter.",
-    image: "/Marcus Weber.avif",
+    image: "/Vids_imgs/Marcus Weber.avif",
   },
 ];
 
