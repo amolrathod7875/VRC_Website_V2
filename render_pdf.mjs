@@ -1,5 +1,5 @@
 import fs from "fs";
-import { createCanvas, Canvas } from "canvas";
+import { createCanvas, Canvas, Image } from "canvas";
 
 class OffscreenCanvasPolyfill extends Canvas {
   constructor(width, height) {
@@ -40,27 +40,24 @@ const doc = await pdfjs.getDocument({
   disableFontFace: true,
   canvasFactory: makeCanvasFactory(),
 }).promise;
-const page = await doc.getPage(1);
-const viewport = page.getViewport({ scale: 2 });
-const canvas = createCanvas(viewport.width, viewport.height);
-const ctx = canvas.getContext("2d");
-const origDraw = ctx.drawImage.bind(ctx);
-ctx.drawImage = function (img, ...rest) {
-  if (rest.length >= 4 && img && img.constructor && img.constructor.name === "CanvasElement") {
-    const inner = img.ctx && img.ctx.canvas;
-    console.log("inner canvas:", inner && inner.constructor && inner.constructor.name, "isCanvas:", inner instanceof Canvas);
-    if (inner instanceof Canvas) {
-      return origDraw(inner, ...rest);
+console.log("numPages:", doc.numPages);
+for (let p = 1; p <= doc.numPages; p++) {
+  const page = await doc.getPage(p);
+  const viewport = page.getViewport({ scale: 2 });
+  const canvas = createCanvas(viewport.width, viewport.height);
+  const ctx = canvas.getContext("2d");
+  const origDraw = ctx.drawImage.bind(ctx);
+  ctx.drawImage = function (img, ...rest) {
+    if (rest.length >= 4 && img && img.constructor && img.constructor.name === "CanvasElement") {
+      const url = img.toDataURL();
+      const real = new Image();
+      real.src = url;
+      return origDraw(real, ...rest);
     }
-  }
-  return origDraw(img, ...rest);
-};
-try {
+    return origDraw(img, ...rest);
+  };
   await page.render({ canvasContext: ctx, viewport, canvas }).promise;
-  const out = `C:\\Users\\shiva\\AppData\\Local\\Temp\\kilo\\tubepage1.png`;
+  const out = `C:\\Users\\shiva\\AppData\\Local\\Temp\\kilo\\tubepage${p}.png`;
   fs.writeFileSync(out, canvas.toBuffer("image/png"));
-  console.log("RENDER OK ->", out);
-} catch (e) {
-  console.log("RENDER FAIL:", e.message);
+  console.log(`page ${p} -> ${out} (${viewport.width}x${viewport.height})`);
 }
-await doc.destroy();

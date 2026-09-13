@@ -1164,6 +1164,7 @@ export const productCategories: ProductCategory[] = [
       { slug: "cheetah", name: "Cheetah", catalogue: "/Catalogue/Cheetah.pdf", image: "/Product_png_s/Cheetah.png" },
       { slug: "dragon", name: "Dragon", catalogue: "/Catalogue/dragon.pdf", image: "/Product_png_s/PFP.png" },
       { slug: "polyurea", name: "Polyurea", catalogue: "/Catalogue/polyurea.pdf", image: "/Product_png_s/Polyurea gun 4106.png" },
+      { slug: "tube-varnish-coating", name: "Tube / Varnish Coating", catalogue: "/Catalogue/TUBE VARNISH COATING SYSTEM.pdf", image: "/Product_png_s/vrc.png" },
       {
         slug: "electronic-two-component",
         name: "Electronic Two Component",

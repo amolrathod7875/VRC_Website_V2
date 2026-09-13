@@ -1,6 +1,131 @@
-export type FilterSpecRow = {
+export type FilterSpec = {
   label: string;
-  values: string[];
+  value: string;
+};
+
+export type FilterVariant = {
+  id: string;
+  name: string;
+  image: string;
+  alt: string;
+  specifications: FilterSpec[];
+  description?: string;
+};
+
+export const filterVariants: FilterVariant[] = [
+  {
+    id: "high-pressure-filter-450",
+    name: "HIGH PRESSURE FILTER — 450 BAR",
+    image: "/Product_png_s/filter/HIGH PRESSURE FILTER 450 bar.jpg",
+    alt: "High Pressure Filter 450 BAR",
+    description: "High-pressure inline filtration unit for industrial fluid handling.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "450 bar" },
+      { label: "INLET / OUTLET / DRAIN PORTS", value: '1/2" BSP(F), 3/8" BSP(F), 1/4" BSP(F)' },
+      { label: "FILTER CASSETTE SIZE", value: "27 mm × 145 mm long" },
+      { label: "WETTED PARTS", value: "304 Stainless Steel, PTFE Seal Ring" },
+    ],
+  },
+  {
+    id: "high-pressure-filter-350",
+    name: "HIGH PRESSURE FILTER — 350 BAR",
+    image: "/Product_png_s/filter/HIGH PRESSURE FILTER 450 bar.jpg",
+    alt: "High Pressure Filter 350 BAR",
+    description: "High-pressure inline filtration unit for industrial fluid handling.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "350 bar" },
+      { label: "INLET / OUTLET / DRAIN PORTS", value: '1/2" BSP(F), 1/4" BSP(F)' },
+      { label: "FILTER CASSETTE SIZE", value: "27 mm × 114 mm long" },
+      { label: "WETTED PARTS", value: "304 Stainless Steel, PTFE Seal Ring" },
+    ],
+  },
+  {
+    id: "low-pressure-filter-ss",
+    name: "LOW PRESSURE FILTER (STAINLESS STEEL)",
+    image: "/Product_png_s/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
+    alt: "Low Pressure Filter Stainless Steel",
+    description: "Low-pressure inline filtration unit with stainless steel construction.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "120 bar" },
+      { label: "INLET / OUTLET / DRAIN PORTS", value: '3/8" BSP(F), 3/8" BSP(F), 1/4" BSP(F)' },
+      { label: "FILTER CASSETTE SIZE", value: "27 mm × 145 mm long" },
+      { label: "WETTED PARTS", value: "304 Stainless Steel, PTFE Seal Ring" },
+    ],
+  },
+  {
+    id: "low-pressure-filter-aluminium",
+    name: "LOW PRESSURE FILTER (ALUMINIUM)",
+    image: "/Product_png_s/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
+    alt: "Low Pressure Filter Aluminium",
+    description: "Low-pressure inline filtration unit with aluminium construction.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "24 bar" },
+      { label: "INLET / OUTLET / DRAIN PORTS", value: '3/8" BSP(F), 3/8" BSP(F), 1/4" BSP(F)' },
+      { label: "FILTER CASSETTE SIZE", value: "27 mm × 145 mm long" },
+      { label: "WETTED PARTS", value: "Aluminium, PTFE Ring" },
+    ],
+  },
+  {
+    id: "cartridge-type-inline-filter",
+    name: "CARTRIDGE TYPE INLINE FILTER 1\"",
+    image: "/Product_png_s/filter/CARTRIDGE TYPE INLINE FILTER.png",
+    alt: "Cartridge Type Inline Filter 1\"",
+    description: "Cartridge-type inline filter for paint spray systems.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "28 bar" },
+      { label: "INLET / OUTLET / DRAIN PORTS", value: '1" BSP(F), 1" BSP(F), 3/8" BSP(F)' },
+      { label: "FILTER CASSETTE SIZE", value: '2 1/2" Dia. × 20" long' },
+      { label: "WETTED PARTS", value: "304 Stainless Steel, PTFE Ring / Viton" },
+    ],
+  },
+  {
+    id: "bag-type-inline-filter",
+    name: "BAG TYPE INLINE FILTER 9\"/13\"",
+    image: "/Product_png_s/filter/BAG TYPE INLINE FILTER .png",
+    alt: "Bag Type Inline Filter 9\"/13\"",
+    description: "Bag-type inline filter for paint spray systems.",
+    specifications: [
+      { label: "MAXIMUM WORKING PRESSURE", value: "30 bar" },
+      { label: "INLET / OUTLET / GAUGE PORTS", value: '1" BSP(F), 1" BSP(F), 1/4" BSP(F)' },
+      { label: "BAG SIZE", value: '4" O.D. × 13" long, 4" O.D. × 9" long' },
+      { label: "WETTED PARTS", value: "304 Stainless Steel, PTFE Ring" },
+    ],
+  },
+  {
+    id: "filter-cassette-l145",
+    name: "FILTER CASSETTE L145",
+    image: "/Product_png_s/filter/FILTER CASSETTE L145.jpg",
+    alt: "Filter Cassette L145",
+    description: "Filter cassette element with multiple mesh size options.",
+    specifications: [
+      { label: "SIZE", value: "27 mm × L145 mm" },
+      { label: "TOTAL FILL VOLUME", value: "83 cc" },
+      { label: "MESH SIZES", value: "60, 80, 100, 120, 125, 150, 200, 250, 400, 600" },
+      { label: "CONSTRUCTION MATERIAL", value: "304 Stainless Steel" },
+      { label: "NOTE", value: "Other sizes on request" },
+    ],
+  },
+  {
+    id: "tip-filter-assembly",
+    name: "TIP FILTER ASSEMBLY",
+    image: "/Product_png_s/filter/TIP FILTER ASSEMBLY.jpg",
+    alt: "Tip Filter Assembly",
+    description: "Disc tip filter assembly for spray guns.",
+    specifications: [
+      { label: "INLET / OUTLET", value: "M18 × 1(F), M18 × 1(M), 7/8\"(F), 7/8\"(M)" },
+      { label: "MESH SIZES", value: "30, 60, 100" },
+      { label: "CONSTRUCTION MATERIAL", value: "304 Stainless Steel" },
+      { label: "TYPE", value: "Disc tip filter" },
+    ],
+  },
+];
+
+export const filterCatalogue = {
+  name: "FILTERS",
+  category: "Accessories / Filters",
+  catalogue: "/Catalogue/filters.pdf",
+  description:
+    "Complete range of filters for paint spray systems including high pressure filters (up to 450 BAR), low pressure filters (stainless steel & aluminium), cartridge type inline filters, bag type inline filters, filter cassettes with multiple mesh sizes, and tip filter assemblies for spray guns.",
 };
 
 export type FilterFeature = {
@@ -19,23 +144,3 @@ export const filterFeatures: FilterFeature[] = [
   { text: "PTFE/Viton seal rings" },
   { text: "Customized filters available on request" },
 ];
-
-export const filterSpecRows: FilterSpecRow[] = [
-  { label: "FILTER TYPE", values: ["High Pressure Filter (450 BAR)", "High Pressure Filter (350 BAR)", "Low Pressure Filter (SS)", "Low Pressure Filter (Aluminium)", "Cartridge Type Inline Filter", "Bag Type Inline Filter", "Filter Cassette L145", "Tip Filter Assembly"] },
-  { label: "MAX WORKING PRESSURE", values: ["450 BAR", "350 BAR", "120 BAR", "24 BAR", "28 BAR", "30 BAR", "\u2014", "\u2014"] },
-  { label: "INLET PORT", values: ['1/2" BSP(F)', '1/2" BSP(F)', '3/8" BSP(F)', '3/8" BSP(F)', '1" BSP(F)', '1" BSP(F)', '\u2014', 'M18\u00D71(F) / 7/8" (F)'] },
-  { label: "OUTLET PORT", values: ['3/8" BSP(F)', '1/4" BSP(F)', '3/8" BSP(F)', '3/8" BSP(F)', '1" BSP(F)', '1" BSP(F)', '\u2014', 'M18\u00D71(M) / 7/8" (M)'] },
-  { label: "DRAIN / GAUGE PORT", values: ['1/4" BSP(F)', '\u2014', '1/4" BSP(F)', '1/4" BSP(F)', '3/8" BSP(F)', '1/4" BSP(F)', '\u2014', '\u2014'] },
-  { label: "CASSETTE / ELEMENT SIZE", values: ["\u00D827mm \u00D7 145mm", "\u00D827mm \u00D7 114mm", "\u00D827mm \u00D7 145mm", "\u00D827mm \u00D7 145mm", '2\u00BD" Dia. \u00D7 20" long', 'Bag 4" O.D. \u00D7 13"/9" long', "\u00D827mm \u00D7 145mm", "Disc tip filter"] },
-  { label: "WETTED PARTS", values: ["304 SS, PTFE Seal Ring", "304 SS, PTFE Seal Ring", "304 SS, PTFE Seal Ring", "Aluminium, PTFE Ring", "304 SS, PTFE/Viton Ring", "304 SS, PTFE Ring", "304 SS", "304 SS"] },
-  { label: "MESH SIZES", values: ["\u2014", "\u2014", "\u2014", "\u2014", "\u2014", "\u2014", "60, 80, 100, 120, 125, 150, 200, 250, 400, 600", "30, 60, 100"] },
-  { label: "TOTAL FILL VOLUME", values: ["\u2014", "\u2014", "\u2014", "\u2014", "\u2014", "\u2014", "83 CC", "\u2014"] },
-];
-
-export const filterCatalogue = {
-  name: "FILTERS",
-  category: "Accessories / Filters",
-  catalogue: "/Catalogue/filters.pdf",
-  description:
-    "Complete range of filters for paint spray systems including high pressure filters (up to 450 BAR), low pressure filters (stainless steel & aluminium), cartridge type inline filters, bag type inline filters, filter cassettes with multiple mesh sizes, and tip filter assemblies for spray guns.",
-};

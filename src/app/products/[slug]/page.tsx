@@ -25,9 +25,11 @@ import { hippoCatalogue, hippoFeatures } from "@/lib/hippoData";
 import { dragonCatalogue, dragonFeatures } from "@/lib/dragonData";
 import { stirrerCatalogue, stirrerFeatures } from "@/lib/stirrerData";
 import { valveCatalogue } from "@/lib/valvesData";
-import { filterCatalogue, filterFeatures } from "@/lib/filtersCatalogueData";
+import { filterCatalogue, filterVariants } from "@/lib/filtersCatalogueData";
 import { polyureaCatalogue, polyureaFeatures } from "@/lib/polyureaData";
 import { cheetahCatalogue, cheetahFeatures } from "@/lib/cheetahData";
+import { tubeVarnishCatalogue, tubeVarnishFeatures } from "@/lib/tubeVarnishData";
+import { TubeVarnishFeatures, TubeVarnishApplications, TubeVarnishTechnicalSpecifications } from "@/components/TubeVarnishCataloguePage";
 import { vrcMixHpCatalogue, vrcMixHpFeatures } from "@/lib/vrcMixHpData";
 import { barrelPumpCatalogue, barrelPumpFeatures } from "@/lib/barrelPumpData";
 import { portablePressureFeedPotCatalogue, portablePressureFeedPotFeatures } from "@/lib/portablePressureFeedPotData";
@@ -51,7 +53,6 @@ import { drumCatalogue, drumFeatures, drumApplications, drumSpecRows, drumSpecCo
 import { DrumApplications, DrumTechnicalSpecifications } from "@/components/DrumCataloguePage";
 import { StirrerCataloguePage } from "@/components/StirrerCataloguePage";
 import { PneumaticStirrerFeatures, PneumaticStirrerVariants } from "@/components/PneumaticStirrerCataloguePage";
-import { FiltersFeatures, FiltersTechnicalSpecifications } from "@/components/FiltersCataloguePage";
 import { ValvesCataloguePage } from "@/components/ValvesCataloguePage";
 import type { CatalogueVariant } from "@/components/CatalogueVariantRow";
 
@@ -451,6 +452,42 @@ export default async function ProductDetailPage({ params }: Props) {
       );
     }
 
+    if (node.slug === "tube-varnish-coating") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={tubeVarnishCatalogue.name}
+            category={tubeVarnishCatalogue.category}
+            catalogue={tubeVarnishCatalogue.catalogue}
+            description={tubeVarnishCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={tubeVarnishCatalogue.description}
+                    specifications={[]}
+                    features={tubeVarnishFeatures.map((f) => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <TubeVarnishApplications />
+          <TubeVarnishTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={tubeVarnishCatalogue.catalogue} />
+        </>
+      );
+    }
+
     if (node.slug === "vrc-mix-hp") {
       return (
         <>
@@ -747,38 +784,24 @@ export default async function ProductDetailPage({ params }: Props) {
     }
 
     if (node.slug === "filters") {
+      const variants = filterVariants.map((v) => ({
+        id: v.id,
+        name: v.name,
+        image: v.image,
+        alt: v.alt,
+        specifications: v.specifications,
+        description: v.description,
+      }));
+
       return (
-        <>
-          <ProductCatalogueHero
-            title={filterCatalogue.name}
-            category={filterCatalogue.category}
-            catalogue={filterCatalogue.catalogue}
-            description={filterCatalogue.description}
-          />
-          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
-              <nav aria-label="Product Categories" className="pt-8">
-                <ProductNav />
-              </nav>
-              <div className="py-8">
-                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
-                <div className="flex flex-col">
-                  <CatalogueSingleProduct
-                    title={node.name}
-                    image={node.image}
-                    alt={node.name}
-                    description={filterCatalogue.description}
-                    specifications={[]}
-                    features={filterFeatures.map(f => f.text)}
-                  />
-                </div>
-              </div>
-            </div>
-          </section>
-          <FiltersFeatures />
-          <FiltersTechnicalSpecifications />
-          <CatalogueDownloadCTA catalogue={filterCatalogue.catalogue} />
-        </>
+        <CatalogueVariantList
+          title={filterCatalogue.name}
+          category={filterCatalogue.category}
+          catalogue={filterCatalogue.catalogue}
+          description={filterCatalogue.description}
+          breadcrumb={breadcrumbs}
+          variants={variants}
+        />
       );
     }
 
