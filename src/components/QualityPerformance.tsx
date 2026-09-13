@@ -52,7 +52,7 @@ export function QualityPerformance() {
       ref={sectionRef}
       className="relative overflow-hidden bg-white min-h-screen flex items-center"
       style={{
-        backgroundImage: "url('/Quality_Background.avif')",
+        backgroundImage: "url('/Vids_imgs/Quality_Background.avif')",
         backgroundSize: "cover",
         backgroundPosition: `center ${bgOffset}px`,
         backgroundRepeat: "no-repeat",

@@ -33,7 +33,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "Learn more →", href: "/about" },
     },
     image: {
-      src: "/VR-Coatings-Pvt-Ltd-Factory.png",
+      src: "/Vids_imgs/VR-Coatings-Pvt-Ltd-Factory.png",
       alt: "VR Coatings facility",
     },
     cta: {
