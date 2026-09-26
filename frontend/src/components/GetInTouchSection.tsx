@@ -42,7 +42,7 @@ export function GetInTouchSection({
         className="absolute inset-0 z-10"
         style={{ backgroundColor: "rgba(6, 31, 54, 0.65)" }}
       />
-      <div className="relative z-20 flex-1 flex items-center px-4 py-20 sm:px-6 lg:px-8 lg:pl-24 lg:py-32">
+      <div className="home-section-container flex-1 flex items-center py-20 lg:py-32">
         <div className="max-w-[600px]">
           <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-100">{eyebrow}</p>
           <h2 className="mt-4 text-4xl font-semibold leading-[1.1] text-white sm:text-5xl">{title}</h2>

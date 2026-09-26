@@ -5,7 +5,7 @@ export function LogoSlider() {
   const logos = [...featured, ...featured];
   return (
     <section className="border-y border-slate-200 bg-surface py-10">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="home-section-container">
         <p className="mb-6 text-center text-xs font-semibold uppercase tracking-[0.24em] text-brand-800">
           Trusted by industrial partners
         </p>

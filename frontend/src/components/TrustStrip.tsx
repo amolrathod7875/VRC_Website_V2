@@ -6,7 +6,7 @@ const ICONS = [IconEngineered, IconQuality, IconApplication, IconProtection, Ico
 export function TrustStrip() {
   return (
     <section className="border-y border-slate-200 bg-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="home-section-container">
         <div className="grid divide-y divide-slate-200 sm:grid-cols-2 sm:divide-y-0 lg:grid-cols-5">
           {trustPillars.map((pillar, i) => {
             const Icon = ICONS[i] ?? IconEngineered;

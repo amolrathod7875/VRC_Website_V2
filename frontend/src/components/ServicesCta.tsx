@@ -4,7 +4,7 @@ import { IconArrowRight } from "./Icon";
 export function ServicesCta() {
   return (
     <section className="bg-surface">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div className="home-section-container py-16 lg:py-20">
         <div className="rounded-xl border border-slate-200 bg-white p-8 sm:p-10 lg:p-12">
           <div className="grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
             <div>

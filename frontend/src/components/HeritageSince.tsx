@@ -4,7 +4,7 @@ export function HeritageSince() {
       aria-labelledby="heritage-since"
       className="relative overflow-hidden bg-white"
     >
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+      <div className="home-section-container py-16 lg:py-24">
         <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:gap-8">
           <p className="text-xs font-semibold uppercase tracking-[0.32em] text-[#1678C8]">
             Since

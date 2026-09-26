@@ -58,7 +58,7 @@ export function QualityPerformance() {
         backgroundRepeat: "no-repeat",
       }}
     >
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:pb-12 w-full">
+      <div className="relative z-10 home-section-container py-20 lg:pb-12 w-full">
         <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-center relative">
           {/* Connection lines SVG - desktop only */}
           <svg

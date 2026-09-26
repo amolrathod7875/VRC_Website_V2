@@ -54,7 +54,7 @@ export function ClientFeedback() {
 
   return (
     <section className="bg-white pt-6 pb-28 sm:pt-8 sm:pb-32 lg:pt-10 lg:pb-36">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="home-section-container">
         <div className="lg:grid lg:grid-cols-[24%_1fr] lg:gap-12">
           <div className="flex flex-col justify-between">
             <Eyebrow>CLIENT FEEDBACK</Eyebrow>

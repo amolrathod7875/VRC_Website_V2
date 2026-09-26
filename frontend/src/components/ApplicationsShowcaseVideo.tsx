@@ -76,7 +76,7 @@ export function ApplicationsShowcaseVideo({
       ref={sectionRef}
       className="bg-white py-16 sm:py-20"
     >
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="home-section-container">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-700">
           Applications
         </p>

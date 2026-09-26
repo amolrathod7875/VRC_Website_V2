@@ -14,7 +14,7 @@ export function BrandStatement() {
           backgroundSize: "64px 64px",
         }}
       />
-      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8 lg:py-32">
+      <div className="home-section-container py-24 lg:py-32">
         <div className="grid items-end gap-12 lg:grid-cols-[1fr_auto]">
           <div className="max-w-3xl">
             <Eyebrow tone="white">About VR Coatings</Eyebrow>

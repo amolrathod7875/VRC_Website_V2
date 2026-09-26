@@ -44,7 +44,8 @@ export default function HomePage() {
             <source src="/media/videos/homepage/Landing_Video.mp4" type="video/mp4" />
           </video>
         </div>
-        <div className="who-we-are-content">
+        <div className="home-section-container relative z-10 w-full">
+          <div className="who-we-are-content">
           <Eyebrow tone="white">Who we are</Eyebrow>
           <SectionHeading tone="white">
             Engineered coating solutions for demanding industries.
@@ -77,6 +78,7 @@ export default function HomePage() {
             <IconArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
+        </div>
       </section>
 
       <TrustStrip />
@@ -86,7 +88,7 @@ export default function HomePage() {
       <BrandStatement />
 
       <section id="products" className="scroll-mt-24 bg-[#F4F7FA]">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="home-section-container py-20 lg:py-24">
           <div className="lg:grid lg:grid-cols-[35%_1fr] lg:gap-12">
             <div className="lg:sticky lg:top-24 lg:self-start">
               <Eyebrow>Our Products</Eyebrow>
@@ -171,7 +173,7 @@ export default function HomePage() {
       <ServicesCta />
 
       <section id="applications" className="bg-white">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+        <div className="home-section-container py-20 lg:py-24">
           <div className="mb-12 grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-end">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-700">Applications</p>
@@ -193,7 +195,7 @@ export default function HomePage() {
       <ClientFeedback />
 
       <section className="bg-surface lg:h-[calc(100vh-80px)] lg:flex lg:items-center">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-0 w-full">
+        <div className="home-section-container py-12 lg:py-0 w-full">
           <div className="grid gap-8 lg:grid-cols-[1.1fr_1fr] lg:items-center min-h-0">
             <div className="relative overflow-hidden rounded-xl flex min-h-0 h-full">
               <video

@@ -205,6 +205,32 @@ body {
   }
 }
 
+.home-section-container {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .home-section-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-section-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+}
+
+:root {
+  --home-rail-x: 16px;
+}
+
 .who-we-are-video-container {
   position: absolute;
   inset: 0;
@@ -230,16 +256,12 @@ body {
   max-width: 40vw;
   margin-left: 0;
   margin-right: auto;
-  padding-left: 5vw;
-  padding-right: 3vw;
 }
 
 @media (max-width: 768px) {
   .who-we-are-content {
     max-width: 100%;
     margin-top: 100px;
-    padding-left: 5vw;
-    padding-right: 5vw;
   }
 }
 

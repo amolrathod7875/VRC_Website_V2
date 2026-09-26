@@ -76,7 +76,8 @@ export function ScrollProgressRail() {
   return (
     <nav
       aria-hidden
-      className="fixed left-6 top-[120px] z-40 hidden lg:flex flex-col items-center pointer-events-none select-none"
+      className="fixed z-40 hidden lg:flex flex-col items-center pointer-events-none select-none"
+      style={{ left: "var(--home-rail-x)", top: "120px" }}
     >
       <span
         key={activeIndex}
