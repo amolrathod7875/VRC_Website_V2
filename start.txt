@@ -1,0 +1,33 @@
+# Start Commands for VR Coatings Website
+
+## Prerequisites
+- Node.js 20+
+- Python 3.11+ (web-env conda environment)
+- PostgreSQL 17 (or Docker)
+
+## Frontend
+
+cd frontend
+npm install
+npm run dev
+
+# Build for production
+npm run build
+
+## Backend
+
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+
+## Full Stack (Docker)
+
+docker compose up --build
+
+## Check Services
+
+Frontend: http://localhost:3000
+Backend health: http://localhost:8000/health
+API base: http://localhost:8000/api/v1
