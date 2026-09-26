@@ -16,7 +16,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "cartridge-type-inline-filter",
     name: "CARTRIDGE TYPE INLINE FILTER 1\"",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Cartridge type inline filter",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },
@@ -28,7 +28,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "bag-type-inline-filter",
     name: "BAG TYPE INLINE FILTER 9\"/13\"",
-    image: "/Product_png_s/Bag type filter.png",
+    image: "/media/images/products/Bag type filter.png",
     alt: "Bag type inline filter",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "30 BAR" },
@@ -40,7 +40,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "filter-cassette-l145",
     name: "FILTER CASSETTE L145",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Filter cassette L145",
     specifications: [
       { label: "SIZE", value: "27MM X L 145 MM" },
@@ -53,7 +53,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "tip-filter-assembly",
     name: "TIP FILTER ASSEMBLY",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Tip filter assembly",
     specifications: [
       { label: "INLET, OUTLET", value: 'M18 X 1(F), M18 X 1(M) / 7/8" (F), 7/8" (M)' },
@@ -64,7 +64,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "high-pressure-filter",
     name: "HIGH PRESSURE FILTER",
-    image: "/Product_png_s/hp filter 350 bar.png",
+    image: "/media/images/products/hp filter 350 bar.png",
     alt: "High pressure filter",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },
@@ -76,7 +76,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "low-pressure-filter-ss",
     name: "LOW PRESSURE FILTER (STAINLESS STEEL)",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Low pressure filter stainless steel",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BAR" },
@@ -88,7 +88,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "low-pressure-filter-aluminium",
     name: "LOW PRESSURE FILTER (ALUMINIUM)",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Low pressure filter aluminium",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "120 BAR" },
@@ -100,7 +100,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "low-pressure-filter-aluminium-24bar",
     name: "LOW PRESSURE FILTER (ALUMINIUM) 24 BAR",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     alt: "Low pressure filter aluminium 24 bar",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "24 BAR" },
@@ -114,7 +114,7 @@ export const filterProducts: FilterProduct[] = [
 export const filterCatalogue = {
   name: "FILTERS",
   category: "Accessories / Filters",
-  catalogue: "/Catalogue/filters.pdf",
+  catalogue: "/media/catalogues/filters.pdf",
   description:
     "Complete range of filters for paint spray systems including cartridge type, bag type, filter cassette, tip filter, high pressure, and low pressure filters.",
 };

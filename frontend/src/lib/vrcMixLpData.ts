@@ -83,7 +83,7 @@ export const vrcMixLpFaults: VrcMixLpFault[] = [
 export const vrcMixLpCatalogue = {
   name: "VRC - MIX LP",
   category: "Spray Painting Equipment / Electronic Two Component / VRC - Mix LP",
-  catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf",
+  catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf",
   description:
     "Variable ratio electronic two-component mixing system designed for low to medium pressure spray applications at 30 bar max working pressure. Features mixing ratio range up to 15.0:1 in 0.1 increments, accuracy tolerance down to 1%, flow rate 0.1-4 L/min, and comprehensive fault monitoring with audio-visual alarms and auto shut-off responses.",
 };

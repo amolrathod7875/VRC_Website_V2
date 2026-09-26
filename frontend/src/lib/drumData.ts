@@ -65,7 +65,7 @@ export const drumSpecRows: DrumSpecRow[] = [
 export const drumCatalogue = {
   name: "DRUM PRESS",
   category: "Dispensing Equipment - Drum Press / Drum Press",
-  catalogue: "/Catalogue/DRUM PRESS.pdf",
+  catalogue: "/media/catalogues/DRUM PRESS.pdf",
   description:
     "Medium & heavy duty heated and cold airless drum press dispensing/ transfer equipment. Equipped with medium duty or heavy duty range of pumps and suitable for semi-solid and pasty materials.",
 };

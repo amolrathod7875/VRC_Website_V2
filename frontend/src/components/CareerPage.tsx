@@ -74,7 +74,7 @@ export function CareerPage() {
         ctaLabel="View Open Positions"
         openingsCount={roles.length}
         imageAlt="Industrial manufacturing facility"
-        imageSrc="/Vids_imgs/Facility image.jpg"
+        imageSrc="/media/videos/homepage/Facility image.jpg"
       />
 
       <CultureStrip items={cultureItems} />

@@ -143,8 +143,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "barrel-pump",
     name: "Barrel Pump",
     description: "Pneumatically operated transfer pump for extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste.",
-    catalogue: "/Catalogue/Barrel Pump.pdf",
-    image: "/Product_png_s/Category_wise_products/Barrel Pump/Barrel Transfer Pump 14419.jpg",
+    catalogue: "/media/catalogues/Barrel Pump.pdf",
+    image: "/media/images/products/Category_wise_products/Barrel Pump/Barrel Transfer Pump 14419.jpg",
     overview: "The Barrel Pump is a pneumatically operated transfer pump designed for extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste. Available in four variants with pressure ratios from 4:1 to 60:1, providing output pressures up to 360 bar at 6 bar air inlet.",
     features: [
       "Pneumatically operated transfer pump for 200L steel drums and 210L plastic barrels",
@@ -175,8 +175,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "cheetah",
     name: "CHEETAH",
     description: "Two-Component Hot Airless Spray Painting Equipment designed for tough working conditions, suitable for two-component high viscosity, solventless coating, semi-solid coating, marine coating, and all types of protective coatings.",
-    catalogue: "/Catalogue/Cheetah.pdf",
-    image: "/Product_png_s/Category_wise_products/Cheetah/Cheetah 14301.jpg",
+    catalogue: "/media/catalogues/Cheetah.pdf",
+    image: "/media/images/products/Category_wise_products/Cheetah/Cheetah 14301.jpg",
     overview: "The CHEETAH is a two-component hot airless spray painting equipment range designed for tough working conditions. It is suitable for two-component high viscosity, solventless coating, semi-solid coating, marine coating, and all types of protective coatings.",
     features: [
       "Pneumatically sensed high-performance air motor",
@@ -210,8 +210,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "cub",
     name: "Cub",
     description: "Four-ball piston transfer pump with 100:1 pressure ratio for high-pressure fluid transfer.",
-    catalogue: "/Catalogue/cub.pdf",
-    image: "/Product_png_s/Category_wise_products/Cub/Cub pump.jpg",
+    catalogue: "/media/catalogues/cub.pdf",
+    image: "/media/images/products/Category_wise_products/Cub/Cub pump.jpg",
     overview: "The CUB is a four-ball piston transfer pump with a 100:1 pressure ratio, designed for high-pressure transfer of paints, coatings, and viscous fluids. Delivers up to 4.2 LPM at 600 BAR maximum working pressure.",
     features: [
       "100:1 pressure ratio",
@@ -246,8 +246,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "drum-press",
     name: "DRUM PRESS",
     description: "Pneumatic drum press dispensing system for extracting paint and coatings from 200L drums.",
-    catalogue: "/Catalogue/DRUM PRESS.pdf",
-    image: "/Product_png_s/Drum press1.png",
+    catalogue: "/media/catalogues/DRUM PRESS.pdf",
+    image: "/media/images/products/Drum press1.png",
     overview: "The DRUM PRESS is a pneumatic drum press dispensing system for extracting and dispensing paint, coatings, and sealants from 200L drums. Features a pneumatic follow plate system with 5L to 200L capacity range and 5\" and 8\" ram options.",
     features: [
       "Pneumatic operation — safe for hazardous areas",
@@ -278,8 +278,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "elephant-pump",
     name: "Elephant Pump",
     description: "High-volume, low-pressure transfer pump for efficient supply of paints, coatings, and viscous fluids.",
-    catalogue: "/Catalogue/Elephant.pdf",
-    image: "/Product_png_s/Category_wise_products/Elephant Pump/Elephant 14398.jpg",
+    catalogue: "/media/catalogues/Elephant.pdf",
+    image: "/media/images/products/Category_wise_products/Elephant Pump/Elephant 14398.jpg",
     overview: "The ELEPHANT is a high-volume, low-pressure transfer pump designed for efficient supply of paints, coatings, and viscous fluids to spray systems. Features a 2:1 pressure ratio, up to 60 LPM flow rate, and handles viscosities up to 2,000 Cp.",
     features: [
       "60 LPM max flow rate — high-volume transfer",
@@ -315,8 +315,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "hippo-pump",
     name: "Hippo Pump",
     description: "Low-pressure transfer pump for reliable transfer of paints, coatings, and viscous fluids.",
-    catalogue: "/Catalogue/Hippo.pdf",
-    image: "/Product_png_s/Category_wise_products/Hippo Pump/Hippo 14311.jpg",
+    catalogue: "/media/catalogues/Hippo.pdf",
+    image: "/media/images/products/Category_wise_products/Hippo Pump/Hippo 14311.jpg",
     overview: "The HIPPO is a low-pressure transfer pump designed for reliable transfer of paints, coatings, and viscous fluids. Available in piston type (pressure ratios 1:170, 3:400, 5:900, 12:400) and diaphragm type (1:1 ratio, 6 bar max). Features 304 stainless steel wetted parts with PTFE/Silicon sealing.",
     features: [
       "Available in piston type (4 pressure ratios) and diaphragm type (1:1 ratio)",
@@ -346,8 +346,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "leopard-electric",
     name: "Leopard - Electric",
     description: "Electric pump system for paint and fluid transfer with dual heating elements and programmable temperature control.",
-    catalogue: "/Catalogue/Electric_pump.pdf",
-    image: "/Product_png_s/Category_wise_products/Leopard - ELECTRIC PUMP/Electric pump.jpg",
+    catalogue: "/media/catalogues/Electric_pump.pdf",
+    image: "/media/images/products/Category_wise_products/Leopard - ELECTRIC PUMP/Electric pump.jpg",
     overview: "The LEOPARD is an electric pump system for paint and fluid transfer. Motor-driven pump with dual heating elements and programmable temperature control. Available in 20L and 210L configurations for 200L barrels and 210L plastic containers. Features stainless steel construction, 2.2 KW motor, 0–40 BAR operating pressure, and built-in filtration.",
     features: [
       "Electric motor-driven — clean, quiet operation",
@@ -382,8 +382,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "pfp-dragon",
     name: "PFP DRAGON",
     description: "Passive Fire Protection (PFP) spray system for high-build intumescent coatings.",
-    catalogue: "/Catalogue/dragon.pdf",
-    image: "/Product_png_s/Category_wise_products/PFP DRAGON/PFP 4017.jpg",
+    catalogue: "/media/catalogues/dragon.pdf",
+    image: "/media/images/products/Category_wise_products/PFP DRAGON/PFP 4017.jpg",
     overview: "The DRAGON system is a passive fire protection (PFP) spray system designed for the application of high-build intumescent coatings. Engineered for heavy-duty industrial use, it ensures reliable and uniform coating performance to enhance fire resistance and protect critical steel structures.",
     features: [
       "Passive fire protection system",
@@ -418,8 +418,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "polyurea",
     name: "Polyurea",
     description: "Two-component hot airless polyurea spray equipment for high viscosity, solvent-less coating, waterproofing, PU foam and insulation coatings.",
-    catalogue: "/Catalogue/polyurea.pdf",
-    image: "/Product_png_s/Category_wise_products/Polyurea/Polyurea.jpg",
+    catalogue: "/media/catalogues/polyurea.pdf",
+    image: "/media/images/products/Category_wise_products/Polyurea/Polyurea.jpg",
     overview:
       "The POLYUREA system is a two-component hot airless spray equipment designed for tough working conditions. It is suitable for two-component high viscosity, solvent-less coating, waterproofing coating, PU foam and insulation coatings. Compact mounted on a robust trolley with accurate fixed volume 1:1 mixing ratio, double 3KW heaters and a polyurea wrap suff heated hose bundle of 15 metres.",
     features: [
@@ -461,8 +461,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "portable-pressure-feed-pot",
     name: "Pressure Feed Pot",
     description: "Portable stainless steel pressure vessel for transferring paint, oils and explosive liquids to spray guns.",
-    catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf",
-    image: "/Product_png_s/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg",
+    catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf",
+    image: "/media/images/products/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg",
     overview:
       "The Pressure Feed Pot is a portable stainless steel pressure vessel suitable for transferring paint, oils, and explosive liquids. It is designed for single gun use and serves as a substitute for the suction pot and gravity pot of the spray gun.",
     features: [
@@ -490,8 +490,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "rhino-pump",
     name: "Rhino Pump",
     description: "Heavy-duty airless spray pump with 12:400 pressure ratio and 400 BAR max pressure.",
-    catalogue: "/Catalogue/rhino.pdf",
-    image: "/Product_png_s/Category_wise_products/Rhino Pump/Rhino 4040.jpg",
+    catalogue: "/media/catalogues/rhino.pdf",
+    image: "/media/images/products/Category_wise_products/Rhino Pump/Rhino 4040.jpg",
     overview: "The RHINO is a heavy-duty airless spray pump system designed for large-scale industrial coating applications. Features a 12:400 pressure ratio, 400 BAR max working pressure, 15 LPM flow rate, and 4.0 KW air motor. Equipped with dual 3KW heaters and 15m heated hose bundle.",
     features: [
       "400 BAR (5800 psi) max working pressure",
@@ -530,8 +530,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "spray-painting-guns",
     name: "Spray Painting Guns",
     description: "Comprehensive range of manual spray guns for airless and air-assisted spraying applications.",
-    catalogue: "/Catalogue/manual_GUNS.pdf",
-    image: "/Product_png_s/Flamingo 11817.png",
+    catalogue: "/media/catalogues/manual_GUNS.pdf",
+    image: "/media/images/products/Flamingo 11817.png",
     overview: "VR Coatings offers a comprehensive range of manual spray guns for airless and air-assisted spraying applications. Pressure ratings from 250 to 500 BAR, with models for general finishing, heavy-duty applications, fine wood finishing, cavity waxing, and precision dispensing.",
     features: [
       "Pressure range: 250 BAR (AM250) to 500 BAR (EAGLE)",
@@ -561,8 +561,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "tiger-mini",
     name: "Tiger Mini",
     description: "Air-assisted airless spray pump system for fine finish and medium-duty applications.",
-    catalogue: "/Catalogue/Tiger_mini.pdf",
-    image: "/Product_png_s/Category_wise_products/Tiger Mini/VRC 4101.jpg",
+    catalogue: "/media/catalogues/Tiger_mini.pdf",
+    image: "/media/images/products/Category_wise_products/Tiger Mini/VRC 4101.jpg",
     overview: "The MINI TIGER is an air-assisted airless spray pump system for fine finish and medium-duty applications. Features a 2:150 pressure ratio, 150 BAR working pressure, and 4.2 LPM flow rate. Designed for use with the FLAMINGO air-assisted airless spray gun.",
     features: [
       "150 BAR working pressure — air-assisted airless system",
@@ -598,8 +598,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "tiger-pump",
     name: "Tiger Pump",
     description: "Low to medium-duty airless spray pump with 2:150 pressure ratio and up to 2 spray guns support.",
-    catalogue: "/Catalogue/Tiger.pdf",
-    image: "/Product_png_s/Category_wise_products/Tiger Pump/Tiger 14326.jpg",
+    catalogue: "/media/catalogues/Tiger.pdf",
+    image: "/media/images/products/Category_wise_products/Tiger Pump/Tiger 14326.jpg",
     overview: "The TIGER is a low to medium-duty airless spray pump system for industrial coating applications. Features a 2:150 pressure ratio, 150 BAR max working pressure, 4.2 LPM flow rate, and 2.2 KW air motor. Compatible with up to 2 spray guns.",
     features: [
       "150 BAR (2175 psi) working pressure — medium-duty airless",
@@ -635,8 +635,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "turbine-stirrer",
     name: "Turbine Stirrer",
     description: "Air-operated turbine agitation system for paint mixing, circulation, and material preparation.",
-    catalogue: "/Catalogue/turbine.pdf",
-    image: "/Product_png_s/Category_wise_products/Turbine Stirrer/Turbinr Stirrer.jpg",
+    catalogue: "/media/catalogues/turbine.pdf",
+    image: "/media/images/products/Category_wise_products/Turbine Stirrer/Turbinr Stirrer.jpg",
     overview: "VR Coatings Turbine Stirrers are air-operated agitation systems for paint mixing, circulation, and material preparation. Available in three tank sizes: TB-70 (70L), TB-110 (110L), and TB-180 (180L). Features 6-blade turbine impellers and 304 stainless steel wetted parts.",
     features: [
       "Three tank sizes: TB-70, TB-110, TB-180",
@@ -667,8 +667,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "vrc-mix-hp",
     name: "VRC MIX HP",
     description: "Electronic variable ratio 2K mixing system for high-pressure spray applications at 450 bar.",
-    catalogue: "/Catalogue/VRC - MIX HP.pdf",
-    image: "/Product_png_s/Category_wise_products/VRC MIX HP/VRCoatings 0964.jpg",
+    catalogue: "/media/catalogues/VRC - MIX HP.pdf",
+    image: "/media/images/products/Category_wise_products/VRC MIX HP/VRCoatings 0964.jpg",
     overview: "The VRC-MIX HP is an electronic two-component mixing system with variable ratio control for high-pressure spray applications. Features 450 bar max working pressure, adjustable mix ratio up to 10.0:1 in 0.1 increments, 240V AC single-phase power supply, and RS 232 + Modbus communication.",
     features: [
       "Electronic variable ratio 2K mixing system",
@@ -699,8 +699,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "vrc-mix-lp",
     name: "VRC MIX LP",
     description: "Variable ratio electronic 2K mixing system for low to medium pressure spray at 30 bar.",
-    catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf",
-    image: "/Product_png_s/Category_wise_products/VRC MIX LP/VRC 4734.jpg",
+    catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf",
+    image: "/media/images/products/Category_wise_products/VRC MIX LP/VRC 4734.jpg",
     overview: "The VRC MIX (L/M) is a variable ratio electronic two-component mixing system designed for low to medium pressure spray applications. Features a 30 bar max working pressure, variable mixing ratio up to 15.0:1 in 0.1 increments, 230V AC single-phase power, and advanced alarm system with audio/visual alerts.",
     features: [
       "Electronic variable ratio 2K mixing system",
@@ -854,48 +854,48 @@ export const applications: Application[] = [
     name: "Automotive",
     text: "E-coat, primers, and durable topcoats for body and underbody parts.",
     icon: IconCar,
-    image: "/applications/automotive.jpg",
-    video: "/Vids_imgs/automotive.mp4",
+    image: "/media/images/applications/automotive.jpg",
+    video: "/media/videos/homepage/automotive.mp4",
   },
   {
     slug: "defence-aerospace",
     name: "Defence & Aerospace",
     text: "Spec-driven coatings for airframes, ground systems, and components.",
     icon: IconPlane,
-    image: "/applications/defence-aerospace.jpg",
-    video: "/Vids_imgs/Aerospace.mp4",
+    image: "/media/images/applications/defence-aerospace.jpg",
+    video: "/media/videos/homepage/Aerospace.mp4",
   },
   {
     slug: "electronics",
     name: "Electronics",
     text: "Protective dielectric films for boards, housings, and connectors.",
     icon: IconCircuit,
-    image: "/applications/electronics.jpg",
-    video: "/Vids_imgs/Electronics.mp4",
+    image: "/media/images/applications/electronics.jpg",
+    video: "/media/videos/homepage/Electronics.mp4",
   },
   {
     slug: "infrastructure",
     name: "Infrastructure",
     text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.",
     icon: IconBuilding,
-    image: "/applications/infrastructure.jpg",
-    video: "/Vids_imgs/Infrastructure.mp4",
+    image: "/media/images/applications/infrastructure.jpg",
+    video: "/media/videos/homepage/Infrastructure.mp4",
   },
   {
     slug: "marine",
     name: "Marine",
     text: "Hull, deck, and offshore steel protection in saline environments.",
     icon: IconShip,
-    image: "/applications/marine.jpg",
-    video: "/Vids_imgs/Marine.mp4",
+    image: "/media/images/applications/marine.jpg",
+    video: "/media/videos/homepage/Marine.mp4",
   },
   {
     slug: "energy-process",
     name: "Energy & Process",
     text: "Coatings for pipelines, refineries, and power generation assets.",
     icon: IconFactory,
-    image: "/applications/energy-process.jpg",
-    video: "/Vids_imgs/Energy.mp4",
+    image: "/media/images/applications/energy-process.jpg",
+    video: "/media/videos/homepage/Energy.mp4",
   },
 ];
 
@@ -948,10 +948,10 @@ export const industries = [
 ];
 
 export const weProvide = [
-  { title: "Application Support", text: "On-site process guidance from surface prep to final inspection.", icon: "support", image: "/we_provide/application-support.jpg" },
-  { title: "Custom Formulation", text: "Lab-backed recipes matched to substrate, climate, and duty cycle.", icon: "flask", image: "/we_provide/custom-formulation.jpg" },
-  { title: "Quality Assurance", text: "Batch traceability, film testing, and documented QC protocols.", icon: "badgeCheck", image: "/we_provide/quality-assurance.jpg" },
-  { title: "Global Supply", text: "Coordinated logistics from India and North America to your line.", icon: "globe", image: "/we_provide/global-supply.jpg" },
+  { title: "Application Support", text: "On-site process guidance from surface prep to final inspection.", icon: "support", image: "/media/images/misc/we_provide/application-support.jpg" },
+  { title: "Custom Formulation", text: "Lab-backed recipes matched to substrate, climate, and duty cycle.", icon: "flask", image: "/media/images/misc/we_provide/custom-formulation.jpg" },
+  { title: "Quality Assurance", text: "Batch traceability, film testing, and documented QC protocols.", icon: "badgeCheck", image: "/media/images/misc/we_provide/quality-assurance.jpg" },
+  { title: "Global Supply", text: "Coordinated logistics from India and North America to your line.", icon: "globe", image: "/media/images/misc/we_provide/global-supply.jpg" },
 ];
  
 export const companyStats = [
@@ -996,7 +996,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Stuttgart, Germany",
     feedback:
       "The integration of VR Coatings equipment into our workflow significantly improved throughput and reduced manual handling.",
-    image: "/Vids_imgs/Sofia Ramirez.avif",
+    image: "/media/videos/homepage/Sofia Ramirez.avif",
   },
   {
     id: "laura-bennett",
@@ -1005,7 +1005,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Munich, Germany",
     feedback:
       "Even under peak load conditions, the equipment operates seamlessly with minimal maintenance, ensuring consistent reliability.",
-    image: "/Vids_imgs/Laura Bennett.avif",
+    image: "/media/videos/homepage/Laura Bennett.avif",
   },
   {
     id: "tomasz-nowak",
@@ -1014,7 +1014,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Warsaw, Poland",
     feedback:
       "VR Coatings' certification process and records made deployment simple and fully compliant, ensuring complete regulatory standards overall.",
-    image: "/Vids_imgs/Tomasz Nowak.avif",
+    image: "/media/videos/homepage/Tomasz Nowak.avif",
   },
   {
     id: "hiroshi-tanaka",
@@ -1023,7 +1023,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Eindhoven, Netherlands",
     feedback:
       "From design review to launch, the VR Coatings team delivered clear updates and strong technical support, ensuring smooth execution.",
-    image: "/Vids_imgs/Hiroshi Tanaka.avif",
+    image: "/media/videos/homepage/Hiroshi Tanaka.avif",
   },
   {
     id: "marcus-weber",
@@ -1032,7 +1032,7 @@ export const clientFeedback: ClientFeedback[] = [
     location: "Frankfurt, Germany",
     feedback:
       "The VR Coatings spray systems integrated cleanly into our existing production line, cutting coating cycle times and delivering a measurable ROI within the first quarter.",
-    image: "/Vids_imgs/Marcus Weber.avif",
+    image: "/media/videos/homepage/Marcus Weber.avif",
   },
 ];
 
@@ -1053,8 +1053,8 @@ export const certifications: Certification[] = [
     title: "ISO 9001:2015 Quality Management System Certificate",
     body:
       "Certificate No. AB22IS214430 issued by BMQR. Valid until 20 September 2027. Scope covers design, manufacturing, marketing, installation, sales and services of industrial spray painting and fluid handling equipments.",
-    file: "/CERTIFICATES/V R COATINGS PVT LTD -9001-RCA - CERTIFICATE.pdf",
-    preview: "/certifications/iso-9001-certificate.jpg",
+    file: "/media/certificates/V R COATINGS PVT LTD -9001-RCA - CERTIFICATE.pdf",
+    preview: "/media/images/certifications/iso-9001-certificate.jpg",
     validTo: "20 September 2027",
   },
   {
@@ -1063,8 +1063,8 @@ export const certifications: Certification[] = [
     title: "ATEX Acknowledgement of Receipt",
     body:
       "Document No. 2656/1/2018 issued by Technicka inspekcia, a.s. (Notified Body 1354). Acknowledges receipt of technical file documentation under Directive 2014/34/EU for non-electrical painting and fluid handling equipments. Technical documentation stored for 10 years.",
-    file: "/CERTIFICATES/ATTEX CERTIFICATE.PDF",
-    preview: "/certifications/atex-acknowledgement.jpg",
+    file: "/media/certificates/ATTEX CERTIFICATE.PDF",
+    preview: "/media/images/certifications/atex-acknowledgement.jpg",
     validTo: "13 August 2028",
   },
   {
@@ -1073,8 +1073,8 @@ export const certifications: Certification[] = [
     title: "Certificate of Conformity (CE Marking)",
     body:
       "Certificate No. 3874-CI-32025 issued by CEPROM (Romania). Valid until 5 February 2030. Confirms compliance of industrial spray painting and fluid handling equipments with Directive 2006/42/EC. Reference standards: EN ISO 12100:2010, EN 60204-1:2006+A1:2009.",
-    file: "/CERTIFICATES/3874-CI-32025 Industrial Spray Painting and Fluid Handling Equip.pdf",
-    preview: "/certifications/ce-certificate-of-conformity.jpg",
+    file: "/media/certificates/3874-CI-32025 Industrial Spray Painting and Fluid Handling Equip.pdf",
+    preview: "/media/images/certifications/ce-certificate-of-conformity.jpg",
     validTo: "5 February 2030",
   },
   {
@@ -1083,8 +1083,8 @@ export const certifications: Certification[] = [
     title: "EU-Type Examination Certificate (ATEX)",
     body:
       "Certificate No. TI19 ATEX 1308 X issued by Technicka inspekcia, a.s. (Notified Body 1354). EU-type examination for flameproof fluid heater under Directive 2014/34/EU. Compliance with EN 60079-0:2018 and EN 60079-1:2014.",
-    file: "/CERTIFICATES/Certificate TI19 ATEX 1308 X.pdf",
-    preview: "/certifications/atex-eu-type-exam.jpg",
+    file: "/media/certificates/Certificate TI19 ATEX 1308 X.pdf",
+    preview: "/media/images/certifications/atex-eu-type-exam.jpg",
   },
 ];
 
@@ -1108,67 +1108,67 @@ export const productCategories: ProductCategory[] = [
   {
     slug: "spray-painting-guns",
     name: "Spray Painting Guns",
-    image: "/Product_png_s/Flamingo 11817.png",
+    image: "/media/images/products/Flamingo 11817.png",
     children: [
-      { slug: "conventional-guns", name: "Conventional Guns", catalogue: "/Catalogue/CONVENTIONAL GUNS_f.pdf", image: "/Product_png_s/Flamingo 11817.png" },
-      { slug: "manual-guns", name: "Manual Guns", catalogue: "/Catalogue/manual_GUNS.pdf", image: "/Product_png_s/king.png" },
-      { slug: "automatic-guns", name: "Automatic Guns", catalogue: "/Catalogue/AUTOMATIC_gun.pdf", image: "/Product_png_s/Cartridge Gun.png" },
+      { slug: "conventional-guns", name: "Conventional Guns", catalogue: "/media/catalogues/CONVENTIONAL GUNS_f.pdf", image: "/media/images/products/Flamingo 11817.png" },
+      { slug: "manual-guns", name: "Manual Guns", catalogue: "/media/catalogues/manual_GUNS.pdf", image: "/media/images/products/king.png" },
+      { slug: "automatic-guns", name: "Automatic Guns", catalogue: "/media/catalogues/AUTOMATIC_gun.pdf", image: "/media/images/products/Cartridge Gun.png" },
       { slug: "pu-foam-gun", name: "PU Foam Gun" },
-      { slug: "wax-spray-gun", name: "Wax Spray Gun", image: "/Product_png_s/wax gun.png" },
-      { slug: "electrostatic-gun", name: "Electrostatic Gun", image: "/Product_png_s/electro.png" },
+      { slug: "wax-spray-gun", name: "Wax Spray Gun", image: "/media/images/products/wax gun.png" },
+      { slug: "electrostatic-gun", name: "Electrostatic Gun", image: "/media/images/products/electro.png" },
     ],
   },
   {
     slug: "spray-painting-equipment",
     name: "Spray Painting Equipment",
-    image: "/Product_png_s/Tiger.png",
+    image: "/media/images/products/Tiger.png",
     children: [
-      { slug: "tiger", name: "Tiger", catalogue: "/Catalogue/Tiger.pdf", image: "/Product_png_s/Tiger.png" },
-      { slug: "mini-tiger", name: "Mini Tiger", catalogue: "/Catalogue/Tiger_mini.pdf", image: "/Product_png_s/Tiger_mini.png" },
-      { slug: "rhino", name: "Rhino", catalogue: "/Catalogue/rhino.pdf", image: "/Product_png_s/Rhino 4040 (1) copy.png" },
-      { slug: "hippo", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf", image: "/Product_png_s/Hippo.png" },
-      { slug: "cheetah", name: "Cheetah", catalogue: "/Catalogue/Cheetah.pdf", image: "/Product_png_s/Cheetah.png" },
-      { slug: "dragon", name: "Dragon", catalogue: "/Catalogue/dragon.pdf", image: "/Product_png_s/PFP.png" },
-      { slug: "polyurea", name: "Polyurea", catalogue: "/Catalogue/polyurea.pdf", image: "/Product_png_s/Polyurea gun 4106.png" },
-      { slug: "tube-varnish-coating", name: "Tube / Varnish Coating", catalogue: "/Catalogue/TUBE VARNISH COATING SYSTEM.pdf", image: "/Product_png_s/vrc.png" },
+      { slug: "tiger", name: "Tiger", catalogue: "/media/catalogues/Tiger.pdf", image: "/media/images/products/Tiger.png" },
+      { slug: "mini-tiger", name: "Mini Tiger", catalogue: "/media/catalogues/Tiger_mini.pdf", image: "/media/images/products/Tiger_mini.png" },
+      { slug: "rhino", name: "Rhino", catalogue: "/media/catalogues/rhino.pdf", image: "/media/images/products/Rhino 4040 (1) copy.png" },
+      { slug: "hippo", name: "Hippo", catalogue: "/media/catalogues/Hippo.pdf", image: "/media/images/products/Hippo.png" },
+      { slug: "cheetah", name: "Cheetah", catalogue: "/media/catalogues/Cheetah.pdf", image: "/media/images/products/Cheetah.png" },
+      { slug: "dragon", name: "Dragon", catalogue: "/media/catalogues/dragon.pdf", image: "/media/images/products/PFP.png" },
+      { slug: "polyurea", name: "Polyurea", catalogue: "/media/catalogues/polyurea.pdf", image: "/media/images/products/Polyurea gun 4106.png" },
+      { slug: "tube-varnish-coating", name: "Tube / Varnish Coating", catalogue: "/media/catalogues/TUBE VARNISH COATING SYSTEM.pdf", image: "/media/images/products/vrc.png" },
       {
         slug: "electronic-two-component",
         name: "Electronic Two Component",
         children: [
-          { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/Catalogue/VRC - MIX HP.pdf", image: "/Product_png_s/VRC MIX HP 0964.png" },
-          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/Product_png_s/VRC MIX LP.png" },
+          { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/media/catalogues/VRC - MIX HP.pdf", image: "/media/images/products/VRC MIX HP 0964.png" },
+          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
         ],
       },
       {
         slug: "fixed-ratio-two-component",
         name: "Fixed Ratio Two Component",
         children: [
-          { slug: "vrc-mix-hp-fixed", name: "VRC - Mix HP", catalogue: "/Catalogue/VRC - MIX HP.pdf", image: "/Product_png_s/VRC MIX HP 0964.png" },
-          { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP", catalogue: "/Catalogue/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/Product_png_s/VRC MIX LP.png" },
+          { slug: "vrc-mix-hp-fixed", name: "VRC - Mix HP", catalogue: "/media/catalogues/VRC - MIX HP.pdf", image: "/media/images/products/VRC MIX HP 0964.png" },
+          { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
         ],
       },
-      { slug: "lion", name: "Lion", image: "/Product_png_s/VRC eagle.png" },
+      { slug: "lion", name: "Lion", image: "/media/images/products/VRC eagle.png" },
     ],
   },
   {
     slug: "paint-transfer-pumps",
     name: "Paint Transfer Pumps",
-    image: "/Product_png_s/Elephant 14398.jpg",
+    image: "/media/images/products/Elephant 14398.jpg",
     children: [
-      { slug: "hippo-pump", name: "Hippo", catalogue: "/Catalogue/Hippo.pdf", image: "/Product_png_s/Hippo 14311.jpg" },
-      { slug: "elephant", name: "Elephant", catalogue: "/Catalogue/Elephant.pdf", image: "/Product_png_s/Elephant 14398.jpg" },
-      { slug: "cub", name: "Cub", catalogue: "/Catalogue/cub.pdf", image: "/Product_png_s/Category_wise_products/Cub/Cub pump.jpg" },
-      { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/Catalogue/Barrel Pump.pdf", image: "/Product_png_s/Barrel Transfer Pump.png" },
-      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/Catalogue/diaphragm pump.pdf", image: "/Product_png_s/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
-      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf", image: "/Product_png_s/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg" },
+      { slug: "hippo-pump", name: "Hippo", catalogue: "/media/catalogues/Hippo.pdf", image: "/media/images/products/Hippo 14311.jpg" },
+      { slug: "elephant", name: "Elephant", catalogue: "/media/catalogues/Elephant.pdf", image: "/media/images/products/Elephant 14398.jpg" },
+      { slug: "cub", name: "Cub", catalogue: "/media/catalogues/cub.pdf", image: "/media/images/products/Category_wise_products/Cub/Cub pump.jpg" },
+      { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/media/catalogues/Barrel Pump.pdf", image: "/media/images/products/Barrel Transfer Pump.png" },
+      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/media/catalogues/diaphragm pump.pdf", image: "/media/images/products/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
+      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf", image: "/media/images/products/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg" },
     ],
   },
   {
     slug: "dispensing-equipment-drum-press",
     name: "Dispensing Equipment - Drum Press",
-    image: "/Product_png_s/Drum press1.png",
+    image: "/media/images/products/Drum press1.png",
     children: [
-      { slug: "drum-press", name: "Drum Press", catalogue: "/Catalogue/DRUM PRESS.pdf", image: "/Product_png_s/Drum press1.png" },
+      { slug: "drum-press", name: "Drum Press", catalogue: "/media/catalogues/DRUM PRESS.pdf", image: "/media/images/products/Drum press1.png" },
       {
         slug: "doser",
         name: "Doser",
@@ -1179,42 +1179,42 @@ export const productCategories: ProductCategory[] = [
       },
     ],
   },
-  { slug: "painting-reciprocators", name: "Painting Reciprocators", image: "/Product_png_s/VRC HAWK.png" },
+  { slug: "painting-reciprocators", name: "Painting Reciprocators", image: "/media/images/products/VRC HAWK.png" },
   {
     slug: "paint-agitation-system-turbine-stirrer",
     name: "Paint Agitation System - Turbine Stirrer",
-    image: "/Product_png_s/Turbinr Stirrer.png",
+    image: "/media/images/products/Turbinr Stirrer.png",
     lineBreakAfter: "Turbine",
     children: [
-      { slug: "turbine-stirrer", name: "Turbine Stirrer", catalogue: "/Catalogue/turbine.pdf", image: "/Product_png_s/Turbinr Stirrer.png" },
-      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer", catalogue: "/Catalogue/PNEUMATIC STIRRER.pdf", image: "/Product_png_s/pneumatic_stirrer.png" },
+      { slug: "turbine-stirrer", name: "Turbine Stirrer", catalogue: "/media/catalogues/turbine.pdf", image: "/media/images/products/Turbinr Stirrer.png" },
+      { slug: "pneumatic-stirrer", name: "Pneumatic Stirrer", catalogue: "/media/catalogues/PNEUMATIC STIRRER.pdf", image: "/media/images/products/pneumatic_stirrer.png" },
       { slug: "electrical-flame-proof-stirrer", name: "Electrical Flame Proof Stirrer" },
     ],
   },
   {
     slug: "accessories",
     name: "Accessories",
-    image: "/Product_png_s/slimline filter.png",
+    image: "/media/images/products/slimline filter.png",
     children: [
-      { slug: "valves", name: "Valves", catalogue: "/Catalogue/Valves.pdf", image: "/Product_png_s/vrc.png" },
-      { slug: "two-component-mixers", name: "Two Component Mixers", image: "/Product_png_s/Mixing Manifold 14427.png" },
-      { slug: "filters", name: "Filters", catalogue: "/Catalogue/filters.pdf", image: "/Product_png_s/slimline filter.png" },
-      { slug: "heating-accessories", name: "Heating Accessories", image: "/Product_png_s/elecric3.png" },
+      { slug: "valves", name: "Valves", catalogue: "/media/catalogues/Valves.pdf", image: "/media/images/products/vrc.png" },
+      { slug: "two-component-mixers", name: "Two Component Mixers", image: "/media/images/products/Mixing Manifold 14427.png" },
+      { slug: "filters", name: "Filters", catalogue: "/media/catalogues/filters.pdf", image: "/media/images/products/slimline filter.png" },
+      { slug: "heating-accessories", name: "Heating Accessories", image: "/media/images/products/elecric3.png" },
       {
         slug: "pressure-regulator",
         name: "Pressure Regulator",
-        image: "/Product_png_s/LP regulator 4219.png",
+        image: "/media/images/products/LP regulator 4219.png",
         children: [
-          { slug: "regulator", name: "Back Pressure Regulator", catalogue: "/Catalogue/regulator.pdf" },
+          { slug: "regulator", name: "Back Pressure Regulator", catalogue: "/media/catalogues/regulator.pdf" },
         ],
-        catalogue: "/Catalogue/regulator.pdf",
+        catalogue: "/media/catalogues/regulator.pdf",
       },
       {
         slug: "hoses",
         name: "Hoses",
         children: [
-          { slug: "electrically-heated-hoses", name: "Electrically Heated Hoses", image: "/Product_png_s/elecric.png" },
-          { slug: "water-heated-hoses", name: "Water Heated Hoses", image: "/Product_png_s/elecric2.png" },
+          { slug: "electrically-heated-hoses", name: "Electrically Heated Hoses", image: "/media/images/products/elecric.png" },
+          { slug: "water-heated-hoses", name: "Water Heated Hoses", image: "/media/images/products/elecric2.png" },
           {
             slug: "ptfe",
             name: "PTFE",
@@ -1236,7 +1236,7 @@ export const productCategories: ProductCategory[] = [
           { slug: "pneumatic-tube", name: "Pneumatic Tube" },
         ],
       },
-      { slug: "other-accessories", name: "Other Accessories", catalogue: "/Catalogue/Other Accessories.pdf" },
+      { slug: "other-accessories", name: "Other Accessories", catalogue: "/media/catalogues/Other Accessories.pdf" },
     ],
   },
 ];
@@ -1271,11 +1271,11 @@ export type CatalogueEntry = {
 };
 
 export const cataloguePDFs: CatalogueEntry[] = [
-  { slug: "ball-valves", name: "Ball Valves", category: "Accessories", catalogue: "/Catalogue/ball_valves.pdf" },
-  { slug: "pulsation-dampner", name: "Pulsation Dampner", category: "Accessories", catalogue: "/Catalogue/PULSATION DAMPNER.pdf" },
-  { slug: "paint-preparation-unit", name: "Paint Preparation Unit", category: "Special", catalogue: "/Catalogue/Paint Preparation Unit.pdf" },
-  { slug: "tube-varnish-coating-system", name: "Tube Varnish Coating System", category: "Special", catalogue: "/Catalogue/TUBE VARNISH COATING SYSTEM.pdf" },
-  { slug: "leopard-electric", name: "Leopard - Electric", category: "Paint Transfer Pumps", catalogue: "/Catalogue/Electric_pump.pdf" },
+  { slug: "ball-valves", name: "Ball Valves", category: "Accessories", catalogue: "/media/catalogues/ball_valves.pdf" },
+  { slug: "pulsation-dampner", name: "Pulsation Dampner", category: "Accessories", catalogue: "/media/catalogues/PULSATION DAMPNER.pdf" },
+  { slug: "paint-preparation-unit", name: "Paint Preparation Unit", category: "Special", catalogue: "/media/catalogues/Paint Preparation Unit.pdf" },
+  { slug: "tube-varnish-coating-system", name: "Tube Varnish Coating System", category: "Special", catalogue: "/media/catalogues/TUBE VARNISH COATING SYSTEM.pdf" },
+  { slug: "leopard-electric", name: "Leopard - Electric", category: "Paint Transfer Pumps", catalogue: "/media/catalogues/Electric_pump.pdf" },
 ];
 
 export function findCatalogue(slug: string): string | undefined {
@@ -1325,7 +1325,7 @@ export const blogPosts: BlogPost[] = [
       "The first few months were filled with sleepless nights. We worked out of a modest workshop in Pune, often making do with what we had. The first pump we built was tested in our backyard before it ever saw a factory floor. And when it worked — really worked — we knew we had something special.",
       "We didn\u2019t know then that VR Coatings would one day be a trusted name across India and even abroad. We only knew we wanted to make machines that never let our customers down.",
     ],
-    image: "/BLOGS/Blog_1.png",
+    image: "/media/images/blogs/Blog_1.png",
   },
   {
     slug: "learning-by-listening-our-first-customers",
@@ -1338,7 +1338,7 @@ export const blogPosts: BlogPost[] = [
       "Our first big break came when an automotive supplier took a chance on us. Their imported dispensing system was down for weeks, waiting for spares. We offered them a locally made solution that worked — and kept working. That customer is still with us today.",
       "From there, word spread. Industries from paints to adhesives to shipbuilding began calling us. Not because we were the cheapest, but because we understood their pain and solved it. Listening became our biggest strength — and it still is.",
     ],
-    image: "/BLOGS/Blog_2.png",
+    image: "/media/images/blogs/Blog_2.png",
   },
   {
     slug: "growing-roots-and-branches",
@@ -1351,7 +1351,7 @@ export const blogPosts: BlogPost[] = [
       "One of our proudest moments was when a customer told us: \u201cYour pump works better than the one we imported from Europe.\u201d That wasn\u2019t just praise — it was proof that Make in India could compete with the world.",
       "We didn\u2019t just grow in size; we grew in reputation. By the early 2000s, we were working with major names in automotive, construction, and manufacturing. And we were just getting started.",
     ],
-    image: "/BLOGS/Blog_3.png",
+    image: "/media/images/blogs/Blog_3.png",
   },
   {
     slug: "our-leap-into-the-global-arena",
@@ -1364,7 +1364,7 @@ export const blogPosts: BlogPost[] = [
       "That\u2019s when we decided to set up an assembly unit in Germany. It wasn\u2019t easy — new regulations, new market expectations — but it was worth it. The German presence allowed us to support European customers more closely and showcase Indian engineering on a global stage.",
       "From Pune to Germany, our machines began carrying the VR Coatings name to factories around the world. And each time a customer said, \u201cThis is better than what we had before,\u201d we knew our decision was right.",
     ],
-    image: "/BLOGS/Blog_4.png",
+    image: "/media/images/blogs/Blog_4.png",
   },
   {
     slug: "innovation-is-in-our-dna",
@@ -1377,7 +1377,7 @@ export const blogPosts: BlogPost[] = [
       "But innovation for us is not just about adding electronics. It\u2019s about making machines smarter, more reliable, and easier to maintain. Whether it\u2019s a high-viscosity adhesive or a delicate electronics potting compound, our solutions are engineered to perform.",
       "And we never stop learning — every new customer challenge is a chance to innovate again.",
     ],
-    image: "/BLOGS/Blog_5.png",
+    image: "/media/images/blogs/Blog_5.png",
   },
   {
     slug: "looking-back-moving-forward",
@@ -1390,7 +1390,7 @@ export const blogPosts: BlogPost[] = [
       "But even as we look ahead, we never forget where we came from — a small workshop, a few determined people, and a belief that Indian engineering could stand shoulder to shoulder with the world.",
       "And if there\u2019s one thing we\u2019ve learned in these decades, it\u2019s this: Machines may be made of steel, but trust is built in the hearts of customers. That\u2019s what keeps VR Coatings running strong — yesterday, today, and tomorrow.",
     ],
-    image: "/BLOGS/Blog_6.png",
+    image: "/media/images/blogs/Blog_6.png",
   },
 ];
 

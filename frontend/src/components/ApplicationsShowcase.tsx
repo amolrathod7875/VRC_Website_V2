@@ -106,7 +106,7 @@ function ApplicationColumn({
       </h3>
       <p className="mt-3 min-h-[4.5em] text-[15px] leading-[1.6] text-slate-600">{item.text}</p>
       <Link
-        href={`/applications/${item.slug}`}
+        href={`/media/images/applications/${item.slug}`}
         className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-[#1678C8] transition-colors duration-200 hover:text-[#0B5C97]"
       >
         Explore

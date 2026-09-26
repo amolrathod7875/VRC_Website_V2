@@ -68,7 +68,7 @@ export const polyureaSpecRows: PolyureaSpecRow[] = [
 export const polyureaCatalogue = {
   name: "POLYUREA",
   category: "Spray Painting Equipment / Polyurea",
-  catalogue: "/Catalogue/polyurea.pdf",
+  catalogue: "/media/catalogues/polyurea.pdf",
   description:
     "Two component hot airless polyurea spray equipment. The range is designed for tough working conditions and is suitable for two component high viscosity, solvent-less coating, waterproofing coating PU foam and insulation coatings.",
 };

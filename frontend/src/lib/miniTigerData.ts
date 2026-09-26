@@ -62,7 +62,7 @@ export const miniTigerSpecRows: MiniTigerSpecRow[] = [
 export const miniTigerCatalogue = {
   name: "MINI TIGER",
   category: "Spray Painting Equipment / Mini Tiger",
-  catalogue: "/Catalogue/Tiger_mini.pdf",
+  catalogue: "/media/catalogues/Tiger_mini.pdf",
   description:
     "Airless Air Assisted Spray Painting Equipment. The MINI TIGER series is purpose-built for reliable and efficient spraying of medium-viscosity liquids. Whether you're working with sprayable primers, finishing paints, or coatings containing medium-sized particles, MINI TIGER equipment delivers consistent results with minimal maintenance.",
 };

@@ -70,7 +70,7 @@ export const diaphragmPumpSpecs: { label: string; value: string }[] = [
 export const diaphragmPumpCatalogue = {
   name: "DIAPHRAGM PUMP",
   category: "Paint Transfer Pumps / Diaphragm Pump",
-  catalogue: "/Catalogue/diaphragm pump.pdf",
+  catalogue: "/media/catalogues/diaphragm pump.pdf",
   description:
     "Air-operated double diaphragm pump for low-pressure transfer of paints, coatings, chemicals, and water-based materials.",
 };

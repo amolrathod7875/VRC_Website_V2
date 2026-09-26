@@ -65,7 +65,7 @@ export const cubSpecRows: CubSpecRow[] = [
 export const cubCatalogue = {
   name: "CUB",
   category: "Paint Transfer Pumps / CUB",
-  catalogue: "/Catalogue/cub.pdf",
+  catalogue: "/media/catalogues/cub.pdf",
   description:
     "Four-Ball Piston Type Paint Transfer Pump. Suitable for transferring paint materials, oils, explosive liquids, and feeding multiple spray guns in paint circulation systems. Designed for high delivery up to 16 L/min.",
 };

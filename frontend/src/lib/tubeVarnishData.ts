@@ -59,7 +59,7 @@ export const tubeVarnishSpecRows: TubeVarnishSpecRow[] = [
 export const tubeVarnishCatalogue = {
   name: "TUBE / VARNISH COATING",
   category: "Spray Painting Equipment / Tube / Varnish Coating",
-  catalogue: "/Catalogue/TUBE VARNISH COATING SYSTEM.pdf",
+  catalogue: "/media/catalogues/TUBE VARNISH COATING SYSTEM.pdf",
   description:
     "Tube coating system for continuous line production. Basic Airless spray coating system with a closed spray chamber equipped with spray chambers, suction chamber, over-sprayed coating material re-cycling system, fumes exhaust system and a water spraying chamber to remove traces of coating material. Includes coating material tank, solvent tank and water tank.",
 };

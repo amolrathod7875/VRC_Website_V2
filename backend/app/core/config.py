@@ -1,3 +1,4 @@
+from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import List
 
@@ -7,7 +8,8 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str = "postgresql+psycopg://vrcoatings:vrcoatings@postgres:5432/vrcoatings"
     BACKEND_CORS_ORIGINS: str = "http://localhost:3000"
-    MEDIA_ROOT: str = "/app/storage"
+    MEDIA_ROOT: str = str(Path(__file__).resolve().parent.parent.parent / "storage")
+    MEDIA_BASE_URL: str = "/media"
     API_V1_STR: str = "/api/v1"
 
     @property

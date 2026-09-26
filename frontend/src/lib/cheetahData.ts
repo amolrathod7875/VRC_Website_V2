@@ -71,7 +71,7 @@ export const cheetahSpecRows: CheetahSpecRow[] = [
 export const cheetahCatalogue = {
   name: "CHEETAH",
   category: "Spray Painting Equipment / Cheetah",
-  catalogue: "/Catalogue/Cheetah.pdf",
+  catalogue: "/media/catalogues/Cheetah.pdf",
   description:
     "Two-Component Hot Airless Spray Painting Equipment designed for tough working conditions. Suitable for two-component high viscosity, solventless coating, semi-solid coating, marine coating, and all types of protective coatings.",
 };

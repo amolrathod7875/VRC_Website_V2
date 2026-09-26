@@ -61,7 +61,7 @@ export const barrelPumpSpecRows: BarrelPumpSpecRow[] = [
 export const barrelPumpCatalogue = {
   name: "BARREL PUMP",
   category: "Paint Transfer Pumps / Barrel Pump",
-  catalogue: "/Catalogue/Barrel Pump.pdf",
+  catalogue: "/media/catalogues/Barrel Pump.pdf",
   description:
     "Pneumatically operated barrel transfer pump for extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste. Available in multiple pressure ratio variants from 4:1 to 60:1.",
 };

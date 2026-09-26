@@ -56,7 +56,7 @@ export const portablePressureFeedPotSpecRows: PortablePressureFeedPotSpecRow[] =
 export const portablePressureFeedPotCatalogue = {
   name: "PORTABLE PRESSURE FEED POT",
   category: "Spray Painting Equipment / Pressure Feed Pot",
-  catalogue: "/Catalogue/PORTABLE PRESSURE FEED POT.pdf",
+  catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf",
   description:
     "Portable stainless steel pressure vessel suitable for transferring paint, oils, and explosive liquids. Designed for single gun use as a substitute for suction pot and gravity pot of spray gun.",
 };

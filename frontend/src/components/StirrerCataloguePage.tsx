@@ -11,7 +11,7 @@ export function StirrerCataloguePage() {
   const variants: CatalogueVariant[] = stirrerVariants.map((v) => ({
     id: v.id,
     name: v.name,
-    image: "/Product_png_s/pneumatic_stirrer.png",
+    image: "/media/images/products/pneumatic_stirrer.png",
     alt: v.name,
     specifications: [
       { label: "MOTOR TYPE", value: v.motorType },

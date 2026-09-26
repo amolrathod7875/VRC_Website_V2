@@ -127,7 +127,7 @@ export const otherAccessoryVariants: OtherAccessoryVariant[] = [
 export const otherAccessoryCatalogue = {
   name: "OTHER ACCESSORIES",
   category: "Accessories / Other Accessories",
-  catalogue: "/Catalogue/Other Accessories.pdf",
+  catalogue: "/media/catalogues/Other Accessories.pdf",
   description:
     "Complete range of other accessories including quick release couplings, Y restrictors, high pressure gun swivels, high pressure Z swivels, and non return valves in multiple size variants.",
 };

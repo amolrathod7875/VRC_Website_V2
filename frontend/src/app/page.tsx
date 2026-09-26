@@ -41,7 +41,7 @@ export default function HomePage() {
             playsInline
             aria-hidden="true"
           >
-            <source src="/Vids_imgs/Landing_Video.mp4" type="video/mp4" />
+            <source src="/media/videos/homepage/Landing_Video.mp4" type="video/mp4" />
           </video>
         </div>
         <div className="who-we-are-content">
@@ -205,7 +205,7 @@ export default function HomePage() {
                 aria-hidden="true"
                 className="absolute inset-0 h-full w-full object-cover"
               >
-                <source src="/Vids_imgs/Scale_video.mp4" type="video/mp4" />
+                <source src="/media/videos/homepage/Scale_video.mp4" type="video/mp4" />
               </video>
             </div>
             <div>

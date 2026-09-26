@@ -103,7 +103,7 @@ function buildVariantFromCategoryNode(node: ProductCategory): CatalogueVariant {
   return {
     id: node.slug,
     name: node.name.toUpperCase(),
-    image: node.image || "/Product_png_s/Flamingo 11817.png",
+    image: node.image || "/media/images/products/Flamingo 11817.png",
     alt: `${node.name} product image`,
     description: landing?.overview,
     specifications: specs,
@@ -363,7 +363,7 @@ export default async function ProductDetailPage({ params }: Props) {
     }
 
     if (node.slug === "hippo" || node.slug === "hippo-pump") {
-      const hippoImage = "/Product_png_s/Hippo.png";
+      const hippoImage = "/media/images/products/Hippo.png";
       return (
         <>
           <ProductCatalogueHero

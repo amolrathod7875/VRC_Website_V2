@@ -19,7 +19,7 @@ export default function AboutPage() {
       <section className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="absolute inset-0 -z-10 overflow-hidden rounded-xl">
           <img
-            src="/Vids_imgs/metal-structure.jpg"
+            src="/media/videos/homepage/metal-structure.jpg"
             alt=""
             aria-hidden="true"
             className="h-full w-full object-cover object-center"
@@ -28,7 +28,7 @@ export default function AboutPage() {
         </div>
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <img
-            src="/Vids_imgs/VR-Coatings-Pvt-Ltd-Factory.png"
+            src="/media/videos/homepage/VR-Coatings-Pvt-Ltd-Factory.png"
             alt="VR Coatings manufacturing facility"
             className="min-h-[320px] rounded-xl object-cover object-center lg:min-h-[420px]"
           />

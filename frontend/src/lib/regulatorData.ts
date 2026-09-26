@@ -66,7 +66,7 @@ export const regulatorVariants: RegulatorVariant[] = [
 export const regulatorCatalogue = {
   name: "REGULATOR",
   category: "Accessories / Pressure Regulator / Regulator",
-  catalogue: "/Catalogue/regulator.pdf",
+  catalogue: "/media/catalogues/regulator.pdf",
   description:
     "Complete range of pressure regulators for industrial fluid handling systems. Refer to the catalogue PDF for detailed model specifications, pressure ranges, and technical data.",
 };

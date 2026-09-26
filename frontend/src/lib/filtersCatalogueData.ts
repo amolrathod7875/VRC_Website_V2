@@ -16,7 +16,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "high-pressure-filter-450",
     name: "HIGH PRESSURE FILTER — 450 BAR",
-    image: "/Product_png_s/filter/HIGH PRESSURE FILTER 450 bar.jpg",
+    image: "/media/images/products/filter/HIGH PRESSURE FILTER 450 bar.jpg",
     alt: "High Pressure Filter 450 BAR",
     description: "High-pressure inline filtration unit for industrial fluid handling.",
     specifications: [
@@ -29,7 +29,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "high-pressure-filter-350",
     name: "HIGH PRESSURE FILTER — 350 BAR",
-    image: "/Product_png_s/filter/HIGH PRESSURE FILTER 450 bar.jpg",
+    image: "/media/images/products/filter/HIGH PRESSURE FILTER 450 bar.jpg",
     alt: "High Pressure Filter 350 BAR",
     description: "High-pressure inline filtration unit for industrial fluid handling.",
     specifications: [
@@ -42,7 +42,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "low-pressure-filter-ss",
     name: "LOW PRESSURE FILTER (STAINLESS STEEL)",
-    image: "/Product_png_s/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
+    image: "/media/images/products/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
     alt: "Low Pressure Filter Stainless Steel",
     description: "Low-pressure inline filtration unit with stainless steel construction.",
     specifications: [
@@ -55,7 +55,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "low-pressure-filter-aluminium",
     name: "LOW PRESSURE FILTER (ALUMINIUM)",
-    image: "/Product_png_s/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
+    image: "/media/images/products/filter/LOW PRESSURE FILTER (STAINLESS STEEL).png",
     alt: "Low Pressure Filter Aluminium",
     description: "Low-pressure inline filtration unit with aluminium construction.",
     specifications: [
@@ -68,7 +68,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "cartridge-type-inline-filter",
     name: "CARTRIDGE TYPE INLINE FILTER 1\"",
-    image: "/Product_png_s/filter/CARTRIDGE TYPE INLINE FILTER.png",
+    image: "/media/images/products/filter/CARTRIDGE TYPE INLINE FILTER.png",
     alt: "Cartridge Type Inline Filter 1\"",
     description: "Cartridge-type inline filter for paint spray systems.",
     specifications: [
@@ -81,7 +81,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "bag-type-inline-filter",
     name: "BAG TYPE INLINE FILTER 9\"/13\"",
-    image: "/Product_png_s/filter/BAG TYPE INLINE FILTER .png",
+    image: "/media/images/products/filter/BAG TYPE INLINE FILTER .png",
     alt: "Bag Type Inline Filter 9\"/13\"",
     description: "Bag-type inline filter for paint spray systems.",
     specifications: [
@@ -94,7 +94,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "filter-cassette-l145",
     name: "FILTER CASSETTE L145",
-    image: "/Product_png_s/filter/FILTER CASSETTE L145.jpg",
+    image: "/media/images/products/filter/FILTER CASSETTE L145.jpg",
     alt: "Filter Cassette L145",
     description: "Filter cassette element with multiple mesh size options.",
     specifications: [
@@ -108,7 +108,7 @@ export const filterVariants: FilterVariant[] = [
   {
     id: "tip-filter-assembly",
     name: "TIP FILTER ASSEMBLY",
-    image: "/Product_png_s/filter/TIP FILTER ASSEMBLY.jpg",
+    image: "/media/images/products/filter/TIP FILTER ASSEMBLY.jpg",
     alt: "Tip Filter Assembly",
     description: "Disc tip filter assembly for spray guns.",
     specifications: [
@@ -123,7 +123,7 @@ export const filterVariants: FilterVariant[] = [
 export const filterCatalogue = {
   name: "FILTERS",
   category: "Accessories / Filters",
-  catalogue: "/Catalogue/filters.pdf",
+  catalogue: "/media/catalogues/filters.pdf",
   description:
     "Complete range of filters for paint spray systems including high pressure filters (up to 450 BAR), low pressure filters (stainless steel & aluminium), cartridge type inline filters, bag type inline filters, filter cassettes with multiple mesh sizes, and tip filter assemblies for spray guns.",
 };

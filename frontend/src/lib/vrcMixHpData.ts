@@ -78,7 +78,7 @@ export const vrcMixHpFaults = [
 export const vrcMixHpCatalogue = {
   name: "VRC MIX HP",
   category: "Spray Painting Equipment / Electronic Two Component / VRC - Mix HP",
-  catalogue: "/Catalogue/VRC - MIX HP.pdf",
+  catalogue: "/media/catalogues/VRC - MIX HP.pdf",
   description:
     "Advanced Variable Ratio Electronic Two Component Airless Spray Painting Equipment. Suitable for all types of two component paints with moderate pot life. Features accurate component metering, online mixing ratio assurance, remote mixing manifold, and comprehensive fault generation with system response.",
 };

@@ -71,7 +71,7 @@ export const turbineSpecRows: TurbineSpecRow[] = [
 export const turbineCatalogue = {
   name: "TURBINE STIRRER",
   category: "Paint Agitation System - Turbine Stirrer",
-  catalogue: "/Catalogue/turbine.pdf",
+  catalogue: "/media/catalogues/turbine.pdf",
   description:
     "Turbine Stirrer Series — Rotary mixing stirrers driven by flameproof or EX-certified electric motors. Features efficient crushing and mixing due to unique blade construction. Eliminates vortex effect to avoid air bubble inclusion. Suitable for dissolving, dispersing and crushing particulates. Available in hand-held, pneumatic hoist, and electric hoist configurations for 20–200 Ltr pails.",
 };

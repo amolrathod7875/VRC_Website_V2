@@ -62,7 +62,7 @@ export const elephantSpecRows: ElephantSpecRow[] = [
 export const elephantCatalogue = {
   name: "ELEPHANT",
   category: "Paint Transfer Pumps / Elephant",
-  catalogue: "/Catalogue/Elephant.pdf",
+  catalogue: "/media/catalogues/Elephant.pdf",
   description:
     "Low Pressure Paint Transfer Pumps. Engineered for reliable transfer of paint materials, oils, and explosive liquids. Ideal for feeding multiple spray guns and supporting paint circulation systems. High-volume delivery up to 120 liters per minute and beyond.",
 };

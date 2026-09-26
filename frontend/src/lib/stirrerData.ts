@@ -108,7 +108,7 @@ export const stirrerVariants: StirrerVariant[] = [
 export const stirrerCatalogue = {
   name: "PNEUMATIC STIRRER",
   category: "Paint Agitation System - Stirrer / Pneumatic Stirrer",
-  catalogue: "/Catalogue/PNEUMATIC STIRRER.pdf",
+  catalogue: "/media/catalogues/PNEUMATIC STIRRER.pdf",
   description:
     "Pneumatic stirrers for paint agitation and material mixing. Available in vane type and axial piston type pneumatic motor driven configurations for various container sizes.",
 };

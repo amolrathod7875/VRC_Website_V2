@@ -16,7 +16,7 @@ export const conventionalGunVariants: GunVariant[] = [
   {
     id: "kingfisher-silver",
     name: "KINGFISHER SILVER",
-    image: "/Product_png_s/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Kingfisher silver gun.jpg",
+    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Kingfisher silver gun.jpg",
     alt: "Kingfisher Silver conventional spray painting gun",
     specifications: [
       { label: "PAINT NOZZLE", value: "1.4, 1.6, 1.8" },
@@ -31,7 +31,7 @@ export const conventionalGunVariants: GunVariant[] = [
   {
     id: "kingfisher-blue",
     name: "KINGFISHER BLUE",
-    image: "/Product_png_s/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/BLue (1).png",
+    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/BLue (1).png",
     alt: "Kingfisher Blue conventional spray painting gun",
     specifications: [
       { label: "PAINT NOZZLE", value: "1.2, 1.4, 1.6, 1.8" },
@@ -46,7 +46,7 @@ export const conventionalGunVariants: GunVariant[] = [
   {
     id: "kingfisher-gold",
     name: "KINGFISHER GOLD",
-    image: "/Product_png_s/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Kingfisher gold gun.jpg",
+    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Kingfisher gold gun.jpg",
     alt: "Kingfisher Gold conventional spray painting gun",
     specifications: [
       { label: "PAINT NOZZLE", value: "0.8, 1.0, 1.2" },
@@ -61,7 +61,7 @@ export const conventionalGunVariants: GunVariant[] = [
   {
     id: "kingfisher-red",
     name: "KINGFISHER RED",
-    image: "/Product_png_s/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Red (1).png",
+    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Conventional Spray Painting Guns/Red (1).png",
     alt: "Kingfisher Red conventional spray painting gun",
     specifications: [
       { label: "PAINT NOZZLE", value: "0.8, 1.0, 1.2" },
@@ -78,7 +78,7 @@ export const conventionalGunVariants: GunVariant[] = [
 export const conventionalGunCatalogue = {
   name: "CONVENTIONAL SPRAY PAINTING GUN",
   category: "Spray Painting Guns / Conventional Guns",
-  catalogue: "/Catalogue/CONVENTIONAL GUNS_f.pdf",
+  catalogue: "/media/catalogues/CONVENTIONAL GUNS_f.pdf",
   description:
     "The Kingfisher family of conventional spray painting guns delivers reliable finish quality for industrial coating applications. Each variant is engineered for specific coating viscosities and finish requirements.",
 };

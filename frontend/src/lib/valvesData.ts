@@ -16,7 +16,7 @@ export const valveProducts: ValveProduct[] = [
   {
     id: "colour-change-valve-double-disc-ccv-250",
     name: "COLOUR CHANGE VALVE (DOUBLE DISC) CCV 250",
-    image: "/Product_png_s/vrc.png",
+    image: "/media/images/products/vrc.png",
     alt: "Colour change valve double disc CCV 250",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "250 BAR" },
@@ -31,7 +31,7 @@ export const valveProducts: ValveProduct[] = [
   {
     id: "colour-change-valve-double-disc-ccv-400",
     name: "COLOUR CHANGE VALVE (DOUBLE DISC) CCV 400",
-    image: "/Product_png_s/vrc.png",
+    image: "/media/images/products/vrc.png",
     alt: "Colour change valve double disc CCV 400",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "400 BAR" },
@@ -46,7 +46,7 @@ export const valveProducts: ValveProduct[] = [
   {
     id: "colour-change-valve-single-disc",
     name: "COLOUR CHANGE VALVE (SINGLE DISC)",
-    image: "/Product_png_s/vrc.png",
+    image: "/media/images/products/vrc.png",
     alt: "Colour change valve single disc",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "300 BAR" },
@@ -60,7 +60,7 @@ export const valveProducts: ValveProduct[] = [
   {
     id: "colour-change-valve-low-pressure",
     name: "COLOUR CHANGE VALVE (LOW PRESSURE)",
-    image: "/Product_png_s/vrc.png",
+    image: "/media/images/products/vrc.png",
     alt: "Colour change valve low pressure",
     specifications: [
       { label: "RESULTANT FLUID PATH", value: "EQUIVALENT TO 4 MM HOLE (12.56 MM²)" },
@@ -75,7 +75,7 @@ export const valveProducts: ValveProduct[] = [
   {
     id: "automatic-feeding-valve",
     name: "AUTOMATIC FEEDING (ON/OFF) VALVE 3.0MM, 6.5MM, 10MM",
-    image: "/Product_png_s/vrc.png",
+    image: "/media/images/products/vrc.png",
     alt: "Automatic feeding on/off valve",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "500 BAR (FOR 3 MM), 225 BAR (FOR 6.5 MM), 240 BAR (FOR 10MM)" },
@@ -92,7 +92,7 @@ export const valveProducts: ValveProduct[] = [
 export const valveCatalogue = {
   name: "VALVES",
   category: "Accessories / Valves",
-  catalogue: "/Catalogue/Valves.pdf",
+  catalogue: "/media/catalogues/Valves.pdf",
   description:
     "Valves for colour change and automatic feeding applications in air assisted and airless spray systems.",
 };

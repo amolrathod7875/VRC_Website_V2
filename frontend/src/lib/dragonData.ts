@@ -137,7 +137,7 @@ export const dragonVariants: DragonVariant[] = [
 export const dragonCatalogue = {
   name: "DRAGON",
   category: "Spray Painting Equipment / Dragon",
-  catalogue: "/Catalogue/dragon.pdf",
+  catalogue: "/media/catalogues/dragon.pdf",
   description:
     "Passive fire protection High performance airless spray system. High duty Airless Plural component Passive Fire protection (PFP) spraying equipment. This range is specifically designed for seamless application of intumescent paint coating, with modular configuration to operate custom mixing ratios.",
 };

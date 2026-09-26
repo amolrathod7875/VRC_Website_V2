@@ -61,7 +61,7 @@ export const tigerSpecRows: TigerSpecRow[] = [
 export const tigerCatalogue = {
   name: "TIGER",
   category: "Spray Painting Equipment / Tiger",
-  catalogue: "/Catalogue/Tiger.pdf",
+  catalogue: "/media/catalogues/Tiger.pdf",
   description:
     "Low & medium duty airless spray painting equipment. This range is suitable for liquids of medium viscosities, all kinds of sprayable primers & finish paints, and paints of medium particle size.",
 };

@@ -63,7 +63,7 @@ export const rhinoSpecRows: RhinoSpecRow[] = [
 export const rhinoCatalogue = {
   name: "RHINO",
   category: "Spray Painting Equipment / Rhino",
-  catalogue: "/Catalogue/rhino.pdf",
+  catalogue: "/media/catalogues/rhino.pdf",
   description:
     "Heavy Duty Airless Spray Painting Equipment. This range is designed for tough working conditions and suitable for high viscosity, solvent less, low solvent coating, semisolid coating, marine coating etc applications.",
 };

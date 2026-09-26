@@ -10,7 +10,7 @@ export function CatalogueLink({ catalogue }: CatalogueLinkProps) {
 
   const href = catalogue.startsWith("/")
     ? catalogue
-    : `/Catalogue/${encodeURIComponent(catalogue)}`;
+    : `/media/catalogues/${encodeURIComponent(catalogue)}`;
 
   return (
     <Link

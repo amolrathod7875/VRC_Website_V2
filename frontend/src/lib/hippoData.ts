@@ -63,7 +63,7 @@ export const hippoSpecRows: HippoSpecRow[] = [
 export const hippoCatalogue = {
   name: "HIPPO",
   category: "Paint Transfer Pumps / Hippo",
-  catalogue: "/Catalogue/Hippo.pdf",
+  catalogue: "/media/catalogues/Hippo.pdf",
   description:
     "Low Pressure Paint Transfer Pumps. This range is suitable for transferring paint materials, explosive liquids, and can feed multiple spray guns in paint circulation systems. It is designed for high delivery up to 15 liters/min.",
 };
