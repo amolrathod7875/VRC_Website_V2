@@ -16,7 +16,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "am250",
     name: "AIRLESS MANUAL SPRAY GUN AM250",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/AM250 gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/AM250 gun.jpg",
     alt: "AM250 airless manual spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "250 BAR" },
@@ -28,7 +28,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "vril",
     name: "AIRLESS MANUAL SPRAY GUN VRIL",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/airless manual spray gun VRIL.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/airless manual spray gun VRIL.jpg",
     alt: "VRIL airless manual spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BAR" },
@@ -40,7 +40,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "falcon",
     name: "AIRLESS MANUAL SPRAY GUN FALCON",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/Falcon gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Falcon gun.jpg",
     alt: "Falcon airless manual spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR(SS), 350 BAR(AL)" },
@@ -64,7 +64,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "eagle",
     name: "AIRLESS MANUAL SPRAY GUN EAGLE",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/Eagle gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Eagle gun.jpg",
     alt: "Eagle airless manual spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "500 BAR" },
@@ -76,7 +76,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "wax-spray-gun",
     name: "WAX SPRAY GUN",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/wax gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/wax gun.jpg",
     alt: "Wax spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BAR" },
@@ -87,7 +87,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "pole-gun",
     name: "POLE GUN",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/Pole Gun 14422 (1).jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Pole Gun 14422 (1).jpg",
     alt: "Pole gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "2345 BAR" },
@@ -101,7 +101,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "vrid",
     name: "AIRLESS MANUAL DISPENSING GUN VRID",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/Airless manual dispensing gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Airless manual dispensing gun.jpg",
     alt: "VRID airless manual dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "325 BAR/150 BAR" },
@@ -114,7 +114,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "hawk-350",
     name: "DISPENSING GUN HAWK",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/VRC HAWK 8156 (1).jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/VRC HAWK 8156 (1).jpg",
     alt: "Hawk dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BAR" },
@@ -126,7 +126,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "extrusion-gun",
     name: "EXTRUSION GUN (EXT- I)",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/EXT Gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/EXT Gun.jpg",
     alt: "Extrusion gun EXT-I",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },
@@ -138,7 +138,7 @@ export const manualGunProducts: ManualGunProduct[] = [
   {
     id: "cartridge-dispensing-gun",
     name: "CARTRIDGE DISPENSING GUN",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/Manual airless Spray Painting Guns/Cartridge Gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Cartridge Gun.jpg",
     alt: "Cartridge dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "6 BAR" },

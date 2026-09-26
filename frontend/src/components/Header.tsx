@@ -51,7 +51,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "Explore Products →", href: "/products" },
     },
     image: {
-      src: "/media/images/products/Category_wise_products/Rhino Pump/Rhino 4040.jpg",
+      src: "/media/images/products/Product_png_s/Category_wise_products/Rhino 4040.jpg",
       alt: "VR Coatings Rhino heavy-duty spray pump",
     },
     cta: {
@@ -69,7 +69,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "Explore Applications →", href: "/applications" },
     },
     image: {
-      src: "/media/images/applications/automotive.jpg",
+      src: "/media/images/applications/applications/automotive.jpg",
       alt: "Automotive coating application",
     },
     cta: {
@@ -86,7 +86,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "View Partners →", href: "/partners" },
     },
     image: {
-      src: "/media/images/partners/ASAHI_SUNAC.svg",
+      src: "/media/images/partners/partners/ASAHI_SUNAC.svg",
       alt: "Global technology partners",
     },
     cta: {
@@ -103,7 +103,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "View Clients →", href: "/clients" },
     },
     image: {
-      src: "/media/images/clients/Manufacturing/tata-steel.png",
+      src: "/media/images/clients/tata-steel.png",
       alt: "Trusted across industry",
     },
     cta: {
@@ -120,7 +120,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "Explore Industries →", href: "/industries" },
     },
     image: {
-      src: "/media/images/applications/automotive.jpg",
+      src: "/media/images/applications/applications/automotive.jpg",
       alt: "Industries we serve",
     },
     cta: {
@@ -147,7 +147,7 @@ const MEGA_MENU_CONFIG: Record<
       },
     ],
     image: {
-      src: "/media/images/blogs/Blog_1.png",
+      src: "/media/images/blogs/BLOGS/Blog_1.png",
       alt: "VR Coatings resources",
     },
   },
@@ -532,7 +532,7 @@ export function Header() {
           <div className="flex items-center justify-between gap-6 px-5 py-3">
             <Link href="/" className="flex items-center gap-3 shrink-0">
               <Image
-                src="/media/images/misc/VRC Logo_nobg (2).png"
+                src="/media/images/misc/logo/VRC Logo_nobg (2).png"
                 alt="VR Coatings logo"
                 width={80}
                 height={45}

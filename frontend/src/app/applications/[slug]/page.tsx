@@ -276,7 +276,7 @@ export default async function ApplicationDetailPage({ params }: Props) {
         <div className="flex items-center justify-between">
           {prevApp ? (
             <Link
-              href={`/media/images/applications/${prevApp.slug}`}
+              href={`/applications/${prevApp.slug}`}
               className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
             >
               <svg
@@ -295,7 +295,7 @@ export default async function ApplicationDetailPage({ params }: Props) {
           )}
           {nextApp ? (
             <Link
-              href={`/media/images/applications/${nextApp.slug}`}
+              href={`/applications/${nextApp.slug}`}
               className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800"
             >
               {nextApp.name}

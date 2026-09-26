@@ -64,7 +64,7 @@ export const filterProducts: FilterProduct[] = [
   {
     id: "high-pressure-filter",
     name: "HIGH PRESSURE FILTER",
-    image: "/media/images/products/hp filter 350 bar.png",
+    image: "/media/images/products/Product_png_s/hp filter 350 bar.png",
     alt: "High pressure filter",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BAR" },

@@ -144,7 +144,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Barrel Pump",
     description: "Pneumatically operated transfer pump for extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste.",
     catalogue: "/media/catalogues/Barrel Pump.pdf",
-    image: "/media/images/products/Category_wise_products/Barrel Pump/Barrel Transfer Pump 14419.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Barrel Transfer Pump 14419.jpg",
     overview: "The Barrel Pump is a pneumatically operated transfer pump designed for extracting paint and viscous fluids from 200L steel drums and 210L plastic barrels with minimal waste. Available in four variants with pressure ratios from 4:1 to 60:1, providing output pressures up to 360 bar at 6 bar air inlet.",
     features: [
       "Pneumatically operated transfer pump for 200L steel drums and 210L plastic barrels",
@@ -176,7 +176,7 @@ export const landingProducts: LandingProduct[] = [
     name: "CHEETAH",
     description: "Two-Component Hot Airless Spray Painting Equipment designed for tough working conditions, suitable for two-component high viscosity, solventless coating, semi-solid coating, marine coating, and all types of protective coatings.",
     catalogue: "/media/catalogues/Cheetah.pdf",
-    image: "/media/images/products/Category_wise_products/Cheetah/Cheetah 14301.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Cheetah 14301.jpg",
     overview: "The CHEETAH is a two-component hot airless spray painting equipment range designed for tough working conditions. It is suitable for two-component high viscosity, solventless coating, semi-solid coating, marine coating, and all types of protective coatings.",
     features: [
       "Pneumatically sensed high-performance air motor",
@@ -211,7 +211,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Cub",
     description: "Four-ball piston transfer pump with 100:1 pressure ratio for high-pressure fluid transfer.",
     catalogue: "/media/catalogues/cub.pdf",
-    image: "/media/images/products/Category_wise_products/Cub/Cub pump.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Cub pump.jpg",
     overview: "The CUB is a four-ball piston transfer pump with a 100:1 pressure ratio, designed for high-pressure transfer of paints, coatings, and viscous fluids. Delivers up to 4.2 LPM at 600 BAR maximum working pressure.",
     features: [
       "100:1 pressure ratio",
@@ -279,7 +279,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Elephant Pump",
     description: "High-volume, low-pressure transfer pump for efficient supply of paints, coatings, and viscous fluids.",
     catalogue: "/media/catalogues/Elephant.pdf",
-    image: "/media/images/products/Category_wise_products/Elephant Pump/Elephant 14398.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Elephant 14398.jpg",
     overview: "The ELEPHANT is a high-volume, low-pressure transfer pump designed for efficient supply of paints, coatings, and viscous fluids to spray systems. Features a 2:1 pressure ratio, up to 60 LPM flow rate, and handles viscosities up to 2,000 Cp.",
     features: [
       "60 LPM max flow rate — high-volume transfer",
@@ -316,7 +316,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Hippo Pump",
     description: "Low-pressure transfer pump for reliable transfer of paints, coatings, and viscous fluids.",
     catalogue: "/media/catalogues/Hippo.pdf",
-    image: "/media/images/products/Category_wise_products/Hippo Pump/Hippo 14311.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Hippo 14311.jpg",
     overview: "The HIPPO is a low-pressure transfer pump designed for reliable transfer of paints, coatings, and viscous fluids. Available in piston type (pressure ratios 1:170, 3:400, 5:900, 12:400) and diaphragm type (1:1 ratio, 6 bar max). Features 304 stainless steel wetted parts with PTFE/Silicon sealing.",
     features: [
       "Available in piston type (4 pressure ratios) and diaphragm type (1:1 ratio)",
@@ -347,7 +347,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Leopard - Electric",
     description: "Electric pump system for paint and fluid transfer with dual heating elements and programmable temperature control.",
     catalogue: "/media/catalogues/Electric_pump.pdf",
-    image: "/media/images/products/Category_wise_products/Leopard - ELECTRIC PUMP/Electric pump.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Electric pump.jpg",
     overview: "The LEOPARD is an electric pump system for paint and fluid transfer. Motor-driven pump with dual heating elements and programmable temperature control. Available in 20L and 210L configurations for 200L barrels and 210L plastic containers. Features stainless steel construction, 2.2 KW motor, 0–40 BAR operating pressure, and built-in filtration.",
     features: [
       "Electric motor-driven — clean, quiet operation",
@@ -383,7 +383,7 @@ export const landingProducts: LandingProduct[] = [
     name: "PFP DRAGON",
     description: "Passive Fire Protection (PFP) spray system for high-build intumescent coatings.",
     catalogue: "/media/catalogues/dragon.pdf",
-    image: "/media/images/products/Category_wise_products/PFP DRAGON/PFP 4017.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/PFP 4017.jpg",
     overview: "The DRAGON system is a passive fire protection (PFP) spray system designed for the application of high-build intumescent coatings. Engineered for heavy-duty industrial use, it ensures reliable and uniform coating performance to enhance fire resistance and protect critical steel structures.",
     features: [
       "Passive fire protection system",
@@ -419,7 +419,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Polyurea",
     description: "Two-component hot airless polyurea spray equipment for high viscosity, solvent-less coating, waterproofing, PU foam and insulation coatings.",
     catalogue: "/media/catalogues/polyurea.pdf",
-    image: "/media/images/products/Category_wise_products/Polyurea/Polyurea.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Polyurea.jpg",
     overview:
       "The POLYUREA system is a two-component hot airless spray equipment designed for tough working conditions. It is suitable for two-component high viscosity, solvent-less coating, waterproofing coating, PU foam and insulation coatings. Compact mounted on a robust trolley with accurate fixed volume 1:1 mixing ratio, double 3KW heaters and a polyurea wrap suff heated hose bundle of 15 metres.",
     features: [
@@ -462,7 +462,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Pressure Feed Pot",
     description: "Portable stainless steel pressure vessel for transferring paint, oils and explosive liquids to spray guns.",
     catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf",
-    image: "/media/images/products/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/VRC 4295 (1).jpg",
     overview:
       "The Pressure Feed Pot is a portable stainless steel pressure vessel suitable for transferring paint, oils, and explosive liquids. It is designed for single gun use and serves as a substitute for the suction pot and gravity pot of the spray gun.",
     features: [
@@ -491,7 +491,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Rhino Pump",
     description: "Heavy-duty airless spray pump with 12:400 pressure ratio and 400 BAR max pressure.",
     catalogue: "/media/catalogues/rhino.pdf",
-    image: "/media/images/products/Category_wise_products/Rhino Pump/Rhino 4040.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Rhino 4040.jpg",
     overview: "The RHINO is a heavy-duty airless spray pump system designed for large-scale industrial coating applications. Features a 12:400 pressure ratio, 400 BAR max working pressure, 15 LPM flow rate, and 4.0 KW air motor. Equipped with dual 3KW heaters and 15m heated hose bundle.",
     features: [
       "400 BAR (5800 psi) max working pressure",
@@ -562,7 +562,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Tiger Mini",
     description: "Air-assisted airless spray pump system for fine finish and medium-duty applications.",
     catalogue: "/media/catalogues/Tiger_mini.pdf",
-    image: "/media/images/products/Category_wise_products/Tiger Mini/VRC 4101.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/VRC 4101.jpg",
     overview: "The MINI TIGER is an air-assisted airless spray pump system for fine finish and medium-duty applications. Features a 2:150 pressure ratio, 150 BAR working pressure, and 4.2 LPM flow rate. Designed for use with the FLAMINGO air-assisted airless spray gun.",
     features: [
       "150 BAR working pressure — air-assisted airless system",
@@ -599,7 +599,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Tiger Pump",
     description: "Low to medium-duty airless spray pump with 2:150 pressure ratio and up to 2 spray guns support.",
     catalogue: "/media/catalogues/Tiger.pdf",
-    image: "/media/images/products/Category_wise_products/Tiger Pump/Tiger 14326.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Tiger 14326.jpg",
     overview: "The TIGER is a low to medium-duty airless spray pump system for industrial coating applications. Features a 2:150 pressure ratio, 150 BAR max working pressure, 4.2 LPM flow rate, and 2.2 KW air motor. Compatible with up to 2 spray guns.",
     features: [
       "150 BAR (2175 psi) working pressure — medium-duty airless",
@@ -636,7 +636,7 @@ export const landingProducts: LandingProduct[] = [
     name: "Turbine Stirrer",
     description: "Air-operated turbine agitation system for paint mixing, circulation, and material preparation.",
     catalogue: "/media/catalogues/turbine.pdf",
-    image: "/media/images/products/Category_wise_products/Turbine Stirrer/Turbinr Stirrer.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Turbinr Stirrer.jpg",
     overview: "VR Coatings Turbine Stirrers are air-operated agitation systems for paint mixing, circulation, and material preparation. Available in three tank sizes: TB-70 (70L), TB-110 (110L), and TB-180 (180L). Features 6-blade turbine impellers and 304 stainless steel wetted parts.",
     features: [
       "Three tank sizes: TB-70, TB-110, TB-180",
@@ -668,7 +668,7 @@ export const landingProducts: LandingProduct[] = [
     name: "VRC MIX HP",
     description: "Electronic variable ratio 2K mixing system for high-pressure spray applications at 450 bar.",
     catalogue: "/media/catalogues/VRC - MIX HP.pdf",
-    image: "/media/images/products/Category_wise_products/VRC MIX HP/VRCoatings 0964.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/VRCoatings 0964.jpg",
     overview: "The VRC-MIX HP is an electronic two-component mixing system with variable ratio control for high-pressure spray applications. Features 450 bar max working pressure, adjustable mix ratio up to 10.0:1 in 0.1 increments, 240V AC single-phase power supply, and RS 232 + Modbus communication.",
     features: [
       "Electronic variable ratio 2K mixing system",
@@ -699,8 +699,8 @@ export const landingProducts: LandingProduct[] = [
     slug: "vrc-mix-lp",
     name: "VRC MIX LP",
     description: "Variable ratio electronic 2K mixing system for low to medium pressure spray at 30 bar.",
-    catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf",
-    image: "/media/images/products/Category_wise_products/VRC MIX LP/VRC 4734.jpg",
+    catalogue: "/media/catalogues/VRC MIX (LOW - MEDIUM) PRESSURE.pdf",
+    image: "/media/images/products/Product_png_s/Category_wise_products/VRC 4734.jpg",
     overview: "The VRC MIX (L/M) is a variable ratio electronic two-component mixing system designed for low to medium pressure spray applications. Features a 30 bar max working pressure, variable mixing ratio up to 15.0:1 in 0.1 increments, 230V AC single-phase power, and advanced alarm system with audio/visual alerts.",
     features: [
       "Electronic variable ratio 2K mixing system",
@@ -854,7 +854,7 @@ export const applications: Application[] = [
     name: "Automotive",
     text: "E-coat, primers, and durable topcoats for body and underbody parts.",
     icon: IconCar,
-    image: "/media/images/applications/automotive.jpg",
+    image: "/media/images/applications/applications/automotive.jpg",
     video: "/media/videos/homepage/automotive.mp4",
   },
   {
@@ -862,7 +862,7 @@ export const applications: Application[] = [
     name: "Defence & Aerospace",
     text: "Spec-driven coatings for airframes, ground systems, and components.",
     icon: IconPlane,
-    image: "/media/images/applications/defence-aerospace.jpg",
+    image: "/media/images/applications/applications/defence-aerospace.jpg",
     video: "/media/videos/homepage/Aerospace.mp4",
   },
   {
@@ -870,7 +870,7 @@ export const applications: Application[] = [
     name: "Electronics",
     text: "Protective dielectric films for boards, housings, and connectors.",
     icon: IconCircuit,
-    image: "/media/images/applications/electronics.jpg",
+    image: "/media/images/applications/applications/electronics.jpg",
     video: "/media/videos/homepage/Electronics.mp4",
   },
   {
@@ -878,7 +878,7 @@ export const applications: Application[] = [
     name: "Infrastructure",
     text: "Bridges, tanks, and industrial structures requiring long-term barrier protection.",
     icon: IconBuilding,
-    image: "/media/images/applications/infrastructure.jpg",
+    image: "/media/images/applications/applications/infrastructure.jpg",
     video: "/media/videos/homepage/Infrastructure.mp4",
   },
   {
@@ -886,7 +886,7 @@ export const applications: Application[] = [
     name: "Marine",
     text: "Hull, deck, and offshore steel protection in saline environments.",
     icon: IconShip,
-    image: "/media/images/applications/marine.jpg",
+    image: "/media/images/applications/applications/marine.jpg",
     video: "/media/videos/homepage/Marine.mp4",
   },
   {
@@ -894,7 +894,7 @@ export const applications: Application[] = [
     name: "Energy & Process",
     text: "Coatings for pipelines, refineries, and power generation assets.",
     icon: IconFactory,
-    image: "/media/images/applications/energy-process.jpg",
+    image: "/media/images/applications/applications/energy-process.jpg",
     video: "/media/videos/homepage/Energy.mp4",
   },
 ];
@@ -1054,7 +1054,7 @@ export const certifications: Certification[] = [
     body:
       "Certificate No. AB22IS214430 issued by BMQR. Valid until 20 September 2027. Scope covers design, manufacturing, marketing, installation, sales and services of industrial spray painting and fluid handling equipments.",
     file: "/media/certificates/V R COATINGS PVT LTD -9001-RCA - CERTIFICATE.pdf",
-    preview: "/media/images/certifications/iso-9001-certificate.jpg",
+    preview: "/media/images/certifications/certifications/iso-9001-certificate.jpg",
     validTo: "20 September 2027",
   },
   {
@@ -1064,7 +1064,7 @@ export const certifications: Certification[] = [
     body:
       "Document No. 2656/1/2018 issued by Technicka inspekcia, a.s. (Notified Body 1354). Acknowledges receipt of technical file documentation under Directive 2014/34/EU for non-electrical painting and fluid handling equipments. Technical documentation stored for 10 years.",
     file: "/media/certificates/ATTEX CERTIFICATE.PDF",
-    preview: "/media/images/certifications/atex-acknowledgement.jpg",
+    preview: "/media/images/certifications/certifications/atex-acknowledgement.jpg",
     validTo: "13 August 2028",
   },
   {
@@ -1074,7 +1074,7 @@ export const certifications: Certification[] = [
     body:
       "Certificate No. 3874-CI-32025 issued by CEPROM (Romania). Valid until 5 February 2030. Confirms compliance of industrial spray painting and fluid handling equipments with Directive 2006/42/EC. Reference standards: EN ISO 12100:2010, EN 60204-1:2006+A1:2009.",
     file: "/media/certificates/3874-CI-32025 Industrial Spray Painting and Fluid Handling Equip.pdf",
-    preview: "/media/images/certifications/ce-certificate-of-conformity.jpg",
+    preview: "/media/images/certifications/certifications/ce-certificate-of-conformity.jpg",
     validTo: "5 February 2030",
   },
   {
@@ -1084,7 +1084,7 @@ export const certifications: Certification[] = [
     body:
       "Certificate No. TI19 ATEX 1308 X issued by Technicka inspekcia, a.s. (Notified Body 1354). EU-type examination for flameproof fluid heater under Directive 2014/34/EU. Compliance with EN 60079-0:2018 and EN 60079-1:2014.",
     file: "/media/certificates/Certificate TI19 ATEX 1308 X.pdf",
-    preview: "/media/images/certifications/atex-eu-type-exam.jpg",
+    preview: "/media/images/certifications/certifications/atex-eu-type-exam.jpg",
   },
 ];
 
@@ -1136,7 +1136,7 @@ export const productCategories: ProductCategory[] = [
         name: "Electronic Two Component",
         children: [
           { slug: "vrc-mix-hp", name: "VRC - Mix HP", catalogue: "/media/catalogues/VRC - MIX HP.pdf", image: "/media/images/products/VRC MIX HP 0964.png" },
-          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
+          { slug: "vrc-mix-lp", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW - MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
         ],
       },
       {
@@ -1144,7 +1144,7 @@ export const productCategories: ProductCategory[] = [
         name: "Fixed Ratio Two Component",
         children: [
           { slug: "vrc-mix-hp-fixed", name: "VRC - Mix HP", catalogue: "/media/catalogues/VRC - MIX HP.pdf", image: "/media/images/products/VRC MIX HP 0964.png" },
-          { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW-MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
+          { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW - MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
         ],
       },
       { slug: "lion", name: "Lion", image: "/media/images/products/VRC eagle.png" },
@@ -1155,12 +1155,12 @@ export const productCategories: ProductCategory[] = [
     name: "Paint Transfer Pumps",
     image: "/media/images/products/Elephant 14398.jpg",
     children: [
-      { slug: "hippo-pump", name: "Hippo", catalogue: "/media/catalogues/Hippo.pdf", image: "/media/images/products/Hippo 14311.jpg" },
+      { slug: "hippo-pump", name: "Hippo", catalogue: "/media/catalogues/Hippo.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Hippo 14311.jpg" },
       { slug: "elephant", name: "Elephant", catalogue: "/media/catalogues/Elephant.pdf", image: "/media/images/products/Elephant 14398.jpg" },
-      { slug: "cub", name: "Cub", catalogue: "/media/catalogues/cub.pdf", image: "/media/images/products/Category_wise_products/Cub/Cub pump.jpg" },
+      { slug: "cub", name: "Cub", catalogue: "/media/catalogues/cub.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Cub pump.jpg" },
       { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/media/catalogues/Barrel Pump.pdf", image: "/media/images/products/Barrel Transfer Pump.png" },
-      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/media/catalogues/diaphragm pump.pdf", image: "/media/images/products/Category_wise_products/Diaphragm Pump/Diaphragm pump.jpg" },
-      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf", image: "/media/images/products/Category_wise_products/Pressure Feed Pot/VRC 4295 (1).jpg" },
+      { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/media/catalogues/diaphragm pump.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Diaphragm pump.jpg" },
+      { slug: "portable-pressure-feed-pot", name: "Portable Pressure Feed Pot", catalogue: "/media/catalogues/PORTABLE PRESSURE FEED POT.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/VRC 4295 (1).jpg" },
     ],
   },
   {
@@ -1325,7 +1325,7 @@ export const blogPosts: BlogPost[] = [
       "The first few months were filled with sleepless nights. We worked out of a modest workshop in Pune, often making do with what we had. The first pump we built was tested in our backyard before it ever saw a factory floor. And when it worked — really worked — we knew we had something special.",
       "We didn\u2019t know then that VR Coatings would one day be a trusted name across India and even abroad. We only knew we wanted to make machines that never let our customers down.",
     ],
-    image: "/media/images/blogs/Blog_1.png",
+    image: "/media/images/blogs/BLOGS/Blog_1.png",
   },
   {
     slug: "learning-by-listening-our-first-customers",
@@ -1338,7 +1338,7 @@ export const blogPosts: BlogPost[] = [
       "Our first big break came when an automotive supplier took a chance on us. Their imported dispensing system was down for weeks, waiting for spares. We offered them a locally made solution that worked — and kept working. That customer is still with us today.",
       "From there, word spread. Industries from paints to adhesives to shipbuilding began calling us. Not because we were the cheapest, but because we understood their pain and solved it. Listening became our biggest strength — and it still is.",
     ],
-    image: "/media/images/blogs/Blog_2.png",
+    image: "/media/images/blogs/BLOGS/Blog_2.png",
   },
   {
     slug: "growing-roots-and-branches",
@@ -1351,7 +1351,7 @@ export const blogPosts: BlogPost[] = [
       "One of our proudest moments was when a customer told us: \u201cYour pump works better than the one we imported from Europe.\u201d That wasn\u2019t just praise — it was proof that Make in India could compete with the world.",
       "We didn\u2019t just grow in size; we grew in reputation. By the early 2000s, we were working with major names in automotive, construction, and manufacturing. And we were just getting started.",
     ],
-    image: "/media/images/blogs/Blog_3.png",
+    image: "/media/images/blogs/BLOGS/Blog_3.png",
   },
   {
     slug: "our-leap-into-the-global-arena",
@@ -1364,7 +1364,7 @@ export const blogPosts: BlogPost[] = [
       "That\u2019s when we decided to set up an assembly unit in Germany. It wasn\u2019t easy — new regulations, new market expectations — but it was worth it. The German presence allowed us to support European customers more closely and showcase Indian engineering on a global stage.",
       "From Pune to Germany, our machines began carrying the VR Coatings name to factories around the world. And each time a customer said, \u201cThis is better than what we had before,\u201d we knew our decision was right.",
     ],
-    image: "/media/images/blogs/Blog_4.png",
+    image: "/media/images/blogs/BLOGS/Blog_4.png",
   },
   {
     slug: "innovation-is-in-our-dna",
@@ -1377,7 +1377,7 @@ export const blogPosts: BlogPost[] = [
       "But innovation for us is not just about adding electronics. It\u2019s about making machines smarter, more reliable, and easier to maintain. Whether it\u2019s a high-viscosity adhesive or a delicate electronics potting compound, our solutions are engineered to perform.",
       "And we never stop learning — every new customer challenge is a chance to innovate again.",
     ],
-    image: "/media/images/blogs/Blog_5.png",
+    image: "/media/images/blogs/BLOGS/Blog_5.png",
   },
   {
     slug: "looking-back-moving-forward",
@@ -1390,7 +1390,7 @@ export const blogPosts: BlogPost[] = [
       "But even as we look ahead, we never forget where we came from — a small workshop, a few determined people, and a belief that Indian engineering could stand shoulder to shoulder with the world.",
       "And if there\u2019s one thing we\u2019ve learned in these decades, it\u2019s this: Machines may be made of steel, but trust is built in the hearts of customers. That\u2019s what keeps VR Coatings running strong — yesterday, today, and tomorrow.",
     ],
-    image: "/media/images/blogs/Blog_6.png",
+    image: "/media/images/blogs/BLOGS/Blog_6.png",
   },
 ];
 

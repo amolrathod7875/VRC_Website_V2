@@ -58,7 +58,7 @@ export const partners: Partner[] = [
       "Available in India through VR Coatings — sales, service & spares",
     ],
     website: "https://www.sunac.co.jp/en/",
-    logo: "/media/images/partners/ASAHI_SUNAC.svg",
+    logo: "/media/images/partners/partners/ASAHI_SUNAC.svg",
   },
   {
     id: "walther-systemtechnik",
@@ -96,7 +96,7 @@ export const partners: Partner[] = [
       "Available in India through VR Coatings — sales, service & spares",
     ],
     website: "https://www.walther-systemtechnik.com",
-    logo: "/media/images/partners/wst-logo-color.svg",
+    logo: "/media/images/partners/partners/wst-logo-color.svg",
   },
   {
     id: "timmer",
@@ -134,7 +134,7 @@ export const partners: Partner[] = [
       "Available in India through VR Coatings — sales, service & spares",
     ],
     website: "https://www.timmer.de/en/pumps/",
-    logo: "/media/images/partners/timmer_logo_white_(14).svg",
+    logo: "/media/images/partners/partners/timmer_logo_white_(14).svg",
     logoBackground: "dark",
     logoFit: "contain",
   },

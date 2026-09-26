@@ -16,7 +16,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "vria-ss",
     name: "AUTOMATIC AIRLESS SPRAY GUN (VRIA) STAINLESS STEEL",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Automatic airless spray gun VRIA SS.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Automatic airless spray gun VRIA SS.jpg",
     alt: "VRIA stainless steel automatic airless spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "450 BARS" },
@@ -29,7 +29,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "400b",
     name: "AUTOMATIC AIRLESS SPRAY GUN (400B) ALUMINIUM",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/400B .jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/400B .jpg",
     alt: "400B aluminium automatic airless spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "400 BARS" },
@@ -42,7 +42,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "vriad-ss",
     name: "AUTOMATIC DISPENSING GUN VRIAD (STAINLESS STEEL)",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Automatic Dispensing gun VRIAD.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Automatic Dispensing gun VRIAD.jpg",
     alt: "VRIAD stainless steel automatic dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "350 BARS" },
@@ -56,7 +56,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "vria-aluminium",
     name: "AUTOMATIC AIRLESS SPRAY GUN (VRIA) ALUMINIUM",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Automatic airless spray gun VRIA Alu.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Automatic airless spray gun VRIA Alu.jpg",
     alt: "VRIA aluminium automatic airless spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "250 BARS" },
@@ -69,7 +69,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "vriad-aluminium",
     name: "AUTOMATIC DISPENSING GUN VRIAD (ALUMINIUM)",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Automatic Dispensing gun VRIAD.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Automatic Dispensing gun VRIAD.jpg",
     alt: "VRIAD aluminium automatic dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "200 BARS" },
@@ -83,7 +83,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "flamingo-auto",
     name: "AUTOMATIC AIR ASSISTED AIRLESS SPRAY GUN (FLAMINGO)",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Automatic air assisted airless spray gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Automatic air assisted airless spray gun.jpg",
     alt: "Flamingo automatic air assisted airless spray gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "250 BARS" },
@@ -95,7 +95,7 @@ export const automaticGunProducts: AutomaticGunProduct[] = [
   {
     id: "hotmelt",
     name: "HOTMELT DISPENSING GUN",
-    image: "/media/images/products/Category_wise_products/Spray Painting Guns/automatic airless Spray Painting Guns/Holt melt Gun.jpg",
+    image: "/media/images/products/Product_png_s/Category_wise_products/Spray Painting Guns/Holt melt Gun.jpg",
     alt: "Hotmelt dispensing gun",
     specifications: [
       { label: "MAXIMUM WORKING PRESSURE", value: "200 BARS" },

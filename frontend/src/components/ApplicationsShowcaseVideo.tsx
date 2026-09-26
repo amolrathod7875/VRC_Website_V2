@@ -124,7 +124,7 @@ export function ApplicationsShowcaseVideo({
                       {numberFor(index)}
                     </span>
                     <Link
-                      href={`/media/images/applications/${app.slug}`}
+                      href={`/applications/${app.slug}`}
                       className={`block text-xl font-semibold leading-tight transition-colors duration-300 sm:text-[26px] lg:text-[28px] ${
                         isActive ? "text-[#1678C8]" : "text-[#082B4C] group-hover:text-[#1678C8]"
                       }`}

@@ -75,7 +75,7 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(HEAD_OFFICE_ADDRESS),
     googleMapsUrl: mapsSearchUrl(HEAD_OFFICE_ADDRESS),
-    image: "/media/images/about/HEAD OFFICE.jpg",
+    image: "/media/images/about/About/HEAD OFFICE.jpg",
     imageAlt: "Head Office facility – Pune, India",
   },
   {
@@ -97,7 +97,7 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(FACTORY_ADDRESS),
     googleMapsUrl: mapsSearchUrl(FACTORY_ADDRESS),
-    image: "/media/images/about/MANUFACTURING.jpg",
+    image: "/media/images/about/About/MANUFACTURING.jpg",
     imageAlt: "Manufacturing facility – Bhosari, Pune",
   },
   {
@@ -117,7 +117,7 @@ export const offices: Office[] = [
     ],
     mapEmbedUrl: embedUrl(NORTH_AMERICA_ADDRESS),
     googleMapsUrl: mapsSearchUrl(NORTH_AMERICA_ADDRESS),
-    image: "/media/images/about/NORTH AMERICA.jpg",
+    image: "/media/images/about/About/NORTH AMERICA.jpg",
     imageAlt: "North America office – Barrie, Ontario, Canada",
   },
   {
@@ -135,7 +135,7 @@ export const offices: Office[] = [
     contacts: [],
     mapEmbedUrl: embedUrl(WAI_MIDC_ADDRESS),
     googleMapsUrl: mapsSearchUrl(WAI_MIDC_ADDRESS),
-    image: "/media/images/about/WAI MIDC.jpg",
+    image: "/media/images/about/About/WAI MIDC.jpg",
     imageAlt: "Wai MIDC facility – Wai, Maharashtra",
   },
 ];

@@ -33,7 +33,7 @@ export default function IndustriesPage() {
           {applications.map((item) => (
             <Link
               key={item.slug}
-              href={`/media/images/applications/${item.slug}`}
+              href={`/applications/${item.slug}`}
               className="group grid gap-0 overflow-hidden rounded-xl border border-slate-200 bg-white transition-all duration-300 hover:border-brand-400 hover:shadow-lg hover:-translate-y-0.5 sm:grid-cols-[28%_1fr]"
             >
               <div className="relative overflow-hidden min-h-[160px] sm:min-h-0">
