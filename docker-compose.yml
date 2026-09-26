@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: vrcoatings
+      POSTGRES_USER: vrcoatings
+      POSTGRES_PASSWORD: vrcoatings
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vrcoatings"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://vrcoatings:vrcoatings@postgres:5432/vrcoatings
+      BACKEND_CORS_ORIGINS: http://localhost:3000
+      MEDIA_ROOT: /app/storage
+    volumes:
+      - ./backend/storage:/app/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:8000/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

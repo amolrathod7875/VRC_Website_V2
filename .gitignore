@@ -1,5 +1,50 @@
-node_modules
-.next
-out
+# Dependencies
+node_modules/
+frontend/node_modules/
+**/node_modules/
+
+# Build outputs
+frontend/.next/
+frontend/out/
+.next/
+out/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+backend/.venv/
+backend/venv/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
 *.log
-.env*
+npm-debug.log*
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+coverage/
+
+# Database
+backend/storage/uploads/
+*.sql.gz
+database backups/
+
+# Misc
+*.mp4 filter=lfs diff=lfs merge=lfs -text
