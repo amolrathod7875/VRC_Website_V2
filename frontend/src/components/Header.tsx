@@ -69,7 +69,7 @@ const MEGA_MENU_CONFIG: Record<
       link: { label: "Explore Applications →", href: "/applications" },
     },
     image: {
-      src: "/media/images/applications/applications/automotive.jpg",
+      src: "/media/images/applications/applications/defence-aerospace.jpg",
       alt: "Automotive coating application",
     },
     cta: {
@@ -368,13 +368,13 @@ function MegaMenuPanel({ label, onClose }: { label: string; onClose: () => void 
 
         {config.image && (
           <div className="hidden lg:flex flex-col gap-4">
-            <div className="relative overflow-hidden rounded-xl bg-slate-100">
+            <div className="relative flex h-44 items-center justify-center overflow-hidden rounded-xl bg-slate-100 p-3">
               <Image
                 src={config.image.src}
                 alt={config.image.alt}
                 width={220}
                 height={160}
-                className="h-40 w-full object-cover"
+                className="max-h-full max-w-full object-contain object-center"
               />
             </div>
             {config.cta && (

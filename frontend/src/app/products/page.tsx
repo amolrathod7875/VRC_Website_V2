@@ -26,19 +26,20 @@ export default function ProductsPage() {
                 href={`/products/${category.slug}`}
                 className="group flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white hover:shadow-md"
               >
-                {category.image ? (
-                  <img
-                    src={category.image}
-                    alt={category.name}
-                    className="aspect-[4/3] w-full object-cover object-center group-hover:opacity-90"
-                  />
-                ) : (
-                  <Placeholder
-                    label={`${category.name} image`}
-                    ratio="4 / 3"
-                    className="group-hover:opacity-90"
-                  />
-                )}
+                <div className="flex h-48 items-center justify-center overflow-hidden p-4 sm:h-56">
+                  {category.image ? (
+                    <img
+                      src={category.image}
+                      alt={category.name}
+                      className="max-h-full max-w-full object-contain group-hover:opacity-90"
+                    />
+                  ) : (
+                    <Placeholder
+                      label={`${category.name} image`}
+                      className="h-full w-full group-hover:opacity-90"
+                    />
+                  )}
+                </div>
               <div className="flex flex-1 flex-col p-5">
                 <h2 className="text-lg font-semibold text-brand-900">{category.name}</h2>
                 {category.children && category.children.length > 0 && (
