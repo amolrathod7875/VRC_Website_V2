@@ -1,0 +1,13 @@
+{
+  "document": "Tiger.pdf",
+  "pages": 2,
+  "tables_detected": 0,
+  "ocr_required_pages": [
+    1,
+    2
+  ],
+  "chunks": 0,
+  "chunk_types": {},
+  "chunk_preview": [],
+  "warnings": []
+}

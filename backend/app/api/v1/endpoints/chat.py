@@ -26,14 +26,30 @@ def _build_rag_service(db: AsyncSession) -> RAGService:
     retriever = HybridRetriever(qdrant_store=qdrant_store)
     reranker = Reranker()
     context_builder = ContextBuilder(reranker=reranker)
-    llm = LLMFactory.create()
+    try:
+        llm = LLMFactory.create()
+    except Exception as exc:
+        raise RuntimeError(f"Generation provider unavailable: {exc}") from exc
     generator = GenerationService(llm_provider=llm, context_builder=context_builder)
     return RAGService(dense=dense, sparse=sparse, retriever=retriever, generator=generator)
 
 
+def _generation_ready() -> bool:
+    try:
+        provider = (rag_settings.LLM_PROVIDER or "").lower().strip()
+        if provider == "groq":
+            return bool(rag_settings.GROQ_API_KEY or __import__("os").environ.get("GROQ_API_KEY"))
+        return False
+    except Exception:
+        return False
+
+
 @router.post("", response_model=ChatResponse)
 async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> ChatResponse:
-    service = _build_rag_service(db)
+    try:
+        service = _build_rag_service(db)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
     result = await service.answer(question=request.message, filters=None)
     sources = [ChatSource(**source) for source in result.get("sources", [])]
     return ChatResponse(answer=result.get("answer", ""), sources=sources)
@@ -52,7 +68,8 @@ async def chat_status(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
         return {
             "rag_ready": indexed_count > 0 and qdrant_connected,
             "qdrant_connected": qdrant_connected,
+            "generation_ready": _generation_ready(),
             "indexed_documents": indexed_count,
         }
     except Exception:
-        return {"rag_ready": False, "qdrant_connected": False, "indexed_documents": 0}
+        return {"rag_ready": False, "qdrant_connected": False, "generation_ready": False, "indexed_documents": 0}

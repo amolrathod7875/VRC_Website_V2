@@ -16,8 +16,8 @@ class QdrantStore:
             collections = self.client.get_collections().collections
             if any(col.name == self.collection_name for col in collections):
                 return
-        except Exception:
-            raise RuntimeError("Unable to connect to Qdrant")
+        except Exception as exc:
+            raise RuntimeError(f"Unable to connect to Qdrant: {exc}") from exc
 
         self.client.create_collection(
             collection_name=self.collection_name,

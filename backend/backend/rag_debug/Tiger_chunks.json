@@ -1,0 +1,100 @@
+{
+  "document": "LION_Catalogue.pdf",
+  "pages": 2,
+  "tables_detected": 1,
+  "ocr_required_pages": [],
+  "chunks": 6,
+  "chunk_types": {
+    "other": 3,
+    "features": 1,
+    "applications": 1,
+    "technical_model": 1
+  },
+  "chunk_preview": [
+    {
+      "chunk_id": "inspect-dry-run::chunk::0",
+      "source_type": "catalogue",
+      "section": "other",
+      "content_type": "other",
+      "product": "LION",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 1,
+      "line_start": 1,
+      "line_end": 2,
+      "authority_priority": 100,
+      "text_preview": "Hydraulic high-volume​ fluid transfer pump"
+    },
+    {
+      "chunk_id": "inspect-dry-run::chunk::1",
+      "source_type": "catalogue",
+      "section": "other",
+      "content_type": "other",
+      "product": "General",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 2,
+      "line_start": 1,
+      "line_end": 3,
+      "authority_priority": 100,
+      "text_preview": "LION is a hydraulically driven, high-volume industrial fluid-transfer pump designed for continuous circulation and feeding duties. Its 4000 cc theoretical displacement and recommended delivery of 60 L/min at 15 cycles make it suitable for centralized coating and process-fluid handling systems."
+    },
+    {
+      "chunk_id": "inspect-dry-run::chunk::2",
+      "source_type": "catalogue",
+      "section": "features",
+      "content_type": "features",
+      "product": "FEATURES",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 2,
+      "line_start": 1,
+      "line_end": 6,
+      "authority_priority": 100,
+      "text_preview": "◆ Hydraulic drive for stable, continuous industrial transfer duty ◆ 4000 cc theoretical hydraulic capacity per cycle ◆ Recommended delivery of 60 L/min at 15 cycles ◆ Maximum oil inlet pressure of 120 bar ◆ Heavy-duty wetted parts with chrome-plated and carbide components ◆ Floor-mounted constructio"
+    },
+    {
+      "chunk_id": "inspect-dry-run::chunk::3",
+      "source_type": "catalogue",
+      "section": "applications",
+      "content_type": "applications",
+      "product": "APPLICATIONS",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 2,
+      "line_start": 1,
+      "line_end": 8,
+      "authority_priority": 100,
+      "text_preview": "◆ Bulk Paint & Coating Transfer​ High-volume movement of primers, topcoats and compatible coating materials between storage and process equipment. ◆ Central Paint-Kitchen Circulation​ Suitable for continuous circulation and feeding in centralized paint supply installations. ◆ Production-Line Fluid F"
+    },
+    {
+      "chunk_id": "inspect-dry-run::chunk::4",
+      "source_type": "catalogue",
+      "section": "technical_model",
+      "content_type": "technical_model",
+      "product": "SPECIFICATION",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 2,
+      "line_start": 1,
+      "line_end": 3,
+      "authority_priority": 100,
+      "text_preview": "Pressure Ratio 0.14:1 Hydraulic Motor Type (mm)"
+    },
+    {
+      "chunk_id": "inspect-dry-run::chunk::5",
+      "source_type": "catalogue",
+      "section": "other",
+      "content_type": "other",
+      "product": "D66 (Ø66)",
+      "product_slug": "lion_catalogue",
+      "model": null,
+      "page_number": 2,
+      "line_start": 1,
+      "line_end": 22,
+      "authority_priority": 100,
+      "text_preview": "Hydraulic Capacity / Cycle (Theoretical) 4000 cc Dimension (D x H) mm Ø 500 x 1600 HEIGHT Recommended Spray Volume @ 15 Cycles (L/Min) 60 L/Min Oil Consumption @ 1 Cycle 0.59 L/Cycle Oil Flow Rate at 10 Bar & @ 15 Cycles 8.85 L/Min Maximum Oil Inlet Pressure (Pressure Safety Set) 120 Bar Maximum Flu"
+    }
+  ],
+  "warnings": []
+}

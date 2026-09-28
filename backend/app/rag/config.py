@@ -35,5 +35,14 @@ class RagSettings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "llama-3.3-70b-versatile"
 
+    def database_url(self) -> str:
+        if self.DATABASE_URL:
+            return self.DATABASE_URL
+        try:
+            from app.core.config import settings as main_settings
+            return getattr(main_settings, "DATABASE_URL", "")
+        except Exception:
+            return ""
+
 
 rag_settings = RagSettings()
