@@ -1,8 +1,8 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from .text_cleaner import normalize_text
 from .pdf_parser import extract_pages
-from .pdf_table_parser import extract_tables, parse_spec_table
+from .pdf_table_parser import extract_tables, parse_spec_table, extract_tables_from_ocr
 from app.rag.constants import (
     CHUNK_TYPE_PRODUCT_IDENTITY,
     CHUNK_TYPE_DESCRIPTION,
@@ -16,6 +16,7 @@ from app.rag.constants import (
     CATALOGUE_AUTHORITY_PRIORITY,
     SOURCE_TYPE_CATALOGUE,
 )
+from app.rag.ingestion.ocr.base import OCRPageResult
 
 
 def _chunk_type_for_heading(heading: str) -> str:
@@ -43,6 +44,7 @@ def chunk_catalogue(
     tables: List[Dict[str, Any]],
     product_slug: str,
     document_id: str,
+    ocr_results: Optional[List[OCRPageResult]] = None,
 ) -> List[Dict[str, Any]]:
     chunks = []
     chunk_index = 0
@@ -118,4 +120,58 @@ def chunk_catalogue(
             })
             chunk_index += 1
 
+    if ocr_results:
+        ocr_tables = extract_tables_from_ocr(ocr_results)
+        for table in ocr_tables:
+            rows = table.get("rows", [])
+            parsed = parse_spec_table(rows)
+            if not parsed:
+                continue
+            for item in parsed:
+                model = item["model"]
+                lines = [f"{v['label']}: {v['value']}" for v in item["values"]]
+                chunks.append({
+                    "document_id": document_id,
+                    "chunk_id": f"{document_id}::chunk::{chunk_index}",
+                    "source_type": SOURCE_TYPE_CATALOGUE,
+                    "source_authority": "primary",
+                    "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
+                    "document_name": document_name,
+                    "product": product_slug.replace("-", " ").title(),
+                    "product_slug": product_slug,
+                    "section": CHUNK_TYPE_TECHNICAL_MODEL,
+                    "content_type": CHUNK_TYPE_TECHNICAL_MODEL,
+                    "model": model,
+                    "page_number": table["page_number"],
+                    "line_start": 1,
+                    "line_end": len(lines),
+                    "text": "\n".join(lines),
+                })
+                chunk_index += 1
+
+    _reclassify_description_chunks(chunks)
+
     return chunks
+
+
+_DESCRIPTION_KEYWORDS = [
+    "suitable for",
+    "range is",
+    "ideal for",
+    "designed for",
+    "used for",
+    "application includes",
+    "coating is",
+    "paint is",
+]
+
+
+def _reclassify_description_chunks(chunks: List[Dict[str, Any]]) -> None:
+    for chunk in chunks:
+        current_section = chunk.get("section", "")
+        if current_section not in (CHUNK_TYPE_OTHER, "General"):
+            continue
+        text_lower = chunk.get("text", "").lower()
+        if any(keyword in text_lower for keyword in _DESCRIPTION_KEYWORDS):
+            chunk["section"] = CHUNK_TYPE_DESCRIPTION
+            chunk["content_type"] = CHUNK_TYPE_DESCRIPTION

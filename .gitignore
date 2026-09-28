@@ -41,6 +41,10 @@ npm-debug.log*
 .mypy_cache/
 coverage/
 
+# RAG debug and cache
+backend/rag_debug/
+backend/.rag_cache/
+
 # Database
 backend/storage/uploads/
 *.sql.gz

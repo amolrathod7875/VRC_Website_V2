@@ -1,6 +1,7 @@
 import pydantic_settings
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
+from pathlib import Path
 
 
 class SettingsProxy:
@@ -13,7 +14,7 @@ class SettingsProxy:
 
 
 class RagSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=str(Path(__file__).resolve().parent.parent.parent.parent / ".env"), extra="ignore")
 
     DATABASE_URL: str = ""
     QDRANT_URL: str = ""
@@ -27,6 +28,9 @@ class RagSettings(BaseSettings):
     RAG_SPARSE_TOP_K: int = 20
     RAG_FINAL_TOP_K: int = 8
     RAG_RERANK_ENABLED: bool = False
+
+    RAG_EMBED_BATCH_SIZE: int = 64
+    RAG_QDRANT_UPSERT_BATCH_SIZE: int = 64
 
     RAG_CATALOGUE_ROOT: str = "/app/storage/catalogues"
     RAG_COMPANY_KB_PATH: str = "/app/storage/knowledge/VR_Coatings_RAG_Monolithic_Knowledge_Base.txt"

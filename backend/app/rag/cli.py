@@ -68,11 +68,14 @@ async def _ingest_company(file_path: str) -> None:
 
 
 async def _inspect_catalogue(file_path: str) -> None:
-    pages = extract_pages(file_path)
+    pages, ocr_results = extract_pages(file_path, enable_ocr=True)
     tables = extract_tables(file_path)
     document_id = "inspect-dry-run"
     product_slug = Path(file_path).stem.lower().replace(" ", "_")
-    chunks = chunk_catalogue(Path(file_path).name, pages, tables, product_slug, document_id)
+    chunks = chunk_catalogue(Path(file_path).name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
+    warnings = []
+    if ocr_results:
+        warnings.extend([w for r in ocr_results for w in r.warnings])
     report = {
         "document": Path(file_path).name,
         "pages": len(pages),
@@ -81,7 +84,7 @@ async def _inspect_catalogue(file_path: str) -> None:
         "chunks": len(chunks),
         "chunk_types": _count_chunk_types(chunks),
         "chunk_preview": [_chunk_preview(chunk) for chunk in chunks[:20]],
-        "warnings": [],
+        "warnings": warnings,
     }
     _write_debug_file("rag_debug/Tiger_chunks.json", report)
     print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -140,14 +143,45 @@ async def _search(query: str) -> None:
             return
         retriever = HybridRetriever(qdrant_store=qdrant)
         dense = DenseEmbeddingService()
+        sparse = SparseEmbeddingService()
         dense_query = dense.embed_query(query)
-        sparse_query = SparseEmbeddingService().embed_query(query)
+        sparse_query = sparse.embed_query(query)
         chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
+        print(f"QUERY: {query}")
+        print("")
+        print("RRF RESULTS:")
         for idx, chunk in enumerate(chunks, start=1):
-            print(f"RANK {idx}: score={chunk.get('score')}")
-            print(f"  document={chunk.get('document_name')} product={chunk.get('product')} section={chunk.get('section')} model={chunk.get('model')} page={chunk.get('page_number')} authority={chunk.get('authority_priority')}")
-            print(f"  text={(chunk.get('text','')[:300]).replace(chr(10), ' ')}")
+            print(f"  {idx}. score={chunk.get('score')}")
+            print(f"     document={chunk.get('document_name')} product={chunk.get('product')} section={chunk.get('section')} model={chunk.get('model')} page={chunk.get('page_number')} authority={chunk.get('authority_priority')}")
+            print(f"     text={(chunk.get('text','')[:300]).replace(chr(10), ' ')}")
             print("")
+
+
+async def _context(query: str) -> None:
+    async with get_session() as db:
+        qdrant = QdrantStore()
+        try:
+            await qdrant.ensure_collection()
+        except RuntimeError as exc:
+            logger.error("Qdrant unavailable: %s", exc)
+            print(f"Qdrant unavailable: {exc}")
+            return
+        retriever = HybridRetriever(qdrant_store=qdrant)
+        dense = DenseEmbeddingService()
+        sparse = SparseEmbeddingService()
+        dense_query = dense.embed_query(query)
+        sparse_query = sparse.embed_query(query)
+        chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
+        context_builder = ContextBuilder()
+        built = context_builder.build(chunks, query)
+        print(f"QUERY: {query}")
+        print("")
+        print("CONTEXT:")
+        print(built.get("context", "")[:4000])
+        print("")
+        print("SOURCES:")
+        for src in built.get("sources", []):
+            print(f"  - {src}")
 
 
 def main() -> None:
@@ -173,6 +207,11 @@ def main() -> None:
     search_parser = subparsers.add_parser("search", help="Retrieval-only search")
     search_parser.add_argument("query", help="Search query")
 
+    context_parser = subparsers.add_parser("context", help="Show context that would be sent to LLM")
+    context_parser.add_argument("query", help="Search query")
+
+    subparsers.add_parser("ocr-status", help="Show OCR engine diagnostics")
+
     args = parser.parse_args()
     if args.command == "ingest-all":
         asyncio.run(_ingest_catalogue(rag_settings.RAG_CATALOGUE_ROOT))
@@ -195,10 +234,59 @@ def main() -> None:
             asyncio.run(_inspect_company(args.path))
     elif args.command == "search":
         asyncio.run(_search(args.query))
+    elif args.command == "context":
+        asyncio.run(_context(args.query))
+    elif args.command == "ocr-status":
+        print(json.dumps(_ocr_status(), ensure_ascii=False, indent=2))
     elif args.command == "status":
         print("Status command not implemented in CLI yet.")
     else:
         parser.print_help()
+
+
+def _ocr_status() -> Dict[str, Any]:
+    status: Dict[str, Any] = {
+        "python": "",
+        "paddlepaddle": None,
+        "paddleocr": None,
+        "pp_structure_v3": False,
+        "device": "cpu",
+        "ocr_ready": False,
+    }
+    try:
+        import platform
+        status["python"] = platform.python_version()
+    except Exception:
+        status["python"] = "unknown"
+
+    try:
+        import paddle
+        status["paddlepaddle"] = paddle.__version__
+    except Exception:
+        pass
+
+    try:
+        import paddleocr
+        status["paddleocr"] = paddleocr.__version__
+    except Exception:
+        pass
+
+    try:
+        from paddleocr import PPStructureV3
+        status["pp_structure_v3"] = True
+    except Exception:
+        pass
+
+    try:
+        from app.rag.ingestion.ocr.paddle_ocr import PaddleOCRProvider
+        provider = PaddleOCRProvider()
+        provider._lazy_init()
+        status["ocr_ready"] = True
+    except Exception as exc:
+        status["ocr_ready"] = False
+        status["error"] = str(exc)
+
+    return status
 
 
 if __name__ == "__main__":

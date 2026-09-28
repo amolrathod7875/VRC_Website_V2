@@ -57,19 +57,42 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
 
 @router.get("/status")
 async def chat_status(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
+    dense_embedding_ready = False
+    sparse_embedding_ready = False
+    qdrant_connected = False
+    try:
+        DenseEmbeddingService()
+        dense_embedding_ready = True
+    except Exception:
+        pass
+    try:
+        SparseEmbeddingService()
+        sparse_embedding_ready = True
+    except Exception:
+        pass
+    try:
+        QdrantStore().client.get_collections()
+        qdrant_connected = True
+    except Exception:
+        pass
     try:
         total_result = await db.execute(select(func.count(RagDocument.id)).where(RagDocument.status == "indexed"))
         indexed_count = total_result.scalar_one() or 0
-        qdrant_connected = True
-        try:
-            QdrantStore().client.get_collections()
-        except Exception:
-            qdrant_connected = False
-        return {
-            "rag_ready": indexed_count > 0 and qdrant_connected,
-            "qdrant_connected": qdrant_connected,
-            "generation_ready": _generation_ready(),
-            "indexed_documents": indexed_count,
-        }
     except Exception:
-        return {"rag_ready": False, "qdrant_connected": False, "generation_ready": False, "indexed_documents": 0}
+        indexed_count = 0
+    ocr_available = False
+    try:
+        from app.rag.ingestion.ocr.ocr_service import ocr_service_from_settings
+        ocr_available = ocr_service_from_settings() is not None
+    except Exception:
+        pass
+    rag_ready = dense_embedding_ready and sparse_embedding_ready and qdrant_connected and indexed_count > 0
+    return {
+        "rag_ready": rag_ready,
+        "dense_embedding_ready": dense_embedding_ready,
+        "sparse_embedding_ready": sparse_embedding_ready,
+        "qdrant_connected": qdrant_connected,
+        "generation_ready": _generation_ready(),
+        "ocr_available": ocr_available,
+        "indexed_documents": indexed_count,
+    }

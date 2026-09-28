@@ -1,0 +1,26 @@
+{
+  "page_number": 1,
+  "full_text": "",
+  "blocks": [],
+  "tables": [
+    {
+      "bbox": [
+        0,
+        0,
+        100,
+        100
+      ],
+      "rows": [
+        [
+          "a",
+          "b"
+        ]
+      ],
+      "markdown": "",
+      "confidence": 0.8
+    }
+  ],
+  "warnings": [],
+  "confidence": 0.8,
+  "metadata": {}
+}

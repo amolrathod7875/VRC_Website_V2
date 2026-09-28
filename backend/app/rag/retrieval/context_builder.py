@@ -8,7 +8,7 @@ class ContextBuilder:
         self.reranker = reranker
 
     def build(self, chunks: List[Dict[str, Any]], query: str, max_chars: int = 12000) -> Dict[str, Any]:
-        ordered = sorted(chunks, key=lambda item: item.get("authority_priority", 0), reverse=True)
+        ordered = list(chunks)
         seen = set()
         unique: List[Dict[str, Any]] = []
         for chunk in ordered:

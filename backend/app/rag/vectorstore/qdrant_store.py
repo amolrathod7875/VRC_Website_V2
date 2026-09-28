@@ -1,9 +1,16 @@
 from typing import Any, Dict, List, Optional
-
+import uuid
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType
+from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, FusionQuery
 from app.rag.config import rag_settings
 from app.rag.constants import STATUS_INDEXED
+
+_POINT_ID_NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
+
+
+def _stable_point_id(document_id: str, chunk_id: str) -> str:
+    raw = f"{document_id}:{chunk_id}"
+    return str(uuid.uuid5(_POINT_ID_NAMESPACE, raw))
 
 
 class QdrantStore:
@@ -19,9 +26,16 @@ class QdrantStore:
         except Exception as exc:
             raise RuntimeError(f"Unable to connect to Qdrant: {exc}") from exc
 
+        dense_size = 384
+        try:
+            from app.rag.embeddings.dense import DenseEmbeddingService
+            dense_size = DenseEmbeddingService().dimension
+        except Exception:
+            pass
+
         self.client.create_collection(
             collection_name=self.collection_name,
-            vectors_config={"dense": VectorParams(size=self._dense_dimension(), distance=Distance.COSINE)},
+            vectors_config={"dense": VectorParams(size=dense_size, distance=Distance.COSINE)},
             sparse_vectors_config={"sparse": SparseVectorParams()},
         )
         self._ensure_indexes()
@@ -38,9 +52,6 @@ class QdrantStore:
             except Exception:
                 pass
 
-    def _dense_dimension(self) -> int:
-        return 384
-
     async def upsert_points(
         self,
         document_id: str,
@@ -48,29 +59,41 @@ class QdrantStore:
         sparse_vectors: List[Dict[str, Any]],
         payloads: List[Dict[str, Any]],
     ) -> None:
-        points = []
-        for idx, payload in enumerate(payloads):
-            points.append({
-                "id": payload.get("chunk_id"),
-                "vector": {
-                    "dense": dense_vectors[idx],
-                    "sparse": sparse_vectors[idx],
-                },
-                "payload": payload,
-            })
-        self.client.upsert(collection_name=self.collection_name, points=points)
+        batch_size = max(1, rag_settings.RAG_QDRANT_UPSERT_BATCH_SIZE)
+        for start in range(0, len(payloads), batch_size):
+            batch_payloads = payloads[start:start + batch_size]
+            batch_dense = dense_vectors[start:start + batch_size]
+            batch_sparse = sparse_vectors[start:start + batch_size]
+            points = []
+            for idx, payload in enumerate(batch_payloads):
+                sparse = batch_sparse[idx]
+                point_id = _stable_point_id(document_id, str(payload.get("chunk_id", idx)))
+                points.append({
+                    "id": point_id,
+                    "vector": {
+                        "dense": batch_dense[idx],
+                        "sparse": SparseVector(indices=sparse.get("indices", []), values=sparse.get("values", [])),
+                    },
+                    "payload": payload,
+                })
+            self.client.upsert(collection_name=self.collection_name, points=points)
 
     async def delete_by_document_id(self, document_id: str) -> None:
         self.client.delete(
             collection_name=self.collection_name,
-            points_selector={"filter": {"must": [{"key": "document_id", "match": {"value": document_id}}]}},
+            points_selector=Filter(must=[FieldCondition(key="document_id", match=MatchValue(value=document_id))]),
         )
 
     async def hybrid_search(self, dense_query: List[float], sparse_query: Dict[str, Any], limit: int) -> List[Any]:
-        results = self.client.search(
+        sparse_vector = SparseVector(indices=sparse_query.get("indices", []), values=sparse_query.get("values", []))
+        results = self.client.query_points(
             collection_name=self.collection_name,
-            query_vector=("dense", dense_query),
+            prefetch=[
+                Prefetch(query=dense_query, using="dense", limit=limit * 2),
+                Prefetch(query=sparse_vector, using="sparse", limit=limit * 2),
+            ],
+            query=FusionQuery(fusion=Fusion.RRF),
             limit=limit,
             with_payload=True,
         )
-        return results
+        return results.points

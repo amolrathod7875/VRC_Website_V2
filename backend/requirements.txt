@@ -10,5 +10,4 @@ email-validator
 httpx
 qdrant-client
 fastembed
-PyMuPDF
 groq

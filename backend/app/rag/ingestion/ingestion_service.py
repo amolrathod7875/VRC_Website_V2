@@ -77,14 +77,17 @@ class IngestionService:
         await self.db.flush()
 
         try:
-            pages = extract_pages(str(file_path))
+            pages, ocr_results = extract_pages(str(file_path), enable_ocr=True)
             tables = extract_tables(str(file_path))
+            if not pages:
+                raise ValueError("No pages extracted")
             product_slug = document_name.lower().replace(" ", "_").replace(".pdf", "")
-            chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id)
+            chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
             if not chunks:
                 raise ValueError("No chunks generated")
 
             texts = [c["text"] for c in chunks]
+            print(f"Embedding {len(texts)} catalogue chunks...")
             dense_vectors = self.dense.embed_documents(texts)
             sparse_vectors = self.sparse.embed_documents(texts)
 
@@ -96,6 +99,7 @@ class IngestionService:
                 metadata = build_catalogue_metadata(document_id, document_name, str(file_path), sha256, product_slug, chunk)
                 payloads.append(metadata)
 
+            print(f"Uploading {len(payloads)} points to Qdrant...")
             await self.qdrant_store.upsert_points(
                 document_id=document_id,
                 dense_vectors=dense_vectors,
@@ -159,9 +163,19 @@ class IngestionService:
             if not chunks:
                 raise ValueError("No chunks generated")
 
+            total = len(chunks)
+            print(f"Parsed {len(sections)} sections, {total} company chunks")
+
             texts = [c["text"] for c in chunks]
-            dense_vectors = self.dense.embed_documents(texts)
-            sparse_vectors = self.sparse.embed_documents(texts)
+            dense_vectors = []
+            sparse_vectors = []
+            batch_size = max(1, rag_settings.RAG_EMBED_BATCH_SIZE)
+            for start in range(0, total, batch_size):
+                end = min(start + batch_size, total)
+                print(f"Embedding company chunks: {end} / {total}")
+                batch_texts = texts[start:end]
+                dense_vectors.extend(self.dense.embed_documents(batch_texts))
+                sparse_vectors.extend(self.sparse.embed_documents(batch_texts))
 
             if existing.qdrant_document_id:
                 await self.qdrant_store.delete_by_document_id(document_id)
@@ -171,12 +185,16 @@ class IngestionService:
                 metadata = build_company_metadata(document_id, document_name, str(file_path), sha256, chunk)
                 payloads.append(metadata)
 
-            await self.qdrant_store.upsert_points(
-                document_id=document_id,
-                dense_vectors=dense_vectors,
-                sparse_vectors=sparse_vectors,
-                payloads=payloads,
-            )
+            qdrant_batch = max(1, rag_settings.RAG_QDRANT_UPSERT_BATCH_SIZE)
+            for start in range(0, len(payloads), qdrant_batch):
+                end = min(start + qdrant_batch, len(payloads))
+                print(f"Uploading company points: {end} / {len(payloads)}")
+                await self.qdrant_store.upsert_points(
+                    document_id=document_id,
+                    dense_vectors=dense_vectors[start:end],
+                    sparse_vectors=sparse_vectors[start:end],
+                    payloads=payloads[start:end],
+                )
 
             existing.sha256 = sha256
             existing.qdrant_document_id = document_id
