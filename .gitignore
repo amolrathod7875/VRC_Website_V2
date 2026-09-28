@@ -48,3 +48,4 @@ database backups/
 
 # Misc
 *.mp4 filter=lfs diff=lfs merge=lfs -text
+start.txt

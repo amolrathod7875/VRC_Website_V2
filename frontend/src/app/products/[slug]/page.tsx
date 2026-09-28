@@ -45,8 +45,10 @@ import {
 import { portablePressureFeedPotCatalogue, portablePressureFeedPotFeatures } from "@/lib/portablePressureFeedPotData";
 import { cubCatalogue, cubFeatures } from "@/lib/cubData";
 import { elephantCatalogue, elephantFeatures } from "@/lib/elephantData";
+import { lionCatalogue, lionFeatures } from "@/lib/lionData";
 import { turbineCatalogue, turbineFeatures } from "@/lib/turbineData";
 import { TigerFeatures, TigerApplications, TigerTechnicalSpecifications } from "@/components/TigerCataloguePage";
+import { LionFeatures, LionApplications, LionTechnicalSpecifications } from "@/components/LionCataloguePage";
 import { MiniTigerApplications, MiniTigerTechnicalSpecifications } from "@/components/MiniTigerCataloguePage";
 import { RhinoApplications, RhinoTechnicalSpecifications } from "@/components/RhinoCataloguePage";
 import { HippoApplications, HippoTechnicalSpecifications } from "@/components/HippoCataloguePage";
@@ -831,6 +833,42 @@ export default async function ProductDetailPage({ params }: Props) {
           <ElephantApplications />
           <ElephantTechnicalSpecifications />
           <CatalogueDownloadCTA catalogue={elephantCatalogue.catalogue} />
+        </>
+      );
+    }
+
+    if (node.slug === "lion") {
+      return (
+        <>
+          <ProductCatalogueHero
+            title={lionCatalogue.name}
+            category={lionCatalogue.category}
+            catalogue={lionCatalogue.catalogue}
+            description={lionCatalogue.description}
+          />
+          <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+              <nav aria-label="Product Categories" className="pt-8">
+                <ProductNav />
+              </nav>
+              <div className="py-8">
+                <p className="mb-6 text-sm text-slate-500">{breadcrumbs}</p>
+                <div className="flex flex-col">
+                  <CatalogueSingleProduct
+                    title={node.name}
+                    image={node.image}
+                    alt={node.name}
+                    description={lionCatalogue.description}
+                    specifications={[]}
+                    features={lionFeatures.map(f => f.text)}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+          <LionApplications />
+          <LionTechnicalSpecifications />
+          <CatalogueDownloadCTA catalogue={lionCatalogue.catalogue} />
         </>
       );
     }

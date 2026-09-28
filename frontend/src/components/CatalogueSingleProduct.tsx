@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SpecificationTable } from "@/components/SpecificationTable";
+import { getMediaUrl } from "@/lib/media";
 
 type CatalogueSingleProductProps = {
   title: string;
@@ -59,7 +60,7 @@ export function CatalogueSingleProduct({
             <div className="relative flex items-center justify-center rounded-[32px_32px_8px_32px] bg-[#E7F5FC] px-6 py-10 sm:px-10 sm:py-14 lg:px-12 lg:py-16">
               {image ? (
                 <img
-                  src={image}
+                  src={getMediaUrl(image)}
                   alt={alt}
                   className="h-auto max-h-[400px] lg:max-h-[500px] w-auto object-contain transition-transform duration-300 ease-out hover:scale-[1.02]"
                   loading="lazy"

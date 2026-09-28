@@ -1145,18 +1145,18 @@ export const productCategories: ProductCategory[] = [
         children: [
           { slug: "vrc-mix-hp-fixed", name: "VRC - Mix HP", catalogue: "/media/catalogues/VRC - MIX HP.pdf", image: "/media/images/products/VRC MIX HP 0964.png" },
           { slug: "vrc-mix-lp-fixed", name: "VRC - Mix LP", catalogue: "/media/catalogues/VRC MIX (LOW - MEDIUM) PRESSURE.pdf", image: "/media/images/products/VRC MIX LP.png" },
-        ],
-      },
-      { slug: "lion", name: "Lion", image: "/media/images/products/VRC eagle.png" },
-    ],
-  },
-  {
-    slug: "paint-transfer-pumps",
+         ],
+       },
+     ],
+   },
+   {
+     slug: "paint-transfer-pumps",
     name: "Paint Transfer Pumps",
     image: "/media/images/products/Elephant 14398.jpg",
     children: [
       { slug: "hippo-pump", name: "Hippo", catalogue: "/media/catalogues/Hippo.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Hippo 14311.jpg" },
       { slug: "elephant", name: "Elephant", catalogue: "/media/catalogues/Elephant.pdf", image: "/media/images/products/Elephant 14398.jpg" },
+      { slug: "lion", name: "LION", catalogue: "/media/catalogues/LION_Catalogue.pdf", image: "/media/images/products/lion.png" },
       { slug: "cub", name: "Cub", catalogue: "/media/catalogues/cub.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Cub pump.jpg" },
       { slug: "barrel-pump", name: "Barrel Pump", catalogue: "/media/catalogues/Barrel Pump.pdf", image: "/media/images/products/Barrel Transfer Pump.png" },
       { slug: "diaphragm-pump", name: "Diaphragm Pump", catalogue: "/media/catalogues/diaphragm pump.pdf", image: "/media/images/products/Product_png_s/Category_wise_products/Diaphragm pump.jpg" },

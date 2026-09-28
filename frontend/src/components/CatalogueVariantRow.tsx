@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SpecificationTable } from "@/components/SpecificationTable";
+import { getMediaUrl } from "@/lib/media";
 
 export type CatalogueVariant = {
   id: string;
@@ -65,7 +66,7 @@ export function CatalogueVariantRow({ variant, index }: CatalogueVariantRowProps
             <div className="absolute inset-0 bg-[#E7F5FC] rounded-[32px_32px_8px_32px]" />
             <div className="relative flex items-center justify-center rounded-[32px_32px_8px_32px] bg-[#E7F5FC] px-6 py-10 sm:px-10 sm:py-14 lg:px-12 lg:py-16">
               <img
-                src={variant.image}
+                src={getMediaUrl(variant.image)}
                 alt={variant.alt}
                 className="h-auto max-h-[400px] lg:max-h-[500px] w-auto object-contain transition-transform duration-300 ease-out hover:scale-[1.02]"
                 loading="lazy"

@@ -31,3 +31,36 @@ docker compose up --build
 Frontend: http://localhost:3000
 Backend health: http://localhost:8000/health
 API base: http://localhost:8000/api/v1
+
+
+
+#Database Element 
+dbeaver-ce
+
+## Database Connection (Local PostgreSQL)
+
+Database: vrcoatings
+Username: vrcoatings
+Password: vrcoatings
+Host: localhost
+Port: 5433
+
+DBeaver connection settings:
+- Driver: PostgreSQL
+- Host: localhost
+- Port: 5433
+- Database: vrcoatings
+- Username: vrcoatings
+- Password: vrcoatings
+
+psql command:
+PGPASSWORD=vrcoatings psql -U vrcoatings -h localhost -p 5433 -d vrcoatings
+
+## Database Connection (Docker Compose)
+
+If using Docker Compose, use port 5432 instead:
+- Port: 5432
+- Database: vrcoatings
+- Username: vrcoatings
+- Password: vrcoatings
+

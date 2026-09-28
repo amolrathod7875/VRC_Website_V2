@@ -1,3 +1,4 @@
+import { getMediaUrl } from "@/lib/media";
 import Link from "next/link";
 
 type CatalogueDownloadCTAProps = {
@@ -19,8 +20,8 @@ export function CatalogueDownloadCTA({ catalogue, title = "Need the complete tec
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href={catalogue}
+             <a
+               href={getMediaUrl(catalogue)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md bg-[#082B4C] px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#0B5C97]"
@@ -29,7 +30,7 @@ export function CatalogueDownloadCTA({ catalogue, title = "Need the complete tec
               <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path d="M5 10h10M11 5l5 5-5 5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
-            </Link>
+            </a>
             <Link
               href="/contact"
               className="inline-flex items-center gap-2 rounded-md border-2 border-[#082B4C] bg-transparent px-5 py-2.5 text-sm font-semibold text-[#082B4C] transition-colors duration-200 hover:bg-[#082B4C] hover:text-white"
