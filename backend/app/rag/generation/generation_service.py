@@ -1,30 +1,64 @@
+import time
+import logging
 from typing import Any, Dict, List
 from app.rag.config import rag_settings
 from app.rag.generation.base import BaseLLMProvider
 from app.rag.generation.factory import LLMFactory
-from app.rag.generation.prompts import SYSTEM_PROMPT
-from app.rag.retrieval.context_builder import ContextBuilder
+from app.rag.generation.prompts import SYSTEM_PROMPT, ANSWER_UNAVAILABLE
+
+logger = logging.getLogger(__name__)
 
 
 class GenerationService:
-    def __init__(self, llm_provider: BaseLLMProvider, context_builder: ContextBuilder) -> None:
+    def __init__(self, llm_provider: BaseLLMProvider) -> None:
         self.llm_provider = llm_provider
-        self.context_builder = context_builder
 
-    async def generate_answer(self, question: str, chunks: List[Dict[str, Any]]) -> Dict[str, Any]:
-        if not chunks:
+    async def generate_answer(self, question: str, context: str) -> Dict[str, Any]:
+        if not context or not context.strip():
             return {
-                "answer": "I couldn't find enough verified information in the VR Coatings knowledge base to answer that accurately.",
+                "answer": ANSWER_UNAVAILABLE,
                 "sources": [],
+                "provider_error": False,
             }
-        built = self.context_builder.build(chunks, question)
-        context = built.get("context", "")
-        sources = built.get("sources", [])
-        if not context:
-            return {
-                "answer": "I couldn't find enough verified information in the VR Coatings knowledge base to answer that accurately.",
-                "sources": [],
-            }
+
         user_prompt = f"Question: {question}"
-        answer = await self.llm_provider.generate(system_prompt=SYSTEM_PROMPT, user_prompt=user_prompt, context=context)
-        return {"answer": answer, "sources": sources}
+        gen_start = time.perf_counter()
+        try:
+            answer = await self.llm_provider.generate(
+                system_prompt=SYSTEM_PROMPT,
+                user_prompt=user_prompt,
+                context=context,
+            )
+        except Exception as exc:
+            latency_ms = (time.perf_counter() - gen_start) * 1000
+            logger.error(
+                "Generation provider error: %s",
+                exc,
+                extra={
+                    "provider": getattr(self.llm_provider, "provider_name", type(self.llm_provider).__name__),
+                    "model": getattr(self.llm_provider, "model_name", "unknown"),
+                    "latency_ms": round(latency_ms, 2),
+                    "provider_error": True,
+                },
+            )
+            return {
+                "answer": "I'm currently unable to generate an answer. Please try again later.",
+                "sources": [],
+                "provider_error": True,
+            }
+
+        latency_ms = (time.perf_counter() - gen_start) * 1000
+        logger.info(
+            "Generation completed",
+            extra={
+                "provider": getattr(self.llm_provider, "provider_name", type(self.llm_provider).__name__),
+                "model": getattr(self.llm_provider, "model_name", "unknown"),
+                "latency_ms": round(latency_ms, 2),
+                "provider_error": False,
+            },
+        )
+        return {
+            "answer": answer or ANSWER_UNAVAILABLE,
+            "sources": [],
+            "provider_error": False,
+        }

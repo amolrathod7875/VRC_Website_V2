@@ -2,7 +2,7 @@ from typing import Any, Dict
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
-from app.schemas.chat import ChatRequest, ChatResponse
+from app.schemas.chat import ChatRequest, ChatResponse, ChatSource, ChatRetrieval
 from app.rag.config import rag_settings
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
@@ -30,8 +30,14 @@ def _build_rag_service(db: AsyncSession) -> RAGService:
         llm = LLMFactory.create()
     except Exception as exc:
         raise RuntimeError(f"Generation provider unavailable: {exc}") from exc
-    generator = GenerationService(llm_provider=llm, context_builder=context_builder)
-    return RAGService(dense=dense, sparse=sparse, retriever=retriever, generator=generator)
+    generator = GenerationService(llm_provider=llm)
+    return RAGService(
+        dense=dense,
+        sparse=sparse,
+        retriever=retriever,
+        generator=generator,
+        context_builder=context_builder,
+    )
 
 
 def _generation_ready() -> bool:
@@ -46,13 +52,20 @@ def _generation_ready() -> bool:
 
 @router.post("", response_model=ChatResponse)
 async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> ChatResponse:
+    if not request.message or not request.message.strip():
+        raise HTTPException(status_code=422, detail="Message must not be empty")
     try:
         service = _build_rag_service(db)
     except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc))
-    result = await service.answer(question=request.message, filters=None)
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    try:
+        result = await service.answer(question=request.message, filters=None)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
     sources = [ChatSource(**source) for source in result.get("sources", [])]
-    return ChatResponse(answer=result.get("answer", ""), sources=sources)
+    retrieval_data = result.get("retrieval")
+    retrieval = ChatRetrieval(**retrieval_data) if retrieval_data else None
+    return ChatResponse(answer=result.get("answer", ""), sources=sources, retrieval=retrieval)
 
 
 @router.get("/status")

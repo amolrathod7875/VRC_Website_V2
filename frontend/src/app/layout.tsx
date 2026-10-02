@@ -3,6 +3,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MainWrapper } from "@/components/MainWrapper";
+import { ChatWidget } from "@/components/ChatWidget";
 
 export const metadata: Metadata = {
   title: {
@@ -16,11 +17,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col bg-white antialiased">
-        <Header />
-        <MainWrapper>{children}</MainWrapper>
-        <Footer />
-      </body>
+    <body className="flex min-h-screen flex-col bg-white antialiased">
+      <Header />
+      <MainWrapper>{children}</MainWrapper>
+      <Footer />
+      <ChatWidget />
+    </body>
     </html>
   );
 }
