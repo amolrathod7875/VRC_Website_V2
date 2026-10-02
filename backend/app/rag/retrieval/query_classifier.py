@@ -67,10 +67,6 @@ def classify_query(question: str) -> QueryIntent:
     if any(kw in normalized for kw in contact_keywords):
         return QueryIntent.CONTACT_LOCATION
 
-    general_company_keywords = ["vr coatings", "company", "manufacture", "manufacturing", "products", "about", "tell me about", "what is", "what does"]
-    if any(kw in normalized for kw in general_company_keywords):
-        return QueryIntent.GENERAL_COMPANY
-
     product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi"]
     if any(kw in normalized for kw in product_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
@@ -78,6 +74,10 @@ def classify_query(question: str) -> QueryIntent:
     yes_no_technical_keywords = ["have a pressure ratio", "have an output", "have a flow", "have a viscosity", "have a max"]
     if any(kw in normalized for kw in yes_no_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
+
+    general_company_keywords = ["vr coatings", "company", "manufacture", "manufacturing", "products", "about", "tell me about", "what is", "what does"]
+    if any(kw in normalized for kw in general_company_keywords):
+        return QueryIntent.GENERAL_COMPANY
 
     product_application_keywords = ["used for", "application", "compatible with", "suitable for", "coating", "painting", "spray"]
     if any(kw in normalized for kw in product_application_keywords):

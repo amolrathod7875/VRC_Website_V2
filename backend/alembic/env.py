@@ -8,7 +8,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 from app.core.database import Base
-from app.models import media_asset, product, application, blog, faq, job, contact_submission, client, partner, industry, rag_document
+from app.models import media_asset, product, application, blog, faq, job, contact_submission, client, partner, industry, rag_document, rag_conversation
 
 target_metadata = Base.metadata
 

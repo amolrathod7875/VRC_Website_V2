@@ -13,6 +13,7 @@ from app.rag.retrieval.reranker import Reranker
 from app.rag.generation.generation_service import GenerationService
 from app.rag.generation.factory import LLMFactory
 from app.rag.services.rag_service import RAGService
+from app.rag.conversation.conversation_service import ConversationService
 from app.models.rag_document import RagDocument
 from sqlalchemy import select, func
 
@@ -54,18 +55,58 @@ def _generation_ready() -> bool:
 async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> ChatResponse:
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=422, detail="Message must not be empty")
+
     try:
         service = _build_rag_service(db)
     except RuntimeError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    conversation_service = ConversationService(db)
+
     try:
-        result = await service.answer(question=request.message, filters=None)
+        conversation = await conversation_service.get_or_create_conversation(
+            str(request.conversation_id) if request.conversation_id else None
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+    await conversation_service.append_user_message(conversation.id, request.message.strip())
+
+    recent_messages = await conversation_service.get_recent_messages(conversation.id, limit=8)
+    active_context = conversation_service.get_active_product_context(recent_messages)
+    augmented_query = conversation_service.build_augmented_query(request.message.strip(), recent_messages, active_context)
+
+    try:
+        result = await service.answer(
+            question=request.message.strip(),
+            filters=None,
+            retrieval_query=augmented_query,
+            recent_messages=recent_messages,
+        )
     except Exception as exc:
+        await db.commit()
         raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
+
     sources = [ChatSource(**source) for source in result.get("sources", [])]
     retrieval_data = result.get("retrieval")
     retrieval = ChatRetrieval(**retrieval_data) if retrieval_data else None
-    return ChatResponse(answer=result.get("answer", ""), sources=sources, retrieval=retrieval)
+    answer = result.get("answer", "")
+
+    await conversation_service.append_assistant_message(
+        conversation_id=conversation.id,
+        content=answer,
+        sources=result.get("sources", []),
+        retrieval_metadata=result.get("retrieval"),
+    )
+
+    await db.commit()
+
+    return ChatResponse(
+        conversation_id=conversation.id,
+        answer=answer,
+        sources=sources,
+        retrieval=retrieval,
+    )
 
 
 @router.get("/status")

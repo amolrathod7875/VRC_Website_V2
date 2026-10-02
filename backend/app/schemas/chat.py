@@ -1,8 +1,11 @@
 from pydantic import BaseModel, Field
+from typing import Optional
+from uuid import UUID
 
 
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1, max_length=2000)
+    conversation_id: Optional[UUID] = None
 
 
 class ChatRetrieval(BaseModel):
@@ -28,6 +31,7 @@ class ChatSource(BaseModel):
 
 
 class ChatResponse(BaseModel):
+    conversation_id: UUID
     answer: str
     sources: list[ChatSource] = []
     retrieval: ChatRetrieval | None = None

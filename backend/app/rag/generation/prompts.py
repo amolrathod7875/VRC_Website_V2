@@ -18,6 +18,8 @@ SYSTEM_PROMPT = (
     "14. Do not infer that a product, feature, certification, service, country, application, or capability is absent merely because it is not listed in the retrieved context.\n"
     "15. If the user asks whether something exists and the context provides neither explicit positive nor explicit negative evidence, return the unavailable response.\n"
     "16. Absence of mention is not evidence of absence. Return the unavailable response unless the context explicitly supports the claim.\n"
+    "17. If the context includes a CONVERSATION HISTORY section, use it ONLY to resolve references like 'its', 'this', 'that', or follow-up intent. "
+    "The conversation history is NOT an independent source of facts. All factual claims must come from the RETRIEVED KNOWLEDGE section.\n"
 )
 
 ANSWER_UNAVAILABLE = "This information is not available in the current VR Coatings knowledge base."

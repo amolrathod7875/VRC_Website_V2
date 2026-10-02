@@ -21,6 +21,7 @@ export interface ChatRetrieval {
 }
 
 export interface ChatAPIResponse {
+  conversation_id: string;
   answer: string;
   sources: ChatSource[];
   retrieval: ChatRetrieval | null;

@@ -11,14 +11,24 @@ const SUGGESTED_PROMPTS = [
   "What is the pressure ratio of Tiger 30:150?",
 ];
 
-const CHAT_STATUS_KEY = "vr-coatings-chat-status";
+const SESSION_KEY = "vr-coatings-conversation-id";
 
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function renderMarkdown(text: string): string {
-  const lines = text.split("\n");
+  const safe = escapeHtml(text);
+  const lines = safe.split("\n");
   const out: string[] = [];
   let inList = false;
   let listType: "ul" | "ol" | null = null;
@@ -35,19 +45,17 @@ function renderMarkdown(text: string): string {
     const line = lines[i];
     const trimmed = line.trim();
 
-    // blank line
     if (trimmed === "") {
       flushList();
       out.push("<br/>");
       continue;
     }
 
-    // Ordered list
     const orderedMatch = trimmed.match(/^(\d+)\.\s+(.*)$/);
     if (orderedMatch) {
       if (!inList || listType !== "ol") {
         flushList();
-        out.push("<ol class=\"list-decimal pl-5 space-y-1 my-1\">");
+        out.push('<ol class="list-decimal pl-5 space-y-1 my-1">');
         inList = true;
         listType = "ol";
       }
@@ -55,11 +63,10 @@ function renderMarkdown(text: string): string {
       continue;
     }
 
-    // Unordered list
     if (trimmed.startsWith("- ")) {
       if (!inList || listType !== "ul") {
         flushList();
-        out.push("<ul class=\"list-disc pl-5 space-y-1 my-1\">");
+        out.push('<ul class="list-disc pl-5 space-y-1 my-1">');
         inList = true;
         listType = "ul";
       }
@@ -67,7 +74,6 @@ function renderMarkdown(text: string): string {
       continue;
     }
 
-    // Paragraph
     flushList();
     out.push(`<p class="leading-6">${inlineFormat(trimmed)}</p>`);
   }
@@ -100,14 +106,23 @@ export function ChatWidget() {
   const [input, setInput] = useState("");
   const [open, setOpen] = useState(false);
   const [panelReady, setPanelReady] = useState(false);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const slowTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-
   const inputId = useId();
+
+  // Load conversation from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (stored) setConversationId(stored);
+    } catch {
+      // sessionStorage unavailable
+    }
+  }, []);
 
   // Health check (runs once on mount)
   useEffect(() => {
@@ -175,8 +190,16 @@ export function ChatWidget() {
     }
   }, [open]);
 
-  // Persist open/closed state across page navigation by listening to route changes would need router;
-  // this is intentionally per-tab session only per Phase 6 spec.
+  // Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && open) {
+        handleClose();
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [open, messages, status, conversationId, input]);
 
   async function handleSubmit(text?: string) {
     const message = (text ?? input).trim();
@@ -196,7 +219,14 @@ export function ChatWidget() {
     setStatus({ type: "loading" });
 
     try {
-      const result: ChatAPIResponse = await sendChatMessage(message);
+      const result: ChatAPIResponse = await sendChatMessage(message, conversationId);
+
+      setConversationId(result.conversation_id);
+      try {
+        sessionStorage.setItem(SESSION_KEY, result.conversation_id);
+      } catch {
+        // sessionStorage unavailable
+      }
 
       const assistantMsg: ChatMessage = {
         id: uid(),
@@ -209,9 +239,6 @@ export function ChatWidget() {
       setMessages((prev) => [...prev, assistantMsg]);
       setStatus({ type: "open" });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Something went wrong.";
-
       const assistantMsg: ChatMessage = {
         id: uid(),
         role: "assistant",
@@ -222,7 +249,7 @@ export function ChatWidget() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-      setStatus({ type: "error", message: errorMessage });
+      setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
     }
   }
 
@@ -239,7 +266,6 @@ export function ChatWidget() {
 
   function handleRetry() {
     setStatus({ type: "loading" });
-    // Retry by re-sending the last user message
     const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
     if (lastUserMsg) {
       handleSubmit(lastUserMsg.content);
@@ -253,9 +279,21 @@ export function ChatWidget() {
     setPanelReady(false);
   }
 
+  function handleNewChat() {
+    setMessages([]);
+    setConversationId(null);
+    setInput("");
+    setStatus({ type: "open" });
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+    } catch {
+      // sessionStorage unavailable
+    }
+    setTimeout(() => inputRef.current?.focus(), 350);
+  }
+
   const isOpen = open;
 
-  // ---- RENDER SOURCES ----
   function renderSources(sources: ChatSource[]) {
     if (!sources.length) return null;
 
@@ -342,7 +380,6 @@ export function ChatWidget() {
   }
 
   function renderContent() {
-    // Loading
     if (status.type === "loading" || status.type === "slow") {
       return (
         <div className="flex justify-start">
@@ -371,7 +408,6 @@ export function ChatWidget() {
       );
     }
 
-    // Empty state (first open, no messages yet)
     if (messages.length === 0 && status.type !== "error") {
       return (
         <div className="flex flex-col items-center justify-center text-center px-4">
@@ -384,7 +420,7 @@ export function ChatWidget() {
               strokeWidth={1.8}
             >
               <path
-                d="M12 4h.01M8 8h.01M16 8h.01M5 12h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-5l-5 5v-5z"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
@@ -423,7 +459,6 @@ export function ChatWidget() {
       );
     }
 
-    // Error state (no messages)
     if (messages.length === 0 && status.type === "error") {
       return (
         <div className="flex flex-col items-center justify-center text-center px-4">
@@ -460,11 +495,10 @@ export function ChatWidget() {
   }
 
   const hasMessages = messages.length > 0;
-  const isAvailable = status.type === "ready" || status.type === "open" || status.type === "error" || status.type === "loading" || status.type === "slow";
+  const isAvailable = ["ready", "open", "error", "loading", "slow"].includes(status.type);
 
   return (
     <>
-      {/* LAUNCHER */}
       {!isOpen && isAvailable && (
         <button
           type="button"
@@ -493,7 +527,6 @@ export function ChatWidget() {
         </button>
       )}
 
-      {/* PANEL OVERLAY (mobile) */}
       {isOpen && (
         <div
           className={cn(
@@ -506,7 +539,6 @@ export function ChatWidget() {
         />
       )}
 
-      {/* PANEL */}
       {isOpen && (
         <div
           role="dialog"
@@ -514,7 +546,6 @@ export function ChatWidget() {
           className={cn(
             "fixed z-50 flex flex-col overflow-hidden",
             "rounded-2xl border border-slate-200 bg-white shadow-2xl",
-            // Mobile: bottom sheet
             "bottom-4 right-4 left-4 top-4 md:inset-auto md:bottom-7 md:right-7",
             "md:w-[410px] md:h-[620px]",
             "transition-all duration-300 ease-out",
@@ -523,7 +554,6 @@ export function ChatWidget() {
               : "opacity-0 scale-95 translate-y-3"
           )}
         >
-          {/* HEADER */}
           <div className="flex shrink-0 items-center justify-between bg-brand-700 px-5 py-3.5">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
@@ -551,6 +581,14 @@ export function ChatWidget() {
               </div>
             </div>
             <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleNewChat}
+                aria-label="Start new chat"
+                className="mr-1 flex h-7 items-center justify-center rounded-md px-2 text-xs font-medium text-white/80 transition-colors hover:bg-white/15 hover:text-white"
+              >
+                New chat
+              </button>
               <span
                 className={cn(
                   "mr-1 h-2 w-2 rounded-full",
@@ -583,7 +621,6 @@ export function ChatWidget() {
             </div>
           </div>
 
-          {/* MESSAGES */}
           <div
             ref={messagesContainerRef}
             className="flex-1 overflow-y-auto px-4 py-4"
@@ -599,7 +636,6 @@ export function ChatWidget() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* INPUT AREA */}
           {isOpen && (
             <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3">
               {(status.type === "loading" || status.type === "slow") && (

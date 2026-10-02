@@ -1,6 +1,6 @@
 import time
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
 from app.rag.retrieval.hybrid_retriever import HybridRetriever
@@ -30,11 +30,19 @@ class RAGService:
         self.generator = generator
         self.context_builder = context_builder
 
-    async def answer(self, question: str, filters: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    async def answer(
+        self,
+        question: str,
+        filters: Dict[str, Any] | None = None,
+        retrieval_query: Optional[str] = None,
+        recent_messages: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
         start = time.perf_counter()
 
-        dense_query = self.dense.embed_query(question)
-        sparse_query = self.sparse.embed_query(question)
+        effective_query = retrieval_query or question
+
+        dense_query = self.dense.embed_query(effective_query)
+        sparse_query = self.sparse.embed_query(effective_query)
 
         retrieval_start = time.perf_counter()
         chunks = await self.retriever.retrieve(
@@ -69,7 +77,7 @@ class RAGService:
                 },
             }
 
-        built = self.context_builder.build(chunks, question)
+        built = self.context_builder.build(chunks, effective_query)
         context = built.get("context", "")
         sources = built.get("sources", [])
         selected_chunks = built.get("chunks", [])
@@ -127,11 +135,18 @@ class RAGService:
                 },
             }
 
+        conversation_context = ""
+        if recent_messages:
+            from app.rag.conversation.conversation_service import ConversationService
+            cs = ConversationService.__new__(ConversationService)
+            conversation_context = cs.build_generation_context(recent_messages, context)
+
         gen_start = time.perf_counter()
         try:
             gen_result = await self.generator.generate_answer(
                 question=question,
-                context=context,
+                context=conversation_context or context,
+                conversation_context=conversation_context,
             )
         except Exception as exc:
             total_duration = (time.perf_counter() - start) * 1000

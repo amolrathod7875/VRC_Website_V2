@@ -7,14 +7,20 @@ const API_BASE =
   );
 
 export async function sendChatMessage(
-  message: string
+  message: string,
+  conversationId?: string | null
 ): Promise<ChatAPIResponse> {
+  const body: Record<string, unknown> = { message };
+  if (conversationId) {
+    body.conversation_id = conversationId;
+  }
+
   const res = await fetch(`${API_BASE}/chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
@@ -30,12 +36,14 @@ export async function sendChatMessage(
   }
 
   const data = (await res.json()) as {
+    conversation_id: string;
     answer: string;
     sources: ChatSource[];
     retrieval: ChatRetrieval | null;
   };
 
   return {
+    conversation_id: data.conversation_id ?? "",
     answer: data.answer ?? "",
     sources: data.sources ?? [],
     retrieval: data.retrieval ?? null,

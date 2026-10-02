@@ -4,9 +4,9 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(env_file=str(Path(__file__).resolve().parent.parent.parent.parent / ".env"), extra="ignore")
 
-    DATABASE_URL: str = "postgresql+psycopg://vrcoatings:vrcoatings@postgres:5432/vrcoatings"
+    DATABASE_URL: str = ""
     BACKEND_CORS_ORIGINS: str = "http://localhost:3000"
     MEDIA_ROOT: str = str(Path(__file__).resolve().parent.parent.parent / "storage")
     MEDIA_BASE_URL: str = "/media"

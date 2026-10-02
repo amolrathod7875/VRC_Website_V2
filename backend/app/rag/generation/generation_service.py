@@ -13,13 +13,18 @@ class GenerationService:
     def __init__(self, llm_provider: BaseLLMProvider) -> None:
         self.llm_provider = llm_provider
 
-    async def generate_answer(self, question: str, context: str) -> Dict[str, Any]:
+    async def generate_answer(self, question: str, context: str, conversation_context: str = "") -> Dict[str, Any]:
         if not context or not context.strip():
             return {
                 "answer": ANSWER_UNAVAILABLE,
                 "sources": [],
                 "provider_error": False,
             }
+
+        if conversation_context and conversation_context.strip():
+            full_context = f"{conversation_context}\n\n{context}"
+        else:
+            full_context = context
 
         user_prompt = f"Question: {question}"
         gen_start = time.perf_counter()
