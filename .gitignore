@@ -44,6 +44,7 @@ coverage/
 # RAG debug and cache
 backend/rag_debug/
 backend/.rag_cache/
+.tmp_test_ocr_cache*
 
 # Database
 backend/storage/uploads/
