@@ -10,6 +10,7 @@ class QueryIntent(str, Enum):
     CONTACT_LOCATION = "contact_location"
     GOVERNANCE = "governance"
     MODEL_IDENTIFIER = "model_identifier"
+    PRODUCT_COMPARISON = "product_comparison"
     UNKNOWN = "unknown"
 
 
@@ -41,6 +42,13 @@ NEGATIVE_EXISTENTIAL_PATTERNS = [
     re.compile(r"\bdoes\s+the\s+company\s+provide\s+(.+)", re.IGNORECASE),
 ]
 
+COMPARISON_PATTERNS = [
+    re.compile(r"\bcompare\b", re.IGNORECASE),
+    re.compile(r"\bvs\b", re.IGNORECASE),
+    re.compile(r"\bversus\b", re.IGNORECASE),
+    re.compile(r"\bdifference\s+between\b", re.IGNORECASE),
+]
+
 AFFIRMATIVE_YES_NO_PATTERNS = [
     re.compile(r"\bdoes\s+tiger\s+\d+:\d+\s+have\s+a\s+pressure\s+ratio\s+of\s+\d+:\d+\b", re.IGNORECASE),
     re.compile(r"\bis\s+the\s+pressure\s+ratio\s+of\s+tiger\s+\d+:\d+\s+\d+:\d+\b", re.IGNORECASE),
@@ -58,6 +66,10 @@ def classify_query(question: str) -> QueryIntent:
 
     if MODEL_IDENTIFIER_PATTERN.match(normalized):
         return QueryIntent.MODEL_IDENTIFIER
+
+    for pattern in COMPARISON_PATTERNS:
+        if pattern.search(normalized):
+            return QueryIntent.PRODUCT_COMPARISON
 
     governance_keywords = ["unknown", "tbc", "proposed", "inferred", "conflict", "data status", "governance"]
     if any(kw in normalized for kw in governance_keywords):
@@ -138,6 +150,12 @@ def get_intent_metadata(intent: QueryIntent) -> dict:
             "prefer_sections": ["company overview", "about", "company profile", "canonical profile", "manufacturing", "business overview", "product portfolio"],
             "downrank_sections": ["change log", "governance", "unknown_register", "internal notes", "dataset goals", "document maintenance"],
             "prefer_source_types": ["company_master"],
+        }
+    if intent == QueryIntent.PRODUCT_COMPARISON:
+        return {
+            "prefer_sections": ["technical_model", "description", "features", "applications", "technical specifications"],
+            "downrank_sections": ["change log", "governance", "unknown_register"],
+            "prefer_source_types": ["catalogue", "company_master"],
         }
     if intent == QueryIntent.PRODUCT_TECHNICAL:
         return {

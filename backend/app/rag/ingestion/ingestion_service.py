@@ -24,6 +24,7 @@ from app.rag.constants import (
     STATUS_FAILED,
     STATUS_PROCESSING,
 )
+from app.rag.product_identity import get_canonical_slug
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +82,7 @@ class IngestionService:
             tables = extract_tables(str(file_path))
             if not pages:
                 raise ValueError("No pages extracted")
-            product_slug = document_name.lower().replace(" ", "_").replace(".pdf", "")
+            product_slug = get_canonical_slug(document_name) or document_name.lower().replace(" ", "_").replace(".pdf", "")
             chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
             if not chunks:
                 raise ValueError("No chunks generated")

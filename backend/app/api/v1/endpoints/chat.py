@@ -82,6 +82,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             filters=None,
             retrieval_query=augmented_query,
             recent_messages=recent_messages,
+            active_context=active_context,
         )
     except Exception as exc:
         await db.commit()

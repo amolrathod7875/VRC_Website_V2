@@ -21,7 +21,10 @@ app.add_middleware(
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
-media_root = Path(settings.MEDIA_ROOT)
+_configured_media_root = Path(settings.MEDIA_ROOT)
+_default_media_root = Path(__file__).resolve().parent.parent.parent / "storage"
+media_root = _configured_media_root if _configured_media_root.exists() else _default_media_root
+
 if media_root.exists():
     app.mount(settings.MEDIA_BASE_URL, StaticFiles(directory=str(media_root)), name="media")
 

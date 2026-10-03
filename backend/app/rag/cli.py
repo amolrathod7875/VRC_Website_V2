@@ -19,6 +19,7 @@ from app.rag.retrieval.hybrid_retriever import HybridRetriever
 from app.rag.retrieval.context_builder import ContextBuilder
 from app.rag.retrieval.reranker import Reranker
 from app.rag.config import rag_settings
+from app.rag.product_identity import get_canonical_slug
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ async def _inspect_catalogue(file_path: str) -> None:
     pages, ocr_results = extract_pages(file_path, enable_ocr=True)
     tables = extract_tables(file_path)
     document_id = "inspect-dry-run"
-    product_slug = Path(file_path).stem.lower().replace(" ", "_")
+    product_slug = get_canonical_slug(Path(file_path).name) or Path(file_path).stem.lower().replace(" ", "_")
     chunks = chunk_catalogue(Path(file_path).name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
     warnings = []
     if ocr_results:

@@ -84,8 +84,21 @@ class QdrantStore:
             points_selector=Filter(must=[FieldCondition(key="document_id", match=MatchValue(value=document_id))]),
         )
 
-    async def hybrid_search(self, dense_query: List[float], sparse_query: Dict[str, Any], limit: int) -> List[Any]:
+    def _build_qdrant_filter(self, filters: Optional[Dict[str, Any]]) -> Optional[Filter]:
+        if not filters:
+            return None
+        must = []
+        for key, value in filters.items():
+            if value is None:
+                continue
+            must.append(FieldCondition(key=key, match=MatchValue(value=value)))
+        if not must:
+            return None
+        return Filter(must=must)
+
+    async def hybrid_search(self, dense_query: List[float], sparse_query: Dict[str, Any], limit: int, filters: Optional[Dict[str, Any]] = None) -> List[Any]:
         sparse_vector = SparseVector(indices=sparse_query.get("indices", []), values=sparse_query.get("values", []))
+        qdrant_filter = self._build_qdrant_filter(filters)
         results = self.client.query_points(
             collection_name=self.collection_name,
             prefetch=[
@@ -95,5 +108,31 @@ class QdrantStore:
             query=FusionQuery(fusion=Fusion.RRF),
             limit=limit,
             with_payload=True,
+            query_filter=qdrant_filter,
         )
         return results.points
+
+    async def update_payloads_by_document_id(self, document_id: str, updates: Dict[str, Any]) -> int:
+        """Update payload fields for all points belonging to a document.
+
+        Returns the number of points updated.
+        """
+        points = self.client.scroll(
+            collection_name=self.collection_name,
+            scroll_filter=Filter(must=[FieldCondition(key="document_id", match=MatchValue(value=document_id))]),
+            limit=4096,
+            with_payload=True,
+        )[0]
+        if not points:
+            return 0
+        updated = 0
+        for point in points:
+            payload = dict(point.payload or {})
+            payload.update(updates)
+            self.client.set_payload(
+                collection_name=self.collection_name,
+                payload=payload,
+                points=[point.id],
+            )
+            updated += 1
+        return updated

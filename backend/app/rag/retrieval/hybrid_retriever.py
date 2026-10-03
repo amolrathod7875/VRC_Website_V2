@@ -17,6 +17,7 @@ class HybridRetriever:
             dense_query=dense_query,
             sparse_query=sparse_query,
             limit=rag_settings.RAG_FINAL_TOP_K,
+            filters=filters,
         )
         chunks = []
         for result in results:

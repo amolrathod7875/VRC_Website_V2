@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc, delete
 from app.models.rag_conversation import RagConversation, RagMessage
+from app.rag.product_identity import resolve_product_identity, extract_model_identifier
 
 logger = logging.getLogger(__name__)
 
@@ -93,6 +94,13 @@ class ConversationService:
             })
         return messages
 
+    def _explicit_product_in_message(self, message: Dict[str, Any]) -> Optional[str]:
+        content = message.get("content", "") or ""
+        resolved = resolve_product_identity(content)
+        if not resolved:
+            return None
+        return resolved[0]
+
     def get_active_product_context(self, messages: List[Dict[str, Any]]) -> Dict[str, Optional[str]]:
         context: Dict[str, Optional[str]] = {
             "product_slug": None,
@@ -100,18 +108,58 @@ class ConversationService:
             "document": None,
         }
 
+        if not messages:
+            return context
+
+        latest_user = next((m for m in reversed(messages) if m.get("role") == "user"), None)
+        explicit_slug = self._explicit_product_in_message(latest_user) if latest_user else None
+
+        if explicit_slug:
+            context["product_slug"] = explicit_slug
+            previous_slug = next(
+                (
+                    src.get("product_slug")
+                    for msg in reversed(messages)
+                    if msg.get("role") == "assistant"
+                    for src in (msg.get("sources", []) or [])
+                    if src.get("product_slug")
+                ),
+                None,
+            )
+            if previous_slug and previous_slug != explicit_slug:
+                context["model"] = None
+                context["document"] = None
+            # Always try to extract a model identifier from the current user message.
+            extracted_model = extract_model_identifier(latest_user.get("content", "") or "") if latest_user else None
+            if extracted_model:
+                context["model"] = extracted_model
+            # Enrich document from the most recent assistant source for the same product.
+            for msg in reversed(messages):
+                if msg.get("role") != "assistant":
+                    continue
+                for src in (msg.get("sources", []) or []):
+                    if src.get("product_slug") == explicit_slug and src.get("document") and not context["document"]:
+                        context["document"] = src["document"]
+                break
+            # Explicit product mention wins; do not overwrite with stale assistant metadata.
+            return context
+
+        # No explicit product in current message: derive from the most recent assistant message only.
         for msg in reversed(messages):
             if msg.get("role") != "assistant":
                 continue
-            for src in msg.get("sources", []) or []:
-                if src.get("product_slug") and not context["product_slug"]:
-                    context["product_slug"] = src["product_slug"]
-                if src.get("model") and not context["model"]:
-                    context["model"] = src["model"]
-                if src.get("document") and not context["document"]:
-                    context["document"] = src["document"]
-                if context["product_slug"] and context["model"]:
-                    return context
+            sources = msg.get("sources", []) or []
+            if not sources:
+                continue
+            primary = sources[0]
+            if primary.get("product_slug"):
+                context["product_slug"] = primary["product_slug"]
+            if primary.get("model"):
+                context["model"] = primary["model"]
+            if primary.get("document"):
+                context["document"] = primary["document"]
+            return context
+
         return context
 
     def _normalize_technical_terms(self, text: str) -> str:
@@ -128,11 +176,17 @@ class ConversationService:
         if not recent_messages:
             return question
 
-        last_user_msg = next((m for m in reversed(recent_messages) if m.get("role") == "user"), None)
-        is_ambiguous = not last_user_msg or self._is_ambiguous_followup(question)
+        # `question` is the current user message. Use it directly for explicit-product detection.
+        explicit_slug = self._explicit_product_in_message({"content": question})
+
+        # Explicit current-turn product mention overrides old context; do not augment with stale identifiers.
+        if explicit_slug:
+            return self._normalize_technical_terms(question)
+
+        is_ambiguous = self._is_ambiguous_followup(question)
 
         if not is_ambiguous:
-            return question
+            return self._normalize_technical_terms(question)
 
         normalized_question = self._normalize_technical_terms(question)
         parts = [normalized_question]
@@ -159,7 +213,7 @@ class ConversationService:
             "its ", "it's ", "its", "this ", "that ", "these ", "those ",
             "output", "pressure", "ratio", "cost", "price", "weight", "size",
             "applications", "application", "features", "specifications",
-            "tell me more", "more ", "about ", "and ", "or ", "what about",
+            "tell me more", "more ", "and ", "or ", "what about",
             "how about", "and the", "and its",
         ]
         for pattern in ambiguous_patterns:
