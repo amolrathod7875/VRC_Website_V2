@@ -169,6 +169,98 @@ def test_build_generation_context_separates_history_from_evidence() -> None:
     assert "authoritative" in context.lower()
 
 
+def test_get_active_product_context_preserves_model_across_same_product_followup() -> None:
+    db = AsyncMock()
+    service = ConversationService(db)
+
+    messages = [
+        make_message("user", "Tell me about Tiger 30:150."),
+        make_message(
+            "assistant",
+            "Tiger 30:150 outputs 150 cc.",
+            sources=[
+                {"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"},
+            ],
+        ),
+        make_message(
+            "user",
+            "What is its output?",
+        ),
+        make_message(
+            "assistant",
+            "150 cc",
+            sources=[
+                {"document": "Tiger.pdf", "product_slug": "tiger", "model": None},
+                {"document": "rhino.pdf", "product_slug": "rhino", "model": "75:210"},
+            ],
+        ),
+        make_message("user", "And pressure ratio?"),
+    ]
+
+    ctx = service.get_active_product_context(messages)
+    assert ctx["product_slug"] == "tiger"
+    assert ctx["model"] == "30:150"
+    assert ctx["document"] == "Tiger.pdf"
+
+
+def test_get_active_product_context_clears_model_on_product_switch() -> None:
+    db = AsyncMock()
+    service = ConversationService(db)
+
+    messages = [
+        make_message("user", "Tell me about Tiger 30:150."),
+        make_message(
+            "assistant",
+            "Tiger 30:150 outputs 150 cc.",
+            sources=[
+                {"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"},
+            ],
+        ),
+        make_message("user", "Now tell me about LION."),
+        make_message(
+            "assistant",
+            "LION is a hydraulic pump.",
+            sources=[
+                {"document": "LION_Catalogue.pdf", "product_slug": "lion", "model": None},
+            ],
+        ),
+        make_message("user", "What is its pressure ratio?"),
+    ]
+
+    ctx = service.get_active_product_context(messages)
+    assert ctx["product_slug"] == "lion"
+    assert ctx["model"] is None
+    assert ctx["document"] == "LION_Catalogue.pdf"
+
+
+def test_build_augmented_query_preserves_model_for_technical_followup() -> None:
+    db = AsyncMock()
+    service = ConversationService(db)
+
+    recent = [
+        make_message("user", "Tell me about Tiger 30:150."),
+        make_message(
+            "assistant",
+            "Tiger 30:150 outputs 150 cc.",
+            sources=[{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}],
+        ),
+        make_message("user", "What is its output?"),
+        make_message(
+            "assistant",
+            "150 cc",
+            sources=[
+                {"document": "Tiger.pdf", "product_slug": "tiger", "model": None},
+            ],
+        ),
+    ]
+    ctx = {"product_slug": "tiger", "model": "30:150", "document": "Tiger.pdf"}
+
+    augmented = service.build_augmented_query("And pressure ratio?", recent, ctx)
+    assert "tiger" in augmented
+    assert "30:150" in augmented
+    assert "pressure ratio" in augmented
+
+
 def test_conversations_do_not_leak_between_sessions() -> None:
     db = AsyncMock()
     service = ConversationService(db)

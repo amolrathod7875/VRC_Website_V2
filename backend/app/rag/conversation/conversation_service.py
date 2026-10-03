@@ -144,21 +144,29 @@ class ConversationService:
             # Explicit product mention wins; do not overwrite with stale assistant metadata.
             return context
 
-        # No explicit product in current message: derive from the most recent assistant message only.
+        # No explicit product in current message: derive context from recent assistant messages.
+        # Collect all sources from recent assistant messages and find the most recent product_slug.
+        all_sources = []
         for msg in reversed(messages):
             if msg.get("role") != "assistant":
                 continue
             sources = msg.get("sources", []) or []
-            if not sources:
-                continue
-            primary = sources[0]
-            if primary.get("product_slug"):
-                context["product_slug"] = primary["product_slug"]
-            if primary.get("model"):
-                context["model"] = primary["model"]
-            if primary.get("document"):
-                context["document"] = primary["document"]
-            return context
+            all_sources.extend(sources)
+
+        for src in all_sources:
+            if src.get("product_slug") and not context["product_slug"]:
+                context["product_slug"] = src["product_slug"]
+            if src.get("document") and not context["document"]:
+                context["document"] = src["document"]
+
+        # If we have a product but no model, look for the model in the collected sources
+        # for the SAME product. This preserves model context across same-product follow-ups
+        # without carrying a model into a different product.
+        if context["product_slug"] and not context["model"]:
+            for src in all_sources:
+                if src.get("product_slug") == context["product_slug"] and src.get("model"):
+                    context["model"] = src["model"]
+                    break
 
         return context
 
