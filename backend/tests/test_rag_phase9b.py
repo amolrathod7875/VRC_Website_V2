@@ -30,6 +30,7 @@ from app.rag.ingestion.catalogue_chunker import chunk_catalogue
 from app.rag.ingestion.pdf_table_parser import parse_spec_table, is_likely_spec_table
 from app.rag.product_identity import get_canonical_slug, resolve_product_identity, extract_model_identifier, PRODUCT_ALIASES
 from app.rag.constants import CATALOGUE_AUTHORITY_PRIORITY, CHUNK_TYPE_TECHNICAL_MODEL, SOURCE_TYPE_CATALOGUE
+from app.rag.config import rag_settings
 
 
 # ============================================================
@@ -341,8 +342,8 @@ def test_registry_qdrant_point_count_matches() -> None:
     from app.core.database import async_session_factory
 
     try:
-        client = QdrantClient(url='https://37832e36-65aa-4fc2-817c-35e534ab5ddb.sa-east-1-0.aws.cloud.qdrant.io', api_key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6YTYwMGRkM2UtYWUyOS00NTQxLTliZjgtNWU4YmEzMzFhYmZkIn0.Puc5Rh43QlzFk-KJ67N-17xTGjiQ0CmMIzyN_ABvurY')
-        qdrant_count = client.count(collection_name='vr_coatings_knowledge').count
+        client = QdrantClient(url=rag_settings.QDRANT_URL, api_key=rag_settings.QDRANT_API_KEY or None)
+        qdrant_count = client.count(collection_name=rag_settings.QDRANT_COLLECTION_NAME).count
     except Exception as exc:
         pytest.skip(f"Qdrant unavailable: {exc}")
 
@@ -372,7 +373,7 @@ def test_review_required_documents_not_in_qdrant() -> None:
     from app.core.database import async_session_factory
 
     try:
-        client = QdrantClient(url='https://37832e36-65aa-4fc2-817c-35e534ab5ddb.sa-east-1-0.aws.cloud.qdrant.io', api_key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIiwic3ViamVjdCI6ImFwaS1rZXk6YTYwMGRkM2UtYWUyOS00NTQxLTliZjgtNWU4YmEzMzFhYmZkIn0.Puc5Rh43QlzFk-KJ67N-17xTGjiQ0CmMIzyN_ABvurY')
+        client = QdrantClient(url=rag_settings.QDRANT_URL, api_key=rag_settings.QDRANT_API_KEY or None)
     except Exception as exc:
         pytest.skip(f"Qdrant unavailable: {exc}")
 
@@ -392,7 +393,7 @@ def test_review_required_documents_not_in_qdrant() -> None:
         if not doc.qdrant_document_id:
             continue
         points, _ = client.scroll(
-            collection_name='vr_coatings_knowledge',
+            collection_name=rag_settings.QDRANT_COLLECTION_NAME,
             scroll_filter=Filter(must=[FieldCondition(key="document_id", match=MatchValue(value=doc.qdrant_document_id))]),
             limit=1,
             with_payload=False,
