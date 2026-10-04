@@ -114,14 +114,20 @@ def reconstruct_table_from_ocr_blocks(
     document_name: str = "",
     x_threshold: float = 120.0,
     y_threshold: float = 25.0,
-) -> Optional[StructuredTable]:
-    """Reconstruct a table from OCR blocks using coordinate clustering."""
+    y_gap_threshold: float = 200.0,
+) -> List[StructuredTable]:
+    """Reconstruct tables from OCR blocks using coordinate clustering.
+    
+    Splits blocks into separate y-clusters when large gaps (> y_gap_threshold)
+    are detected, then reconstructs tables from each cluster independently.
+    Returns only clusters that have actual structured table data.
+    """
     if not blocks:
-        return None
+        return []
 
     valid_blocks = [b for b in blocks if b.bbox and len(b.bbox) >= 2]
     if not valid_blocks:
-        return None
+        return []
 
     block_data = []
     for b in valid_blocks:
@@ -139,8 +145,38 @@ def reconstruct_table_from_ocr_blocks(
         })
 
     if not block_data:
-        return None
+        return []
 
+    # Split blocks into y-clusters by large gaps
+    sorted_by_y = sorted(block_data, key=lambda b: b["y"])
+    y_clusters = []
+    current_cluster = [sorted_by_y[0]]
+    
+    for b in sorted_by_y[1:]:
+        if b["y"] - current_cluster[-1]["y"] > y_gap_threshold:
+            y_clusters.append(current_cluster)
+            current_cluster = [b]
+        else:
+            current_cluster.append(b)
+    y_clusters.append(current_cluster)
+    
+    tables = []
+    for cluster in y_clusters:
+        table = _reconstruct_single_table(cluster, page_number, document_name, x_threshold, y_threshold)
+        if table:
+            tables.append(table)
+    
+    return tables
+
+
+def _reconstruct_single_table(
+    block_data: List[Dict[str, Any]],
+    page_number: int,
+    document_name: str = "",
+    x_threshold: float = 120.0,
+    y_threshold: float = 25.0,
+) -> Optional[StructuredTable]:
+    """Reconstruct a single table from a cluster of OCR blocks."""
     x_centers = _cluster_coordinates([b["x"] for b in block_data], x_threshold)
     y_centers = _cluster_coordinates([b["y"] for b in block_data], y_threshold)
 
@@ -176,12 +212,108 @@ def reconstruct_table_from_ocr_blocks(
     if len(filtered_sorted_x) < 2 or len(filtered_rows) < 1:
         return None
 
+    # Try to find the best header row if first row looks like a section title
+    if filtered_headers and not any(re.search(r"\d+:\d+", h) for h in filtered_headers):
+        candidate = _select_best_table_candidate(filtered_headers, filtered_rows, page_number, document_name)
+        if candidate and candidate.table_type != "UNKNOWN_TABLE":
+            return candidate
+
     first_rows = filtered_rows[:3]
     table_type = detect_table_type(filtered_headers, first_rows, document_name)
 
-    return StructuredTable(
+    structured = StructuredTable(
         headers=filtered_headers,
         rows=filtered_rows,
+        source_page=page_number,
+        table_type=table_type,
+    )
+
+    is_valid, issues = validate_table(structured)
+    if not is_valid:
+        structured.confidence = "REVIEW_REQUIRED"
+        structured.issues = issues
+
+    return structured
+
+
+def _select_best_table_candidate(
+    headers: List[str],
+    rows: List[TableRow],
+    page_number: int,
+    document_name: str = "",
+) -> Optional[StructuredTable]:
+    """Select the best table candidate from clustered OCR blocks."""
+    if not rows:
+        return None
+
+    # First, look for a row that strongly resembles a header:
+    # - First cell is a known header keyword ("Type", "Model", etc.)
+    # - Subsequent cells contain ratio-like values (e.g., "28:550", "30:150")
+    # This handles cases where section titles appear before the actual table header.
+    header_keywords = ["type", "model", "part no", "part number", "port size", "size"]
+    for i, row in enumerate(rows):
+        first_cell = row.cells[0].text.strip().lower() if row.cells else ""
+        if any(k in first_cell for k in header_keywords):
+            # Check if subsequent cells have ratio-like or model-like values
+            other_cells = [c.text for c in row.cells[1:]]
+            other_text = " ".join(other_cells)
+            if re.search(r"\d+:\d+", other_text) or len([c for c in other_cells if c.strip()]) >= 2:
+                best_header_idx = i
+                best_headers = [row.cells[j].text if j < len(row.cells) else "" for j in range(len(headers))]
+                best_rows = []
+                for k, r in enumerate(rows):
+                    if k == best_header_idx:
+                        continue
+                    raw_cells = [c.text for c in r.cells]
+                    best_rows.append(TableRow(cells=r.cells, raw_cells=raw_cells, confidence=r.confidence, issues=r.issues))
+                if len(best_rows) < 1:
+                    return None
+                table_type = detect_table_type(best_headers, best_rows[:3], document_name)
+                return StructuredTable(
+                    headers=best_headers,
+                    rows=best_rows,
+                    source_page=page_number,
+                    table_type=table_type,
+                )
+
+    # Fallback: score-based selection
+    all_row_texts = []
+    for row in rows:
+        row_text = " ".join(c.text for c in row.cells)
+        all_row_texts.append(row_text)
+
+    header_candidates = []
+    for i, row_text in enumerate(all_row_texts):
+        score = 0
+        if any(k in row_text.lower() for k in ["type", "model", "part no", "port size", "pressure ratio", "discharge", "stroke", "moc", "mwp"]):
+            score += 2
+        if any(k in row_text.lower() for k in ["fan dia", "shaft", "container", "connections", "material"]):
+            score += 1
+        numeric_count = len(re.findall(r"\d+", row_text))
+        alpha_count = len(re.findall(r"[a-zA-Z]", row_text))
+        if alpha_count > numeric_count:
+            score += 1
+        header_candidates.append((score, i))
+
+    header_candidates.sort(key=lambda x: x[0], reverse=True)
+    best_header_idx = header_candidates[0][1] if header_candidates else 0
+
+    best_headers = [rows[best_header_idx].cells[i].text if i < len(rows[best_header_idx].cells) else "" for i in range(len(headers))]
+    best_rows = []
+    for i, row in enumerate(rows):
+        if i == best_header_idx:
+            continue
+        raw_cells = [c.text for c in row.cells]
+        best_rows.append(TableRow(cells=row.cells, raw_cells=raw_cells, confidence=row.confidence, issues=row.issues))
+
+    if len(best_rows) < 1:
+        return None
+
+    table_type = detect_table_type(best_headers, best_rows[:3], document_name)
+
+    return StructuredTable(
+        headers=best_headers,
+        rows=best_rows,
         source_page=page_number,
         table_type=table_type,
     )
@@ -303,13 +435,11 @@ def parse_pump_table(table: StructuredTable) -> List[Dict[str, Any]]:
 
             label = raw_cells[0] if raw_cells else ""
             if not label:
-                complete = False
-                break
+                continue
 
             raw_value = raw_cells[col_idx] if col_idx < len(raw_cells) else ""
             if not raw_value:
-                complete = False
-                break
+                continue
 
             is_ratio_col = col_idx in ratio_col_indices
             normalized_value, reason = _normalize_ratio_token(raw_value, is_ratio_col, context_rows)

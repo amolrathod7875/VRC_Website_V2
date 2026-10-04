@@ -794,6 +794,8 @@ def _split_mixed_technical_chunks(chunks: List[Dict[str, Any]], document_name: s
             new_chunk["section"] = CHUNK_TYPE_ACCESSORIES
             new_chunk["content_type"] = CHUNK_TYPE_ACCESSORIES
             new_chunk["line_end"] = len(accessory_lines)
+            if spec_lines:
+                new_chunk["chunk_id"] = f"{chunk.get('chunk_id', '')}-accessories"
             result.append(new_chunk)
     return result
 
@@ -864,10 +866,10 @@ def _add_structured_table_chunks(
     if ocr_results:
         for ocr_result in ocr_results:
             page_number = ocr_result.page_number
-            structured = reconstruct_table_from_ocr_blocks(
+            structured_tables_list = reconstruct_table_from_ocr_blocks(
                 ocr_result.blocks, page_number, document_name
             )
-            if structured:
+            for structured in structured_tables_list:
                 is_valid, issues = validate_table(structured)
                 if not is_valid:
                     structured.confidence = "REVIEW_REQUIRED"

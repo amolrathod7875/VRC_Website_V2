@@ -330,8 +330,10 @@ def test_reconstruct_table_from_ocr_blocks() -> None:
         OCRBlock(text="30:1", bbox=[300, 200, 400, 250], confidence=0.99),
         OCRBlock(text="35:1", bbox=[500, 200, 600, 250], confidence=0.99),
     ]
-    table = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="test.pdf")
-    assert table is not None
+    tables = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="test.pdf")
+    assert tables is not None
+    assert len(tables) >= 1
+    table = tables[0]
     assert len(table.headers) >= 2
     assert len(table.rows) >= 1
     assert table.table_type == "PUMP_MODEL_TABLE"
@@ -341,8 +343,8 @@ def test_reconstruct_table_insufficient_blocks() -> None:
     blocks = [
         OCRBlock(text="Type", bbox=[100, 100, 200, 150], confidence=0.99),
     ]
-    table = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="test.pdf")
-    assert table is None
+    tables = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="test.pdf")
+    assert tables == []
 
 
 # ============================================================
@@ -358,10 +360,11 @@ def test_cub_table_from_real_ocr_blocks() -> None:
 
     data = __import__("json").loads(cache_path.read_text(encoding="utf-8"))
     blocks = [OCRBlock(**b) for b in data.get("blocks", [])]
-    table = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="cub.pdf")
-    if table is None:
+    tables = reconstruct_table_from_ocr_blocks(blocks, page_number=2, document_name="cub.pdf")
+    if not tables:
         pytest.skip("Could not reconstruct table from CUB OCR")
 
+    table = tables[0]
     parsed = parse_structured_table(table)
     if not parsed:
         pytest.skip("CUB table parsed empty")

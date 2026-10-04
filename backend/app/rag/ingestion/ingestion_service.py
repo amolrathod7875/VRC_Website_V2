@@ -10,6 +10,7 @@ from app.rag.utils.ids import generate_document_id
 from app.rag.ingestion.pdf_parser import extract_pages, page_needs_ocr
 from app.rag.ingestion.pdf_table_parser import extract_tables
 from app.rag.ingestion.catalogue_chunker import chunk_catalogue
+from app.rag.ingestion.multi_product_chunker import chunk_multi_product_catalogue, _product_slug_from_heading
 from app.rag.ingestion.company_parser import parse_company_text
 from app.rag.ingestion.company_chunker import chunk_company_sections
 from app.rag.ingestion.metadata_builder import build_catalogue_metadata, build_company_metadata
@@ -27,6 +28,25 @@ from app.rag.constants import (
 from app.rag.product_identity import get_canonical_slug
 
 logger = logging.getLogger(__name__)
+
+_MULTI_PRODUCT_FAMILIES = {
+    "automatic_gun": "automatic-spray-guns",
+    "conventional guns": "kingfisher",
+    "manual_guns": "manual-spray-guns",
+}
+
+
+def _is_multi_product_document(document_name: str) -> bool:
+    doc_lower = document_name.lower()
+    return any(name in doc_lower for name in _MULTI_PRODUCT_FAMILIES)
+
+
+def _family_slug_for_document(document_name: str) -> Optional[str]:
+    doc_lower = document_name.lower()
+    for key, slug in _MULTI_PRODUCT_FAMILIES.items():
+        if key in doc_lower:
+            return slug
+    return None
 
 
 class IngestionService:
@@ -82,8 +102,26 @@ class IngestionService:
             tables = extract_tables(str(file_path))
             if not pages:
                 raise ValueError("No pages extracted")
+
             product_slug = get_canonical_slug(document_name) or document_name.lower().replace(" ", "_").replace(".pdf", "")
-            chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
+            is_multi = _is_multi_product_document(document_name)
+            if is_multi:
+                chunks = chunk_multi_product_catalogue(document_name, pages, tables, document_id, ocr_results=ocr_results)
+                family_slug = _family_slug_for_document(document_name)
+                child_slugs = sorted({c.get("product_slug") for c in chunks if c.get("product_slug")})
+                if family_slug and family_slug not in child_slugs:
+                    child_slugs.insert(0, family_slug)
+                existing.product_slug = family_slug or (child_slugs[0] if child_slugs else product_slug)
+                existing.product_slugs = child_slugs
+                for chunk in chunks:
+                    chunk_slug = chunk.get("product_slug")
+                    if chunk_slug and chunk_slug != family_slug:
+                        chunk["parent_product_slug"] = family_slug
+            else:
+                chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
+                existing.product_slug = product_slug
+                existing.product_slugs = [product_slug]
+
             if not chunks:
                 raise ValueError("No chunks generated")
 

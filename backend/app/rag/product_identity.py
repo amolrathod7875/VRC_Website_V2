@@ -124,6 +124,147 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "high pressure ball valves",
         ],
     },
+    "automatic-spray-guns": {
+        "canonical_slug": "automatic-spray-guns",
+        "aliases": [
+            "automatic spray guns",
+            "automatic gun",
+            "automatic_gun",
+            "automatic spray painting gun",
+            "automatic spray painting guns",
+        ],
+    },
+    "kingfisher": {
+        "canonical_slug": "kingfisher",
+        "aliases": [
+            "kingfisher",
+            "kingfisher silver",
+            "kingfisher blue",
+            "kingfisher red",
+            "kingfisher gold",
+            "conventional guns",
+            "conventional gun",
+        ],
+    },
+    "manual-spray-guns": {
+        "canonical_slug": "manual-spray-guns",
+        "aliases": [
+            "manual spray guns",
+            "manual gun",
+            "manual_guns",
+            "manual spray painting guns",
+            "manual spray painting gun",
+        ],
+    },
+    "vria": {
+        "canonical_slug": "vria",
+        "aliases": [
+            "vria",
+            "vria aluminium",
+            "vria stainless steel",
+            "vria ss",
+            "vria al",
+        ],
+    },
+    "vriad": {
+        "canonical_slug": "vriad",
+        "aliases": [
+            "vriad",
+            "vriad aluminium",
+            "vriad stainless steel",
+            "vriad ss",
+            "vriad al",
+        ],
+    },
+    "400b": {
+        "canonical_slug": "400b",
+        "aliases": [
+            "400b",
+            "400 b",
+        ],
+    },
+    "hotmelt-dispenser": {
+        "canonical_slug": "hotmelt-dispenser",
+        "aliases": [
+            "hotmelt",
+            "hot melt",
+            "hotmelt dispensing gun",
+            "hot melt dispensing gun",
+        ],
+    },
+    "flamingo": {
+        "canonical_slug": "flamingo",
+        "aliases": [
+            "flamingo",
+            "flamingo gun",
+        ],
+    },
+    "am250": {
+        "canonical_slug": "am250",
+        "aliases": [
+            "am250",
+            "am 250",
+        ],
+    },
+    "vril": {
+        "canonical_slug": "vril",
+        "aliases": [
+            "vril",
+        ],
+    },
+    "eagle": {
+        "canonical_slug": "eagle",
+        "aliases": [
+            "eagle",
+            "eagle gun",
+        ],
+    },
+    "falcon": {
+        "canonical_slug": "falcon",
+        "aliases": [
+            "falcon",
+            "falcon gun",
+        ],
+    },
+    "ext-i": {
+        "canonical_slug": "ext-i",
+        "aliases": [
+            "ext-i",
+            "ext i",
+            "extrusion gun",
+            "extrusion gun ext-i",
+        ],
+    },
+    "hawk": {
+        "canonical_slug": "hawk",
+        "aliases": [
+            "hawk",
+            "hawk gun",
+            "dispensing gun hawk",
+        ],
+    },
+    "wax-spray-gun": {
+        "canonical_slug": "wax-spray-gun",
+        "aliases": [
+            "wax spray gun",
+            "wax gun",
+        ],
+    },
+    "pole-gun": {
+        "canonical_slug": "pole-gun",
+        "aliases": [
+            "pole gun",
+            "polegun",
+        ],
+    },
+    "vrid": {
+        "canonical_slug": "vrid",
+        "aliases": [
+            "vrid",
+            "vrid gun",
+            "airless manual dispensing gun vrid",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.

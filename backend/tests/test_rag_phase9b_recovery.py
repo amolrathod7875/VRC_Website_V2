@@ -117,19 +117,13 @@ def test_review_required_not_indexed_in_postgres() -> None:
     from app.core.database import async_session_factory
     import asyncio
 
-    # After Phase 9C.2 Batch 1 and Phase 9C.3 Batch 2, these documents were approved and indexed.
+    # After Phase 9C.2 Batch 1, Phase 9C.3 Batch 2, Phase 9C.4, and Phase 9C.5,
+    # these documents were approved and indexed.
     # Only the remaining review-required documents should be excluded.
     review_required = {
-        "manual_GUNS.pdf",
         "VRC MIX (LOW - MEDIUM) PRESSURE.pdf",
-        "AUTOMATIC_gun.pdf",
-        "ball_valves.pdf",
         "Barrel Pump.pdf",
-        "CONVENTIONAL GUNS_f.pdf",
-        "cub.pdf",
         "dragon.pdf",
-        "DRUM PRESS.pdf",
-        "PNEUMATIC STIRRER.pdf",
         "polyurea.pdf",
         "TUBE VARNISH COATING SYSTEM.pdf",
     }

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, BigInteger, DateTime, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.sql import func
 import uuid
 from app.core.database import Base
@@ -12,6 +12,7 @@ class RagDocument(Base):
     document_name = Column(String(512), nullable=False, unique=True)
     source_type = Column(String(64), nullable=False)
     product_slug = Column(String(256), nullable=True)
+    product_slugs = Column(JSONB, nullable=True)
     storage_path = Column(String(1024), nullable=False)
     sha256 = Column(String(64), nullable=False)
     version = Column(String(64), nullable=True)

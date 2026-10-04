@@ -28,6 +28,9 @@ _FILENAME_FALLBACK: dict[str, str] = {
     "electric_pump.pdf": "leopard",
     "cheetah.pdf": "cheetah",
     "filters.pdf": "filters",
+    "automatic_gun.pdf": "automatic-spray-guns",
+    "conventional guns_f.pdf": "kingfisher",
+    "manual_guns.pdf": "manual-spray-guns",
 }
 
 
@@ -54,15 +57,37 @@ class CatalogueResolver:
         return True
 
     async def _db_catalogues(self, product_slug: str) -> list[RagDocument]:
+        slug = (product_slug or "").strip().lower()
+        if not slug:
+            return []
+
         result = await self.db.execute(
             select(RagDocument)
             .where(
                 RagDocument.source_type == "catalogue",
-                RagDocument.product_slug == product_slug,
+                RagDocument.status == "indexed",
             )
             .order_by(RagDocument.document_name.asc())
         )
-        return list(result.scalars().all())
+        all_docs = list(result.scalars().all())
+
+        matched: list[RagDocument] = []
+        for doc in all_docs:
+            doc_slug = (doc.product_slug or "").strip().lower()
+            doc_slugs = doc.product_slugs or []
+            if isinstance(doc_slugs, str):
+                try:
+                    import json
+                    doc_slugs = json.loads(doc_slugs)
+                except Exception:
+                    doc_slugs = []
+            if slug == doc_slug:
+                matched.append(doc)
+                continue
+            if slug in [s.lower() for s in doc_slugs if isinstance(s, str)]:
+                matched.append(doc)
+                continue
+        return matched
 
     async def resolve(self, product_slug: str) -> list[dict[str, Any]]:
         slug = (product_slug or "").strip().lower()
