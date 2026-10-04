@@ -11,6 +11,7 @@ from app.rag.ingestion.pdf_parser import extract_pages, page_needs_ocr
 from app.rag.ingestion.pdf_table_parser import extract_tables
 from app.rag.ingestion.catalogue_chunker import chunk_catalogue
 from app.rag.ingestion.multi_product_chunker import chunk_multi_product_catalogue, _product_slug_from_heading
+from app.rag.ingestion.system_catalogue_chunker import chunk_system_catalogue
 from app.rag.ingestion.company_parser import parse_company_text
 from app.rag.ingestion.company_chunker import chunk_company_sections
 from app.rag.ingestion.metadata_builder import build_catalogue_metadata, build_company_metadata
@@ -35,10 +36,29 @@ _MULTI_PRODUCT_FAMILIES = {
     "manual_guns": "manual-spray-guns",
 }
 
+_SYSTEM_CATALOGUE_SLUGS = {
+    "dragon",
+    "polyurea",
+    "tube-varnish-coating-system",
+    "vrc-mix-low-medium-pressure",
+}
+
 
 def _is_multi_product_document(document_name: str) -> bool:
     doc_lower = document_name.lower()
     return any(name in doc_lower for name in _MULTI_PRODUCT_FAMILIES)
+
+
+def _is_system_catalogue_document(document_name: str, product_slug: str) -> bool:
+    slug = (product_slug or "").lower()
+    doc_lower = document_name.lower()
+    if slug in _SYSTEM_CATALOGUE_SLUGS:
+        return True
+    if "system" in doc_lower and "coating" in doc_lower:
+        return True
+    if "vrc mix" in doc_lower and "pressure" in doc_lower:
+        return True
+    return False
 
 
 def _family_slug_for_document(document_name: str) -> Optional[str]:
@@ -105,6 +125,7 @@ class IngestionService:
 
             product_slug = get_canonical_slug(document_name) or document_name.lower().replace(" ", "_").replace(".pdf", "")
             is_multi = _is_multi_product_document(document_name)
+            is_system = _is_system_catalogue_document(document_name, product_slug)
             if is_multi:
                 chunks = chunk_multi_product_catalogue(document_name, pages, tables, document_id, ocr_results=ocr_results)
                 family_slug = _family_slug_for_document(document_name)
@@ -117,6 +138,10 @@ class IngestionService:
                     chunk_slug = chunk.get("product_slug")
                     if chunk_slug and chunk_slug != family_slug:
                         chunk["parent_product_slug"] = family_slug
+            elif is_system:
+                chunks = chunk_system_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
+                existing.product_slug = product_slug
+                existing.product_slugs = [product_slug]
             else:
                 chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
                 existing.product_slug = product_slug

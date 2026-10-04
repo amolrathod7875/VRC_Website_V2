@@ -265,6 +265,42 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "airless manual dispensing gun vrid",
         ],
     },
+    "dragon": {
+        "canonical_slug": "dragon",
+        "aliases": [
+            "dragon",
+            "dragon pfp",
+            "dragon passive fire protection",
+        ],
+    },
+    "polyurea": {
+        "canonical_slug": "polyurea",
+        "aliases": [
+            "polyurea",
+            "polyurea spray equipment",
+            "two component polyurea",
+        ],
+    },
+    "tube-varnish-coating-system": {
+        "canonical_slug": "tube-varnish-coating-system",
+        "aliases": [
+            "tube varnish coating system",
+            "tube coating system",
+            "varnish coating system",
+        ],
+    },
+    "vrc-mix-low-medium-pressure": {
+        "canonical_slug": "vrc-mix-low-medium-pressure",
+        "aliases": [
+            "vrc mix low medium pressure",
+            "vrc mix low-medium pressure",
+            "vrc mix low medium",
+            "vrc mix low-medium",
+            "vrc mix (low - medium) pressure",
+            "vrc mix (low-medium) pressure",
+            "vrc mix low-medium-pressure",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.
