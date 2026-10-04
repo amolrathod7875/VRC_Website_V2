@@ -40,6 +40,7 @@ _SYSTEM_CATALOGUE_SLUGS = {
     "dragon",
     "polyurea",
     "tube-varnish-coating-system",
+    "vrc-mix-hp",
     "vrc-mix-low-medium-pressure",
 }
 

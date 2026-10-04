@@ -281,14 +281,25 @@ def test_vrc_mix_low_medium_and_hp_are_distinct_identities() -> None:
     hp = resolve_product_identity("VRC - MIX HP")
     assert low_medium is not None
     assert low_medium[0] == "vrc-mix-low-medium-pressure"
-    assert hp is None or hp[0] != "vrc-mix-low-medium-pressure"
+    assert hp is not None
+    assert hp[0] == "vrc-mix-hp"
+    assert hp[0] != low_medium[0]
 
 
 def test_vrc_mix_low_medium_and_hp_are_distinct_documents() -> None:
     low_medium_doc = "VRC MIX (LOW - MEDIUM) PRESSURE.pdf"
     hp_doc = "VRC - MIX HP.pdf"
     assert low_medium_doc.lower() != hp_doc.lower()
-    assert _FILENAME_FALLBACK.get(hp_doc.lower()) != "vrc-mix-low-medium-pressure"
+    assert _FILENAME_FALLBACK.get(hp_doc.lower()) == "vrc-mix-hp"
+    assert _FILENAME_FALLBACK.get(low_medium_doc.lower()) == "vrc-mix-low-medium-pressure"
+
+
+def test_catalogue_resolver_no_cross_resolution() -> None:
+    assert _FILENAME_FALLBACK.get("dragon.pdf") == "dragon"
+    assert _FILENAME_FALLBACK.get("polyurea.pdf") == "polyurea"
+    assert _FILENAME_FALLBACK.get("tube varnish coating system.pdf") == "tube-varnish-coating-system"
+    assert _FILENAME_FALLBACK.get("vrc - mix hp.pdf") == "vrc-mix-hp"
+    assert _FILENAME_FALLBACK.get("vrc mix (low - medium) pressure.pdf") == "vrc-mix-low-medium-pressure"
 
 
 # ============================================================
@@ -367,6 +378,12 @@ def test_vrc_mix_low_medium_alias_resolution() -> None:
     assert resolve_product_identity("VRC MIX low-medium pressure")[0] == "vrc-mix-low-medium-pressure"
 
 
+def test_vrc_mix_hp_alias_resolution() -> None:
+    assert resolve_product_identity("VRC MIX HP")[0] == "vrc-mix-hp"
+    assert resolve_product_identity("VRC - MIX HP")[0] == "vrc-mix-hp"
+    assert resolve_product_identity("vrc mix hp")[0] == "vrc-mix-hp"
+
+
 # ============================================================
 # 13. Filename fallback mapping
 # ============================================================
@@ -375,10 +392,11 @@ def test_filename_fallback_for_systems() -> None:
     assert _FILENAME_FALLBACK.get("polyurea.pdf") == "polyurea"
     assert _FILENAME_FALLBACK.get("tube varnish coating system.pdf") == "tube-varnish-coating-system"
     assert _FILENAME_FALLBACK.get("vrc mix (low - medium) pressure.pdf") == "vrc-mix-low-medium-pressure"
+    assert _FILENAME_FALLBACK.get("vrc - mix hp.pdf") == "vrc-mix-hp"
 
 
 def test_vrc_mix_hp_filename_fallback() -> None:
-    assert _FILENAME_FALLBACK.get("vrc - mix hp.pdf") is None
+    assert _FILENAME_FALLBACK.get("vrc - mix hp.pdf") == "vrc-mix-hp"
 
 
 # ============================================================

@@ -301,6 +301,16 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "vrc mix low-medium-pressure",
         ],
     },
+    "vrc-mix-hp": {
+        "canonical_slug": "vrc-mix-hp",
+        "aliases": [
+            "vrc mix hp",
+            "vrc-mix hp",
+            "vrc - mix hp",
+            "vrc mix hp (te)",
+            "vrc mix hp (fm) (pcs)",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.

@@ -35,6 +35,7 @@ _FILENAME_FALLBACK: dict[str, str] = {
     "polyurea.pdf": "polyurea",
     "tube varnish coating system.pdf": "tube-varnish-coating-system",
     "vrc mix (low - medium) pressure.pdf": "vrc-mix-low-medium-pressure",
+    "vrc - mix hp.pdf": "vrc-mix-hp",
 }
 
 
