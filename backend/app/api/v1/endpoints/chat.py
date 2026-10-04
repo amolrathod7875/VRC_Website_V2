@@ -12,6 +12,7 @@ from app.rag.retrieval.context_builder import ContextBuilder
 from app.rag.retrieval.reranker import Reranker
 from app.rag.generation.generation_service import GenerationService
 from app.rag.generation.factory import LLMFactory
+from app.rag.generation.prompts import ANSWER_UNAVAILABLE
 from app.rag.services.rag_service import RAGService
 from app.rag.conversation.conversation_service import ConversationService
 from app.rag.greeting_detector import is_greeting_only, is_assistant_identity
@@ -190,23 +191,23 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             raise HTTPException(status_code=500, detail="General chat generation failed") from exc
 
     intent = QueryIntent(result.get("intent", QueryIntent.UNKNOWN.value))
-    show_sources = _should_show_sources(intent, active_context, result.get("answer", ""), result.get("sources", []))
-    filtered_sources = _filter_sources_for_ui(result.get("sources", []), active_context)
+    answer = result.get("answer", "")
+
+    show_sources = _should_show_sources(intent, active_context, answer, result.get("sources", []))
+    filtered_sources = _filter_sources_for_ui(result.get("sources", []), active_context, intent)
+
+    if answer == ANSWER_UNAVAILABLE:
+        show_sources = False
+        filtered_sources = []
 
     sources = [ChatSource(**source) for source in filtered_sources]
     retrieval_data = result.get("retrieval")
     retrieval = ChatRetrieval(**retrieval_data) if retrieval_data else None
-    answer = result.get("answer", "")
 
     resolved_slug = active_context.get("product_slug") if active_context else None
     catalogues: list[dict[str, Any]] = []
     show_catalogues = False
-    if resolved_slug and intent in (
-        QueryIntent.PRODUCT_TECHNICAL,
-        QueryIntent.PRODUCT_APPLICATION,
-        QueryIntent.MODEL_IDENTIFIER,
-        QueryIntent.CATALOGUE_REQUEST,
-    ):
+    if resolved_slug:
         resolver = CatalogueResolver(db=db)
         catalogues = await resolver.resolve(resolved_slug)
         show_catalogues = bool(catalogues)
@@ -249,6 +250,9 @@ def _should_show_sources(
     ):
         return False
 
+    if intent == QueryIntent.PRODUCT_DISCOVERY:
+        return bool(sources)
+
     if intent in (
         QueryIntent.PRODUCT_TECHNICAL,
         QueryIntent.PRODUCT_APPLICATION,
@@ -265,6 +269,7 @@ def _should_show_sources(
 def _filter_sources_for_ui(
     sources: list,
     active_context: Dict[str, Optional[str]],
+    intent: QueryIntent | None = None,
 ) -> list:
     resolved_slug = (active_context or {}).get("product_slug")
     resolved_document = (active_context or {}).get("document")
@@ -276,8 +281,9 @@ def _filter_sources_for_ui(
         document = src.get("document")
         product_slug = src.get("product_slug")
 
-        # Hide raw Company Master from user-facing sources.
-        if source_type == SOURCE_TYPE_COMPANY_MASTER:
+        # Hide raw Company Master from user-facing sources for product-specific queries.
+        # For discovery queries, company_master may legitimately contain industry/application evidence.
+        if source_type == SOURCE_TYPE_COMPANY_MASTER and intent != QueryIntent.PRODUCT_DISCOVERY:
             continue
 
         # For product queries, prefer sources matching the resolved product.

@@ -1,5 +1,5 @@
 import pytest
-from app.rag.retrieval.query_classifier import is_vr_coatings_domain_query, QueryIntent
+from app.rag.retrieval.query_classifier import is_vr_coatings_domain_query, QueryIntent, classify_query
 
 
 @pytest.mark.parametrize(
@@ -57,3 +57,28 @@ def test_general_question_during_product_context_stays_general() -> None:
 def test_product_switch_detected() -> None:
     assert is_vr_coatings_domain_query("Now tell me about LION") is True
     assert is_vr_coatings_domain_query("What about Rhino?") is True
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "which product can be used for Automobile",
+        "which VR Coatings product is suitable for automotive painting",
+        "which product is used in railways",
+        "which pump can be used for structural painting",
+        "what product should I use for paint transfer",
+        "which product is suitable for oil and gas",
+        "Which product can be used for Automobile?",
+    ],
+)
+def test_product_discovery_classified_as_discovery(message: str) -> None:
+    intent = classify_query(message)
+    assert intent == QueryIntent.PRODUCT_DISCOVERY
+
+
+def test_catalogue_request_outranks_product_application() -> None:
+    assert classify_query("give me catalogue of Rhino") == QueryIntent.CATALOGUE_REQUEST
+    assert classify_query("give me catalogue of Tiger") == QueryIntent.CATALOGUE_REQUEST
+    assert classify_query("show me Leopard catalogue") == QueryIntent.CATALOGUE_REQUEST
+    assert classify_query("give me catalogue of LION") == QueryIntent.CATALOGUE_REQUEST
+    assert classify_query("give me catalogue of Hippo") == QueryIntent.CATALOGUE_REQUEST

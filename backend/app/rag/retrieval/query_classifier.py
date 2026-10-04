@@ -9,6 +9,7 @@ class QueryIntent(str, Enum):
     GENERAL_COMPANY = "general_company"
     PRODUCT_TECHNICAL = "product_technical"
     PRODUCT_APPLICATION = "product_application"
+    PRODUCT_DISCOVERY = "product_discovery"
     CONTACT_LOCATION = "contact_location"
     GOVERNANCE = "governance"
     MODEL_IDENTIFIER = "model_identifier"
@@ -81,6 +82,16 @@ COMPARISON_PATTERNS = [
     re.compile(r"\bdifference\s+between\b", re.IGNORECASE),
 ]
 
+PRODUCT_DISCOVERY_PATTERNS = [
+    re.compile(r"\bwhich\b.*?\bproduct\b", re.IGNORECASE),
+    re.compile(r"\bwhat\b.*?\bproduct\b", re.IGNORECASE),
+    re.compile(r"\bwhich\b.*?\bpump\b", re.IGNORECASE),
+    re.compile(r"\bwhat\b.*?\bpump\b", re.IGNORECASE),
+    re.compile(r"\bwhich\b.*?\bspray\b", re.IGNORECASE),
+    re.compile(r"\brecommend\s+a\s+product\b", re.IGNORECASE),
+    re.compile(r"\bsuggest\s+a\s+product\b", re.IGNORECASE),
+]
+
 AFFIRMATIVE_YES_NO_PATTERNS = [
     re.compile(r"\bdoes\s+tiger\s+\d+:\d+\s+have\s+a\s+pressure\s+ratio\s+of\s+\d+:\d+\b", re.IGNORECASE),
     re.compile(r"\bis\s+the\s+pressure\s+ratio\s+of\s+tiger\s+\d+:\d+\s+\d+:\d+\b", re.IGNORECASE),
@@ -118,6 +129,10 @@ def classify_query(question: str) -> QueryIntent:
     yes_no_technical_keywords = ["have a pressure ratio", "have an output", "have a flow", "have a viscosity", "have a max"]
     if any(kw in normalized for kw in yes_no_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
+
+    for pattern in PRODUCT_DISCOVERY_PATTERNS:
+        if pattern.search(normalized):
+            return QueryIntent.PRODUCT_DISCOVERY
 
     general_company_keywords = ["vr coatings", "company", "manufacture", "manufacturing", "products", "about", "tell me about", "what is", "what does"]
     if any(kw in normalized for kw in general_company_keywords):
@@ -203,6 +218,12 @@ def get_intent_metadata(intent: QueryIntent) -> dict:
             "prefer_sections": ["applications", "technical specifications", "technical_model"],
             "downrank_sections": ["change log", "governance", "unknown_register"],
             "prefer_source_types": ["catalogue", "company_master"],
+        }
+    if intent == QueryIntent.PRODUCT_DISCOVERY:
+        return {
+            "prefer_sections": ["applications", "technical specifications", "description", "features"],
+            "downrank_sections": ["change log", "governance", "unknown_register", "full product master", "controlled search / seo terminology", "deployment / rag answering policy"],
+            "prefer_source_types": ["catalogue"],
         }
     if intent == QueryIntent.CONTACT_LOCATION:
         return {

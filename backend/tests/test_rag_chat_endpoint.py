@@ -261,3 +261,105 @@ def test_chat_endpoint_topic_switch_resets_active_context() -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["answer"] == "1985"
+
+
+def test_chat_endpoint_catalogue_request_bypasses_rag() -> None:
+    with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
+        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
+            mock_cs = MagicMock()
+            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
+            mock_cs.append_user_message = AsyncMock()
+            mock_cs.append_assistant_message = AsyncMock()
+            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.get_active_product_context = MagicMock(return_value={})
+            MockConvService.return_value = mock_cs
+
+            response = client.post("/api/v1/chat", json={"message": "give me catalogue of rhino"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "catalogue_request"
+    assert "Rhino" in data["answer"]
+    assert data["show_sources"] is False
+    assert data["sources"] == []
+    assert data["retrieval"] is None
+    assert len(data["catalogues"]) == 1
+    assert data["catalogues"][0]["document_name"] == "rhino.pdf"
+    mock_rag.assert_not_called()
+
+
+def test_chat_endpoint_catalogue_request_tiger() -> None:
+    with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
+        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
+            mock_cs = MagicMock()
+            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
+            mock_cs.append_user_message = AsyncMock()
+            mock_cs.append_assistant_message = AsyncMock()
+            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.get_active_product_context = MagicMock(return_value={})
+            MockConvService.return_value = mock_cs
+
+            response = client.post("/api/v1/chat", json={"message": "give me catalogue of Tiger"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "catalogue_request"
+    assert "Tiger" in data["answer"]
+    assert data["show_sources"] is False
+    assert data["sources"] == []
+    assert data["retrieval"] is None
+    assert len(data["catalogues"]) == 1
+    assert data["catalogues"][0]["document_name"] == "Tiger.pdf"
+    mock_rag.assert_not_called()
+
+
+def test_chat_endpoint_unknown_catalogue_returns_error() -> None:
+    with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
+        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
+            mock_cs = MagicMock()
+            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
+            mock_cs.append_user_message = AsyncMock()
+            mock_cs.append_assistant_message = AsyncMock()
+            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.get_active_product_context = MagicMock(return_value={})
+            MockConvService.return_value = mock_cs
+
+            response = client.post("/api/v1/chat", json={"message": "give me catalogue of Ferrari"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "catalogue_request"
+    assert "couldn" in data["answer"].lower() and "find a vr coatings catalogue" in data["answer"].lower()
+    assert data["show_sources"] is False
+    assert data["sources"] == []
+    assert data["retrieval"] is None
+    assert data["catalogues"] == []
+    mock_rag.assert_not_called()
+
+
+def test_chat_endpoint_unavailable_clears_sources() -> None:
+    mock_service = AsyncMock()
+    mock_service.answer.return_value = {
+        "answer": "This information is not available in the current VR Coatings knowledge base.",
+        "sources": [{"document": "Tiger.pdf", "source_type": "catalogue", "product_slug": "tiger"}],
+        "retrieval": {"chunks_used": 0},
+    }
+
+    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
+        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
+            mock_cs = MagicMock()
+            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
+            mock_cs.append_user_message = AsyncMock()
+            mock_cs.append_assistant_message = AsyncMock()
+            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.get_active_product_context = MagicMock(return_value={"product_slug": "tiger"})
+            mock_cs.build_augmented_query = MagicMock(return_value="How much does Tiger cost?")
+            MockConvService.return_value = mock_cs
+
+            response = client.post("/api/v1/chat", json={"message": "How much does Tiger cost?"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert "not available" in data["answer"]
+    assert data["show_sources"] is False
+    assert data["sources"] == []
