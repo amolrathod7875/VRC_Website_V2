@@ -109,6 +109,10 @@ _KV_TECHNICAL_LABELS = {
     "volume flow at", "max. temperature of the coating material",
     "spray gun does not exceed", "correctly up to", "altitude above mean sea level",
     "recommended spray volume", "discharge per cycle",
+    "capacity", "pot capacity", "power supply", "net weight", "net wt",
+    "max. working pressure", "max working pressure", "net wt.",
+    "watt", "kw", "litre", "liter", "ltr", "ltrs", "itrs",
+    "working pressure", "gross weight",
 }
 
 _TECHNICAL_VALUE_PATTERNS = [
@@ -233,12 +237,22 @@ def _is_technical_value(text: str) -> bool:
 
 def _looks_like_kv_label(text: str) -> bool:
     t = text.lower().strip().rstrip(":")
+    if not t:
+        return False
     if t in _KV_TECHNICAL_LABELS:
         return True
     import re
     t_no_paren = re.sub(r'\s*\([^)]*\)\s*$', '', t).strip()
     if t_no_paren in _KV_TECHNICAL_LABELS:
         return True
+    first_colon = t.find(":")
+    if first_colon != -1:
+        left = t[:first_colon].strip()
+        if left in _KV_TECHNICAL_LABELS:
+            return True
+        left_no_paren = re.sub(r'\s*\([^)]*\)\s*$', '', left).strip()
+        if left_no_paren in _KV_TECHNICAL_LABELS:
+            return True
     for l in _KV_TECHNICAL_LABELS:
         if t.endswith(" " + l):
             return True
@@ -626,6 +640,12 @@ def chunk_catalogue(
                 })
                 chunk_index += 1
 
+    # Post-processing
+    chunks = _ensure_product_identity_chunk(chunks, document_name, product_slug, page_lines)
+    chunks = _extract_turbine_variants(chunks, document_name)
+    chunks = _split_mixed_technical_chunks(chunks, document_name)
+    chunks = _drop_short_unknown_fragments(chunks)
+
     # Deduplicate footer chunks
     chunks = _dedupe_footer_chunks(chunks)
 
@@ -655,3 +675,188 @@ def _reclassify_description_chunks(chunks: List[Dict[str, Any]]) -> None:
         if any(keyword in text_lower for keyword in _DESCRIPTION_KEYWORDS):
             chunk["section"] = CHUNK_TYPE_DESCRIPTION
             chunk["content_type"] = CHUNK_TYPE_DESCRIPTION
+
+
+_VARIANT_PATTERN = re.compile(r'\b(?:TB|TB-)[\s-]?\d+\b', re.IGNORECASE)
+
+
+def _extract_turbine_variants(chunks: List[Dict[str, Any]], document_name: str) -> List[Dict[str, Any]]:
+    """Extract TB-70/TB-110/TB-180 style variants as technical_variant chunks."""
+    doc_lower = document_name.lower()
+    if "turbine" not in doc_lower and "stirrer" not in doc_lower:
+        return chunks
+    variant_chunks: List[Dict[str, Any]] = []
+    for chunk in chunks:
+        text = chunk.get("text", "")
+        lines = text.splitlines()
+        for line in lines:
+            m = _VARIANT_PATTERN.search(line)
+            if not m:
+                continue
+            variant_id = m.group(0).upper().replace(" ", "-")
+            desc = line[m.end():].strip()
+            if desc.startswith("("):
+                desc = desc[1:]
+            if desc.endswith(")"):
+                desc = desc[:-1]
+            desc = desc.strip()
+            if not desc:
+                continue
+            base_doc_id = chunk.get("document_id", f"doc-{document_name}")
+            variant_chunks.append({
+                "document_id": base_doc_id,
+                "chunk_id": f"{base_doc_id}::chunk::variant::{variant_id}",
+                "source_type": chunk.get("source_type", SOURCE_TYPE_CATALOGUE),
+                "source_authority": "primary",
+                "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
+                "document_name": document_name,
+                "product": chunk.get("product", ""),
+                "product_slug": chunk.get("product_slug", ""),
+                "section": CHUNK_TYPE_TECHNICAL_VARIANT,
+                "content_type": CHUNK_TYPE_TECHNICAL_VARIANT,
+                "page_number": chunk.get("page_number"),
+                "line_start": 1,
+                "line_end": 1,
+                "text": f"{variant_id}: {desc}",
+            })
+    if variant_chunks:
+        existing_texts = {c.get("text", "") for c in chunks}
+        for vc in variant_chunks:
+            if vc["text"] not in existing_texts:
+                chunks.append(vc)
+    return chunks
+
+
+def _ensure_product_identity_chunk(
+    chunks: List[Dict[str, Any]],
+    document_name: str,
+    product_slug: str,
+    page_lines: Dict[int, List[str]],
+) -> List[Dict[str, Any]]:
+    """Ensure short meaningful page-1 content gets a product_identity chunk."""
+    if 1 not in page_lines:
+        return chunks
+    has_identity = any(c.get("section") == CHUNK_TYPE_PRODUCT_IDENTITY for c in chunks)
+    if has_identity:
+        return chunks
+    page1 = page_lines[1]
+    identity_lines = []
+    for line in page1:
+        cls = _classify_short_fragment(line)
+        if cls in ("FOOTER", "EMAIL", "PAGE_NUMBER", "OCR_GARBAGE", "TECHNICAL_VALUE", "TECHNICAL_IDENTIFIER"):
+            continue
+        stripped = line.strip()
+        if len(stripped) > 1:
+            identity_lines.append(stripped)
+    if not identity_lines:
+        return chunks
+    if len(identity_lines) <= 8:
+        identity_text = "\n".join(identity_lines)
+        identity_words = set(identity_text.lower().split())
+        for c in chunks:
+            if c.get("page_number") != 1:
+                continue
+            existing_text = c.get("text", "")
+            if not existing_text:
+                continue
+            existing_words = set(existing_text.lower().split())
+            if not identity_words or not existing_words:
+                continue
+            overlap = len(identity_words & existing_words) / max(len(identity_words), len(existing_words))
+            if overlap > 0.7:
+                c["section"] = CHUNK_TYPE_PRODUCT_IDENTITY
+                c["content_type"] = CHUNK_TYPE_PRODUCT_IDENTITY
+                return chunks
+        existing_texts = {c.get("text", "") for c in chunks}
+        if identity_text in existing_texts:
+            return chunks
+        base_doc_id = chunks[0]["document_id"] if chunks else f"doc-{product_slug}"
+        chunks.insert(0, {
+            "document_id": base_doc_id,
+            "chunk_id": f"{base_doc_id}::chunk::identity",
+            "source_type": SOURCE_TYPE_CATALOGUE,
+            "source_authority": "primary",
+            "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
+            "document_name": document_name,
+            "product": identity_lines[0] if identity_lines else product_slug,
+            "product_slug": product_slug,
+            "section": CHUNK_TYPE_PRODUCT_IDENTITY,
+            "content_type": CHUNK_TYPE_PRODUCT_IDENTITY,
+            "page_number": 1,
+            "line_start": 1,
+            "line_end": len(identity_lines),
+            "text": identity_text,
+        })
+    return chunks
+
+
+def _split_mixed_technical_chunks(chunks: List[Dict[str, Any]], document_name: str) -> List[Dict[str, Any]]:
+    """Split technical_model chunks that mix specs with accessories/components."""
+    _ACCESSORY_HINTS = {
+        "drum jacket heater", "electrical stirrer", "transfer pump",
+        "hoisting unit", "stirrer", "pump", "heater", "jacket",
+        "pot", "outlet tube", "gasket", "valve",
+    }
+    result: List[Dict[str, Any]] = []
+    for chunk in chunks:
+        if chunk.get("section") != CHUNK_TYPE_TECHNICAL_MODEL:
+            result.append(chunk)
+            continue
+        text = chunk.get("text", "")
+        lines = text.splitlines()
+        spec_lines = []
+        accessory_lines = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            cls = _classify_short_fragment(stripped)
+            if cls == "OCR_GARBAGE":
+                continue
+            if ":" in stripped or _is_technical_value(stripped) or _looks_like_kv_label(stripped):
+                spec_lines.append(stripped)
+            elif cls == "SECTION_HEADING" or len(stripped) <= 3:
+                spec_lines.append(stripped)
+            else:
+                lower = stripped.lower()
+                is_accessory = any(h in lower for h in _ACCESSORY_HINTS)
+                if is_accessory:
+                    accessory_lines.append(stripped)
+                else:
+                    spec_lines.append(stripped)
+        if spec_lines:
+            new_chunk = dict(chunk)
+            new_chunk["text"] = "\n".join(spec_lines)
+            new_chunk["line_end"] = len(spec_lines)
+            result.append(new_chunk)
+        if accessory_lines:
+            new_chunk = dict(chunk)
+            new_chunk["text"] = "\n".join(accessory_lines)
+            new_chunk["section"] = CHUNK_TYPE_ACCESSORIES
+            new_chunk["content_type"] = CHUNK_TYPE_ACCESSORIES
+            new_chunk["line_end"] = len(accessory_lines)
+            result.append(new_chunk)
+    return result
+
+
+def _drop_short_unknown_fragments(chunks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Remove very short UNKNOWN fragments that aren't part of KV pairs."""
+    cleaned: List[Dict[str, Any]] = []
+    for chunk in chunks:
+        lines = chunk.get("text", "").splitlines()
+        kept = []
+        for line in lines:
+            stripped = line.strip()
+            if not stripped:
+                continue
+            cls = _classify_short_fragment(stripped)
+            if cls == "UNKNOWN" and len(stripped) < 4:
+                continue
+            kept.append(stripped)
+        if not kept:
+            continue
+        new_chunk = dict(chunk)
+        new_chunk["text"] = "\n".join(kept)
+        new_chunk["line_end"] = len(kept)
+        cleaned.append(new_chunk)
+    return cleaned
