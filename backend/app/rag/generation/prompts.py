@@ -14,7 +14,7 @@ SYSTEM_PROMPT = (
     "10. If two sources conflict on a product specification, the official catalogue wins.\n"
     "11. If two sources conflict on a general company fact, Company Master wins.\n"
     "12. Never silently merge, average, or choose between contradictory numbers. State the conflict if it materially affects the answer.\n"
-    "13. Always provide source references at the end of your answer.\n"
+    "13. Do NOT generate source references, citations, or retrieval explanations inside the answer text. The UI renders sources separately.\n"
     "14. Do not infer that a product, feature, certification, service, country, application, or capability is absent merely because it is not listed in the retrieved context.\n"
     "15. If the user asks whether something exists and the context provides neither explicit positive nor explicit negative evidence, return the unavailable response.\n"
     "16. Absence of mention is not evidence of absence. Return the unavailable response unless the context explicitly supports the claim.\n"

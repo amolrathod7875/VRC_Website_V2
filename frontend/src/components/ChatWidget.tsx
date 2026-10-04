@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChatAPIResponse, ChatMessage, ChatSource, ChatRetrieval } from "@/lib/chatTypes";
+import type { ChatAPIResponse, ChatMessage, ChatSource, ChatRetrieval, CatalogueReference } from "@/lib/chatTypes";
 import { checkChatStatus, sendChatMessage } from "@/lib/chatApi";
 import { useEffect, useId, useRef, useState } from "react";
 
@@ -212,6 +212,8 @@ export function ChatWidget() {
       content: message,
       sources: [],
       retrieval: null,
+      catalogues: [],
+      show_catalogues: false,
     };
 
     setMessages((prev) => [...prev, userMsg]);
@@ -236,6 +238,8 @@ export function ChatWidget() {
         retrieval: result.retrieval,
         show_sources: result.show_sources,
         intent: result.intent,
+        catalogues: result.catalogues,
+        show_catalogues: result.show_catalogues,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -247,6 +251,8 @@ export function ChatWidget() {
         content: "",
         sources: [],
         retrieval: null,
+        catalogues: [],
+        show_catalogues: false,
         error: "I'm having trouble reaching the VR Coatings knowledge service. Please try again.",
       };
 
@@ -350,6 +356,52 @@ export function ChatWidget() {
     );
   }
 
+  function renderCatalogues(catalogues: CatalogueReference[]) {
+    if (!catalogues.length) return null;
+
+    return (
+      <div className="mt-2 space-y-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          Product Catalogue
+        </p>
+        {catalogues.map((cat, idx) => (
+          <div
+            key={cat.document_name + idx}
+            className="rounded-lg border border-slate-200 bg-slate-50 p-3 text-xs"
+          >
+            <p className="font-medium text-slate-800">
+              {cat.product_name || cat.product_slug}
+            </p>
+            <p className="mt-0.5 text-slate-500">
+              {cat.document_name}
+            </p>
+            <a
+              href={cat.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1.5 inline-flex items-center gap-1 text-brand-700 hover:text-brand-800"
+            >
+              Open catalogue
+              <svg
+                viewBox="0 0 20 20"
+                className="h-3 w-3"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  d="M5 10h10M11 5l5 5-5 5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   function renderMessage(msg: ChatMessage) {
     const isUser = msg.role === "user";
 
@@ -374,6 +426,7 @@ export function ChatWidget() {
             <>
               <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} />
               {!isUser && msg.show_sources !== false && renderSources(msg.sources)}
+              {!isUser && msg.show_catalogues !== false && renderCatalogues(msg.catalogues)}
             </>
           )}
         </div>

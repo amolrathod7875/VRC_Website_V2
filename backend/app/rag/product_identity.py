@@ -60,6 +60,32 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "vr filters",
         ],
     },
+    "paint-preparation-unit": {
+        "canonical_slug": "paint-preparation-unit",
+        "aliases": [
+            "paint preparation unit",
+            "paint prep unit",
+            "drum heater",
+            "drum jacket",
+        ],
+    },
+    "portable-pressure-feed-pot": {
+        "canonical_slug": "portable-pressure-feed-pot",
+        "aliases": [
+            "portable pressure feed pot",
+            "pressure feed pot",
+            "portable pressure pot",
+        ],
+    },
+    "turbine": {
+        "canonical_slug": "turbine",
+        "aliases": [
+            "turbine",
+            "turbine stirrer",
+            "turbine stirrer series",
+            "paint agitation system",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.

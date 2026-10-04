@@ -16,7 +16,34 @@ class QueryIntent(str, Enum):
     GREETING = "greeting"
     ASSISTANT_IDENTITY = "assistant_identity"
     GENERAL_CHAT = "general_chat"
+    CATALOGUE_REQUEST = "catalogue_request"
     UNKNOWN = "unknown"
+
+
+_CATALOGUE_PATTERNS = [
+    re.compile(r"\bcatalogue\b", re.IGNORECASE),
+    re.compile(r"\bcatalog\b", re.IGNORECASE),
+    re.compile(r"\bbrochure\b", re.IGNORECASE),
+    re.compile(r"\bpdf\b", re.IGNORECASE),
+    re.compile(r"\bdatasheet\b", re.IGNORECASE),
+    re.compile(r"\bdata\s+sheet\b", re.IGNORECASE),
+    re.compile(r"\bproduct\s+sheet\b", re.IGNORECASE),
+    re.compile(r"\btechnical\s+brochure\b", re.IGNORECASE),
+    re.compile(r"\bopen\s+catalogue\b", re.IGNORECASE),
+    re.compile(r"\bshow\s+catalogue\b", re.IGNORECASE),
+    re.compile(r"\bsend\s+catalogue\b", re.IGNORECASE),
+    re.compile(r"\bgive\s+catalogue\b", re.IGNORECASE),
+]
+
+
+def is_catalogue_request(question: str) -> bool:
+    normalized = question.strip().lower()
+    if not normalized:
+        return False
+    for pattern in _CATALOGUE_PATTERNS:
+        if pattern.search(normalized):
+            return True
+    return False
 
 
 NEGATIVE_EXISTENTIAL_PATTERNS = [
@@ -99,6 +126,9 @@ def classify_query(question: str) -> QueryIntent:
     product_application_keywords = ["used for", "application", "compatible with", "suitable for", "coating", "painting", "spray"]
     if any(kw in normalized for kw in product_application_keywords):
         return QueryIntent.PRODUCT_APPLICATION
+
+    if is_catalogue_request(question):
+        return QueryIntent.CATALOGUE_REQUEST
 
     return QueryIntent.UNKNOWN
 

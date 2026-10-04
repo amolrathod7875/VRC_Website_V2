@@ -20,6 +20,13 @@ export interface ChatRetrieval {
   total_duration_ms?: number | null;
 }
 
+export interface CatalogueReference {
+  product_slug: string;
+  product_name: string;
+  document_name: string;
+  url: string;
+}
+
 export interface ChatAPIResponse {
   conversation_id: string;
   answer: string;
@@ -27,6 +34,8 @@ export interface ChatAPIResponse {
   retrieval: ChatRetrieval | null;
   show_sources?: boolean;
   intent?: string | null;
+  catalogues: CatalogueReference[];
+  show_catalogues?: boolean;
 }
 
 export interface ChatMessage {
@@ -37,5 +46,7 @@ export interface ChatMessage {
   retrieval: ChatRetrieval | null;
   show_sources?: boolean;
   intent?: string | null;
+  catalogues: CatalogueReference[];
+  show_catalogues?: boolean;
   error?: string;
 }

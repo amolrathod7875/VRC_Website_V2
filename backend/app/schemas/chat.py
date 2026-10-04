@@ -30,6 +30,13 @@ class ChatSource(BaseModel):
     authority_priority: int | None = None
 
 
+class CatalogueReference(BaseModel):
+    product_slug: str
+    product_name: str
+    document_name: str
+    url: str
+
+
 class ChatResponse(BaseModel):
     conversation_id: UUID
     answer: str
@@ -37,3 +44,5 @@ class ChatResponse(BaseModel):
     retrieval: ChatRetrieval | None = None
     show_sources: bool = True
     intent: str | None = None
+    catalogues: list[CatalogueReference] = []
+    show_catalogues: bool = False

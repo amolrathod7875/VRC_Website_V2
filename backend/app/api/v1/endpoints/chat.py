@@ -2,7 +2,7 @@ from typing import Any, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
-from app.schemas.chat import ChatRequest, ChatResponse, ChatSource, ChatRetrieval
+from app.schemas.chat import ChatRequest, ChatResponse, ChatSource, ChatRetrieval, CatalogueReference
 from app.rag.config import rag_settings
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
@@ -16,7 +16,8 @@ from app.rag.services.rag_service import RAGService
 from app.rag.conversation.conversation_service import ConversationService
 from app.rag.greeting_detector import is_greeting_only, is_assistant_identity
 from app.rag.greeting_response import get_greeting_response, get_assistant_identity_response
-from app.rag.retrieval.query_classifier import QueryIntent, is_vr_coatings_domain_query
+from app.rag.retrieval.query_classifier import QueryIntent, is_vr_coatings_domain_query, is_catalogue_request
+from app.rag.catalogue_resolver import CatalogueResolver
 from app.models.rag_document import RagDocument
 from app.rag.constants import SOURCE_TYPE_COMPANY_MASTER
 from sqlalchemy import select, func
@@ -121,6 +122,34 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             intent=QueryIntent.ASSISTANT_IDENTITY.value,
         )
 
+    if is_catalogue_request(message):
+        resolver = CatalogueResolver(db=db)
+        resolved_slug, catalogues = await resolver.resolve_from_message(message)
+        if resolved_slug and catalogues:
+            product_name = catalogues[0]["product_name"]
+            answer = f"Sure \u2014 here is the {product_name} product catalogue."
+        elif resolved_slug:
+            answer = f"I couldn\u2019t find a VR Coatings catalogue for that product right now."
+        else:
+            answer = "I couldn\u2019t find a VR Coatings catalogue for that product."
+        await conversation_service.append_assistant_message(
+            conversation_id=conversation.id,
+            content=answer,
+            sources=[],
+            retrieval_metadata=None,
+        )
+        await db.commit()
+        return ChatResponse(
+            conversation_id=conversation.id,
+            answer=answer,
+            sources=[],
+            retrieval=None,
+            show_sources=False,
+            intent=QueryIntent.CATALOGUE_REQUEST.value,
+            catalogues=[CatalogueReference(**c) for c in catalogues],
+            show_catalogues=bool(catalogues),
+        )
+
     # Determine whether this is a VR Coatings domain query.
     domain_query = is_vr_coatings_domain_query(message, active_context, recent_messages)
 
@@ -169,6 +198,19 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     retrieval = ChatRetrieval(**retrieval_data) if retrieval_data else None
     answer = result.get("answer", "")
 
+    resolved_slug = active_context.get("product_slug") if active_context else None
+    catalogues: list[dict[str, Any]] = []
+    show_catalogues = False
+    if resolved_slug and intent in (
+        QueryIntent.PRODUCT_TECHNICAL,
+        QueryIntent.PRODUCT_APPLICATION,
+        QueryIntent.MODEL_IDENTIFIER,
+        QueryIntent.CATALOGUE_REQUEST,
+    ):
+        resolver = CatalogueResolver(db=db)
+        catalogues = await resolver.resolve(resolved_slug)
+        show_catalogues = bool(catalogues)
+
     await conversation_service.append_assistant_message(
         conversation_id=conversation.id,
         content=answer,
@@ -185,6 +227,8 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
         retrieval=retrieval,
         show_sources=show_sources,
         intent=intent.value,
+        catalogues=[CatalogueReference(**c) for c in catalogues],
+        show_catalogues=show_catalogues,
     )
 
 

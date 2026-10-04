@@ -1,4 +1,4 @@
-import type { ChatAPIResponse, ChatSource, ChatRetrieval } from "./chatTypes";
+import type { ChatAPIResponse, ChatSource, ChatRetrieval, CatalogueReference } from "./chatTypes";
 
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1").replace(
@@ -42,6 +42,8 @@ export async function sendChatMessage(
     retrieval: ChatRetrieval | null;
     show_sources?: boolean;
     intent?: string | null;
+    catalogues: CatalogueReference[];
+    show_catalogues?: boolean;
   };
 
   return {
@@ -51,6 +53,8 @@ export async function sendChatMessage(
     retrieval: data.retrieval ?? null,
     show_sources: data.show_sources ?? true,
     intent: data.intent ?? null,
+    catalogues: data.catalogues ?? [],
+    show_catalogues: data.show_catalogues ?? false,
   };
 }
 
