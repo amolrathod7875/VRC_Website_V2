@@ -14,9 +14,9 @@ from app.rag.generation.generation_service import GenerationService
 from app.rag.generation.factory import LLMFactory
 from app.rag.services.rag_service import RAGService
 from app.rag.conversation.conversation_service import ConversationService
-from app.rag.greeting_detector import is_greeting_only
-from app.rag.greeting_response import get_greeting_response
-from app.rag.retrieval.query_classifier import QueryIntent
+from app.rag.greeting_detector import is_greeting_only, is_assistant_identity
+from app.rag.greeting_response import get_greeting_response, get_assistant_identity_response
+from app.rag.retrieval.query_classifier import QueryIntent, is_vr_coatings_domain_query
 from app.models.rag_document import RagDocument
 from app.rag.constants import SOURCE_TYPE_COMPANY_MASTER
 from sqlalchemy import select, func
@@ -43,6 +43,14 @@ def _build_rag_service(db: AsyncSession) -> RAGService:
         generator=generator,
         context_builder=context_builder,
     )
+
+
+def _build_generation_service() -> GenerationService:
+    try:
+        llm = LLMFactory.create()
+    except Exception as exc:
+        raise RuntimeError(f"Generation provider unavailable: {exc}") from exc
+    return GenerationService(llm_provider=llm)
 
 
 def _generation_ready() -> bool:
@@ -74,9 +82,11 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     recent_messages = await conversation_service.get_recent_messages(conversation.id, limit=8)
     active_context = conversation_service.get_active_product_context(recent_messages)
 
-    # Greeting-only messages bypass the entire RAG pipeline.
-    if is_greeting_only(request.message.strip()):
-        answer = get_greeting_response(request.message.strip())
+    message = request.message.strip()
+
+    # PATH A: deterministic conversational responses (no retrieval, no generation).
+    if is_greeting_only(message):
+        answer = get_greeting_response(message)
         await conversation_service.append_assistant_message(
             conversation_id=conversation.id,
             content=answer,
@@ -93,24 +103,62 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             intent=QueryIntent.GREETING.value,
         )
 
-    try:
-        service = _build_rag_service(db)
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
-
-    augmented_query = conversation_service.build_augmented_query(request.message.strip(), recent_messages, active_context)
-
-    try:
-        result = await service.answer(
-            question=request.message.strip(),
-            filters=None,
-            retrieval_query=augmented_query,
-            recent_messages=recent_messages,
-            active_context=active_context,
+    if is_assistant_identity(message):
+        answer = get_assistant_identity_response()
+        await conversation_service.append_assistant_message(
+            conversation_id=conversation.id,
+            content=answer,
+            sources=[],
+            retrieval_metadata=None,
         )
-    except Exception as exc:
         await db.commit()
-        raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
+        return ChatResponse(
+            conversation_id=conversation.id,
+            answer=answer,
+            sources=[],
+            retrieval=None,
+            show_sources=False,
+            intent=QueryIntent.ASSISTANT_IDENTITY.value,
+        )
+
+    # Determine whether this is a VR Coatings domain query.
+    domain_query = is_vr_coatings_domain_query(message, active_context, recent_messages)
+
+    if domain_query:
+        # PATH B: VR Coatings RAG.
+        try:
+            service = _build_rag_service(db)
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+        augmented_query = conversation_service.build_augmented_query(message, recent_messages, active_context)
+
+        try:
+            result = await service.answer(
+                question=message,
+                filters=None,
+                retrieval_query=augmented_query,
+                recent_messages=recent_messages,
+                active_context=active_context,
+            )
+        except Exception as exc:
+            await db.commit()
+            raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
+    else:
+        # PATH C: general chat via Groq directly.
+        try:
+            service = _build_generation_service()
+        except RuntimeError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+        try:
+            result = await service.answer_general(
+                question=message,
+                recent_messages=recent_messages,
+            )
+        except Exception as exc:
+            await db.commit()
+            raise HTTPException(status_code=500, detail="General chat generation failed") from exc
 
     intent = QueryIntent(result.get("intent", QueryIntent.UNKNOWN.value))
     show_sources = _should_show_sources(intent, active_context, result.get("answer", ""), result.get("sources", []))
@@ -146,9 +194,10 @@ def _should_show_sources(
     answer: str,
     sources: list,
 ) -> bool:
-    # Greeting and general company / governance / contact queries should not show sources.
     if intent in (
         QueryIntent.GREETING,
+        QueryIntent.ASSISTANT_IDENTITY,
+        QueryIntent.GENERAL_CHAT,
         QueryIntent.GENERAL_COMPANY,
         QueryIntent.CONTACT_LOCATION,
         QueryIntent.GOVERNANCE,
@@ -156,8 +205,6 @@ def _should_show_sources(
     ):
         return False
 
-    # Product queries should show sources when we have resolved product context
-    # or when retrieval actually returned catalogue evidence.
     if intent in (
         QueryIntent.PRODUCT_TECHNICAL,
         QueryIntent.PRODUCT_APPLICATION,

@@ -90,16 +90,16 @@ class GroqProvider(BaseLLMProvider):
         raise RuntimeError(f"Groq generation failed after retries: {last_exc}") from last_exc
 
     async def generate(self, system_prompt: str, user_prompt: str, context: str) -> str:
-        if not context or not context.strip():
-            raise ValueError("Context is empty")
         start = time.perf_counter()
         try:
+            messages = [{"role": "system", "content": system_prompt}]
+            if context and context.strip():
+                messages.append({"role": "user", "content": f"{user_prompt}\n\nContext:\n{context}"})
+            else:
+                messages.append({"role": "user", "content": user_prompt})
             payload = {
                 "model": self.model,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"{user_prompt}\n\nContext:\n{context}"},
-                ],
+                "messages": messages,
                 "temperature": 0.0,
                 "max_tokens": 1024,
             }

@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from app.rag.config import rag_settings
 from app.rag.generation.base import BaseLLMProvider
 from app.rag.generation.factory import LLMFactory
-from app.rag.generation.prompts import SYSTEM_PROMPT, ANSWER_UNAVAILABLE
+from app.rag.generation.prompts import SYSTEM_PROMPT, GENERAL_CHAT_SYSTEM_PROMPT, ANSWER_UNAVAILABLE
 
 logger = logging.getLogger(__name__)
 
@@ -64,6 +64,57 @@ class GenerationService:
         )
         return {
             "answer": answer or ANSWER_UNAVAILABLE,
+            "sources": [],
+            "provider_error": False,
+        }
+
+    async def generate_general_answer(
+        self,
+        question: str,
+        conversation_history: str = "",
+    ) -> Dict[str, Any]:
+        if conversation_history and conversation_history.strip():
+            user_prompt = f"{conversation_history}\n\nQuestion: {question}"
+        else:
+            user_prompt = f"Question: {question}"
+
+        gen_start = time.perf_counter()
+        try:
+            answer = await self.llm_provider.generate(
+                system_prompt=GENERAL_CHAT_SYSTEM_PROMPT,
+                user_prompt=user_prompt,
+                context="",
+            )
+        except Exception as exc:
+            latency_ms = (time.perf_counter() - gen_start) * 1000
+            logger.error(
+                "General chat generation error: %s",
+                exc,
+                extra={
+                    "provider": getattr(self.llm_provider, "provider_name", type(self.llm_provider).__name__),
+                    "model": getattr(self.llm_provider, "model_name", "unknown"),
+                    "latency_ms": round(latency_ms, 2),
+                    "provider_error": True,
+                },
+            )
+            return {
+                "answer": "I'm currently unable to generate an answer. Please try again later.",
+                "sources": [],
+                "provider_error": True,
+            }
+
+        latency_ms = (time.perf_counter() - gen_start) * 1000
+        logger.info(
+            "General chat generation completed",
+            extra={
+                "provider": getattr(self.llm_provider, "provider_name", type(self.llm_provider).__name__),
+                "model": getattr(self.llm_provider, "model_name", "unknown"),
+                "latency_ms": round(latency_ms, 2),
+                "provider_error": False,
+            },
+        )
+        return {
+            "answer": answer or "",
             "sources": [],
             "provider_error": False,
         }

@@ -22,6 +22,12 @@ _GREETING_PATTERNS = [
     re.compile(r"^(bye|goodbye|see\s+you|good\s+night)[\s!.,;:?)]*$", re.IGNORECASE),
 ]
 
+_IDENTITY_PATTERNS = [
+    re.compile(r"^(what'?s\s+your\s+name|what\s+is\s+your\s+name)[\s!.,;:?)]*$", re.IGNORECASE),
+    re.compile(r"^(who\s+are\s+you|who\s+am\s+i\s+talking\s+to)[\s!.,;:?)]*$", re.IGNORECASE),
+    re.compile(r"^(what\s+are\s+you)[\s!.,;:?)]*$", re.IGNORECASE),
+]
+
 # Patterns that indicate the message contains a real query beyond a pure greeting.
 _NON_GREETING_INDICATORS = [
     # Product names
@@ -63,20 +69,13 @@ def _has_non_greeting_content(text: str) -> bool:
 
 
 def classify_greeting(text: str) -> Optional[str]:
-    """Return a greeting category if the text is a pure greeting, else None.
-
-    The function is conservative: it only returns a category when the message
-    is essentially conversational and contains no real query content.
-    """
+    """Return a greeting category if the text is a pure greeting, else None."""
     normalized = normalize_for_greeting(text)
     for pattern in _GREETING_PATTERNS:
         match = pattern.match(normalized)
         if match:
-            # The matched portion must consume the entire normalized text.
             if match.group(0) != normalized:
                 continue
-            # If the matched greeting itself contains non-greeting indicators,
-            # it is not a pure greeting.
             if _has_non_greeting_content(match.group(0)):
                 continue
             return _category_for_pattern(pattern, match.group(0))
@@ -85,6 +84,14 @@ def classify_greeting(text: str) -> Optional[str]:
 
 def is_greeting_only(text: str) -> bool:
     return classify_greeting(text) is not None
+
+
+def is_assistant_identity(text: str) -> bool:
+    normalized = normalize_for_greeting(text)
+    for pattern in _IDENTITY_PATTERNS:
+        if pattern.match(normalized):
+            return True
+    return False
 
 
 def _category_for_pattern(pattern: re.Pattern, matched: str) -> str:

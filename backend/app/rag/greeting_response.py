@@ -1,4 +1,4 @@
-from app.rag.greeting_detector import classify_greeting
+from app.rag.greeting_detector import classify_greeting, is_assistant_identity
 
 _GREETING_RESPONSES = {
     "hi": "Hey! 👋 How can I help you with VR Coatings today?",
@@ -13,9 +13,18 @@ _GREETING_RESPONSES = {
     "general": "Hey! 👋 How can I help you with VR Coatings today?",
 }
 
+_ASSISTANT_IDENTITY_RESPONSE = (
+    "I'm the VR Coatings Assistant. I can help with VR Coatings products and technical information, "
+    "and I can also help with general questions."
+)
+
 
 def get_greeting_response(message: str) -> str:
     category = classify_greeting(message)
     if not category:
         raise ValueError("Message is not a greeting-only message")
     return _GREETING_RESPONSES.get(category, _GREETING_RESPONSES["general"])
+
+
+def get_assistant_identity_response() -> str:
+    return _ASSISTANT_IDENTITY_RESPONSE

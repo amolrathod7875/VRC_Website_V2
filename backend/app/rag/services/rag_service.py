@@ -275,3 +275,58 @@ class RAGService:
             },
             "intent": intent.value,
         }
+
+    async def answer_general(
+        self,
+        question: str,
+        recent_messages: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        start = time.perf_counter()
+        conversation_history = ""
+        if recent_messages:
+            from app.rag.conversation.conversation_service import ConversationService
+            cs = ConversationService.__new__(ConversationService)
+            conversation_history = cs.build_generation_context(recent_messages, "")
+
+        try:
+            result = await self.generator.generate_general_answer(
+                question=question,
+                conversation_history=conversation_history,
+            )
+        except Exception as exc:
+            total_duration = (time.perf_counter() - start) * 1000
+            logger.error(
+                "General chat generation error: %s",
+                exc,
+                extra={
+                    "question_length": len(question),
+                    "total_duration_ms": round(total_duration, 2),
+                    "provider_error": True,
+                },
+            )
+            return {
+                "answer": "I'm currently unable to generate an answer. Please try again later.",
+                "sources": [],
+                "retrieval": {
+                    "chunks_used": 0,
+                    "retrieval_duration_ms": 0.0,
+                    "generation_duration_ms": 0.0,
+                    "total_duration_ms": round(total_duration, 2),
+                    "provider_error": True,
+                },
+                "intent": QueryIntent.GENERAL_CHAT.value,
+            }
+
+        total_duration = (time.perf_counter() - start) * 1000
+        return {
+            "answer": result.get("answer", ""),
+            "sources": [],
+            "retrieval": {
+                "chunks_used": 0,
+                "retrieval_duration_ms": 0.0,
+                "generation_duration_ms": round((time.perf_counter() - start) * 1000, 2),
+                "total_duration_ms": round(total_duration, 2),
+                "provider_error": result.get("provider_error", False),
+            },
+            "intent": QueryIntent.GENERAL_CHAT.value,
+        }

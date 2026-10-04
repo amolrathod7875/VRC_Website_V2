@@ -1,6 +1,8 @@
 import re
 from enum import Enum
-from typing import Tuple
+from typing import Any, Dict, List, Optional, Tuple
+
+from app.rag.product_identity import resolve_product_identity
 
 
 class QueryIntent(str, Enum):
@@ -12,6 +14,8 @@ class QueryIntent(str, Enum):
     MODEL_IDENTIFIER = "model_identifier"
     PRODUCT_COMPARISON = "product_comparison"
     GREETING = "greeting"
+    ASSISTANT_IDENTITY = "assistant_identity"
+    GENERAL_CHAT = "general_chat"
     UNKNOWN = "unknown"
 
 
@@ -193,3 +197,71 @@ def get_intent_metadata(intent: QueryIntent) -> dict:
         "downrank_sections": [],
         "prefer_source_types": [],
     }
+
+
+def is_vr_coatings_domain_query(
+    question: str,
+    active_context: Optional[Dict[str, Optional[str]]] = None,
+    recent_messages: Optional[List[Dict[str, Any]]] = None,
+) -> bool:
+    if not question or not question.strip():
+        return False
+
+    normalized = question.strip().lower()
+
+    # 1. Explicit known product/model/company reference in the current message.
+    if resolve_product_identity(question):
+        return True
+
+    company_keywords = ["vr coatings", "vrc ", " vrc", "company", "catalogue"]
+    if any(kw in normalized for kw in company_keywords):
+        return True
+
+    # Product/technical/application keywords strongly imply a domain query.
+    domain_keywords = [
+        "pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure",
+        "technical specification", "cc ", "bar ", "psi",
+        "used for", "application", "compatible with", "suitable for", "coating", "painting",
+        "warranty", "price", "cost", "weight", "size", "material",
+    ]
+    if any(kw in normalized for kw in domain_keywords):
+        return True
+
+    # 2. Confident contextual product follow-up.
+    if active_context and active_context.get("product_slug"):
+        if _is_domain_followup(question):
+            return True
+
+    return False
+
+
+def _is_domain_followup(question: str) -> bool:
+    q = question.strip().lower()
+
+    general_knowledge_indicators = [
+        "artificial intelligence", "machine learning", "python", "java", "javascript",
+        "sql", "tcp", "udp", "joke", "factorial", "capital of", "president",
+        "planet", "country", "explain newton", "write a ", "code to", "function to",
+        "what is a ", "how does a ", "difference between ", " ai", "deep learning",
+        "neural network", "transformer model", "algorithm", "data structure",
+    ]
+    for indicator in general_knowledge_indicators:
+        if indicator in q:
+            return False
+
+    domain_indicators = [
+        "its ", "it's ", "its", "this ", "that ", "these ", "those ",
+        "output", "pressure", "ratio", "cost", "price", "weight", "size",
+        "applications", "application", "features", "specifications",
+        "tell me more", "more ", "and ", "or ", "what about",
+        "how about", "and the", "and its", "warranty", "material",
+    ]
+    for pattern in domain_indicators:
+        if q.startswith(pattern) or f" {pattern}" in f" {q} ":
+            return True
+
+    words = q.split()
+    if len(words) <= 4:
+        return True
+
+    return False

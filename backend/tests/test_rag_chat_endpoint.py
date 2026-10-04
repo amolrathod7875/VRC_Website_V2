@@ -143,10 +143,10 @@ def test_chat_endpoint_missing_retrieval_metadata() -> None:
             mock_cs.append_assistant_message = AsyncMock()
             mock_cs.get_recent_messages = AsyncMock(return_value=[])
             mock_cs.get_active_product_context = MagicMock(return_value={})
-            mock_cs.build_augmented_query = MagicMock(return_value="test")
+            mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio of Tiger 30:150?")
             MockConvService.return_value = mock_cs
 
-            response = client.post("/api/v1/chat", json={"message": "test"})
+            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
 
     assert response.status_code == 200
     data = response.json()
