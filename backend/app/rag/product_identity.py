@@ -86,6 +86,44 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "paint agitation system",
         ],
     },
+    "cub": {
+        "canonical_slug": "cub",
+        "aliases": [
+            "cub",
+            "cub pump",
+            "four-ball piston pump",
+            "cub 2:400",
+            "cub 4:400",
+            "cub 6:400",
+        ],
+    },
+    "drum-press": {
+        "canonical_slug": "drum-press",
+        "aliases": [
+            "drum press",
+            "drum-press",
+            "drum press dispensing",
+            "airless drum press",
+        ],
+    },
+    "pneumatic-stirrer": {
+        "canonical_slug": "pneumatic-stirrer",
+        "aliases": [
+            "pneumatic stirrer",
+            "pneumatic stirrers",
+            "air stirrer",
+            "pneumatic driven stirrer",
+        ],
+    },
+    "ball-valves": {
+        "canonical_slug": "ball-valves",
+        "aliases": [
+            "ball valves",
+            "ball valve",
+            "high pressure ball valve",
+            "high pressure ball valves",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.

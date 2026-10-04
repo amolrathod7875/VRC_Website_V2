@@ -3,6 +3,15 @@ from typing import Any, Dict, List, Optional, Tuple
 from .text_cleaner import normalize_text
 from .pdf_parser import extract_pages
 from .pdf_table_parser import extract_tables, parse_spec_table, extract_tables_from_ocr
+from .structured_table_parser import (
+    StructuredTable,
+    TableCell,
+    TableRow,
+    detect_table_type,
+    parse_structured_table,
+    validate_table,
+    reconstruct_table_from_ocr_blocks,
+)
 from app.rag.constants import (
     CHUNK_TYPE_PRODUCT_IDENTITY,
     CHUNK_TYPE_DESCRIPTION,
@@ -10,6 +19,7 @@ from app.rag.constants import (
     CHUNK_TYPE_APPLICATIONS,
     CHUNK_TYPE_TECHNICAL_MODEL,
     CHUNK_TYPE_TECHNICAL_TABLE,
+    CHUNK_TYPE_TECHNICAL_PART,
     CHUNK_TYPE_ACCESSORIES,
     CHUNK_TYPE_NOTES,
     CHUNK_TYPE_OTHER,
@@ -583,62 +593,11 @@ def chunk_catalogue(
         })
         chunk_index += 1
 
-    # Table chunks
-    for table in tables:
-        rows = table.get("rows", [])
-        parsed = parse_spec_table(rows)
-        if not parsed:
-            continue
-        for item in parsed:
-            model = item["model"]
-            lines = [f"{v['label']}: {v['value']}" for v in item["values"]]
-            chunks.append({
-                "document_id": document_id,
-                "chunk_id": f"{document_id}::chunk::{chunk_index}",
-                "source_type": SOURCE_TYPE_CATALOGUE,
-                "source_authority": "primary",
-                "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
-                "document_name": document_name,
-                "product": product_slug.replace("-", " ").title(),
-                "product_slug": product_slug,
-                "section": CHUNK_TYPE_TECHNICAL_MODEL,
-                "content_type": CHUNK_TYPE_TECHNICAL_MODEL,
-                "model": model,
-                "page_number": table["page_number"],
-                "line_start": 1,
-                "line_end": len(lines),
-                "text": "\n".join(lines),
-            })
-            chunk_index += 1
-
-    if ocr_results:
-        ocr_tables = extract_tables_from_ocr(ocr_results)
-        for table in ocr_tables:
-            rows = table.get("rows", [])
-            parsed = parse_spec_table(rows)
-            if not parsed:
-                continue
-            for item in parsed:
-                model = item["model"]
-                lines = [f"{v['label']}: {v['value']}" for v in item["values"]]
-                chunks.append({
-                    "document_id": document_id,
-                    "chunk_id": f"{document_id}::chunk::{chunk_index}",
-                    "source_type": SOURCE_TYPE_CATALOGUE,
-                    "source_authority": "primary",
-                    "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
-                    "document_name": document_name,
-                    "product": product_slug.replace("-", " ").title(),
-                    "product_slug": product_slug,
-                    "section": CHUNK_TYPE_TECHNICAL_MODEL,
-                    "content_type": CHUNK_TYPE_TECHNICAL_MODEL,
-                    "model": model,
-                    "page_number": table["page_number"],
-                    "line_start": 1,
-                    "line_end": len(lines),
-                    "text": "\n".join(lines),
-                })
-                chunk_index += 1
+    # Structured table reconstruction from OCR blocks
+    chunks, chunk_index = _add_structured_table_chunks(
+        chunks, document_id, document_name, product_slug,
+        tables, ocr_results, chunk_index
+    )
 
     # Post-processing
     chunks = _ensure_product_identity_chunk(chunks, document_name, product_slug, page_lines)
@@ -860,3 +819,120 @@ def _drop_short_unknown_fragments(chunks: List[Dict[str, Any]]) -> List[Dict[str
         new_chunk["line_end"] = len(kept)
         cleaned.append(new_chunk)
     return cleaned
+
+
+def _add_structured_table_chunks(
+    chunks: List[Dict[str, Any]],
+    document_id: str,
+    document_name: str,
+    product_slug: str,
+    tables: List[Dict[str, Any]],
+    ocr_results: Optional[List[OCRPageResult]],
+    chunk_index_start: int,
+) -> Tuple[List[Dict[str, Any]], int]:
+    """Add structured table chunks using coordinate-based reconstruction."""
+    chunk_index = chunk_index_start
+    structured_tables: List[StructuredTable] = []
+
+    for table in tables:
+        page_number = table.get("page_number", 1)
+        rows = table.get("rows", [])
+        if not rows:
+            continue
+
+        headers = rows[0] if rows else []
+        header_list = [str(h or "").strip() for h in headers]
+        table_rows = []
+        for row in rows[1:]:
+            cells = [TableCell(text=str(c or "").strip(), confidence=None) for c in row]
+            raw_cells = [c.text for c in cells]
+            table_rows.append(TableRow(cells=cells, raw_cells=raw_cells))
+
+        table_type = detect_table_type(header_list, table_rows[:3], document_name)
+        structured = StructuredTable(
+            headers=header_list,
+            rows=table_rows,
+            source_page=page_number,
+            table_type=table_type,
+        )
+        is_valid, issues = validate_table(structured)
+        if not is_valid:
+            structured.confidence = "REVIEW_REQUIRED"
+            structured.issues = issues
+        structured_tables.append(structured)
+
+    if ocr_results:
+        for ocr_result in ocr_results:
+            page_number = ocr_result.page_number
+            structured = reconstruct_table_from_ocr_blocks(
+                ocr_result.blocks, page_number, document_name
+            )
+            if structured:
+                is_valid, issues = validate_table(structured)
+                if not is_valid:
+                    structured.confidence = "REVIEW_REQUIRED"
+                    structured.issues = issues
+                structured_tables.append(structured)
+
+    for table in structured_tables:
+        parsed = parse_structured_table(table)
+        for item in parsed:
+            table_type = item.get("table_type", "UNKNOWN_TABLE")
+            if table_type == "PUMP_MODEL_TABLE":
+                section = CHUNK_TYPE_TECHNICAL_MODEL
+                content_type = CHUNK_TYPE_TECHNICAL_MODEL
+                identifier = item.get("model", "")
+            elif table_type == "PART_NUMBER_TABLE":
+                section = CHUNK_TYPE_TECHNICAL_PART
+                content_type = CHUNK_TYPE_TECHNICAL_PART
+                identifier = item.get("part_number", "")
+            elif table_type == "VALVE_SPEC_TABLE":
+                section = CHUNK_TYPE_TECHNICAL_PART
+                content_type = CHUNK_TYPE_TECHNICAL_PART
+                identifier = item.get("part_number", "")
+            else:
+                section = CHUNK_TYPE_TECHNICAL_TABLE
+                content_type = CHUNK_TYPE_TECHNICAL_TABLE
+                identifier = ""
+
+            lines = []
+            if identifier and table_type in ("PART_NUMBER_TABLE", "VALVE_SPEC_TABLE"):
+                lines.append(f"Part Number: {identifier}")
+            for v in item.get("values", []):
+                label = v.get("label", "")
+                value = v.get("value", "")
+                raw_value = v.get("raw_value", "")
+                norm_reason = v.get("normalization_reason")
+                if norm_reason and raw_value != value:
+                    lines.append(f"{label}: {value} (raw: {raw_value})")
+                else:
+                    lines.append(f"{label}: {value}")
+
+            chunk_meta = {
+                "document_id": document_id,
+                "chunk_id": f"{document_id}::chunk::{chunk_index}",
+                "source_type": SOURCE_TYPE_CATALOGUE,
+                "source_authority": "primary",
+                "authority_priority": CATALOGUE_AUTHORITY_PRIORITY,
+                "document_name": document_name,
+                "product": product_slug.replace("-", " ").title(),
+                "product_slug": product_slug,
+                "section": section,
+                "content_type": content_type,
+                "page_number": item.get("source_page", table.source_page),
+                "line_start": 1,
+                "line_end": len(lines),
+                "text": "\n".join(lines),
+                "confidence": item.get("confidence", "USABLE"),
+                "table_type": table_type,
+                "issues": item.get("issues", []),
+            }
+
+            if identifier:
+                chunk_meta["model"] = identifier if table_type == "PUMP_MODEL_TABLE" else None
+                chunk_meta["part_number"] = identifier if table_type in ("PART_NUMBER_TABLE", "VALVE_SPEC_TABLE") else None
+
+            chunks.append(chunk_meta)
+            chunk_index += 1
+
+    return chunks, chunk_index
