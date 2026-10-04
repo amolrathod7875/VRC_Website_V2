@@ -257,6 +257,14 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "polegun",
         ],
     },
+    "barrel-pump": {
+        "canonical_slug": "barrel-pump",
+        "aliases": [
+            "barrel pump",
+            "barrel-pump",
+            "barrel pump 210 liters",
+        ],
+    },
     "vrid": {
         "canonical_slug": "vrid",
         "aliases": [
@@ -284,12 +292,14 @@ _MODEL_PATTERN = re.compile(r"\b([A-Za-z]+)?\s*(\d+:\d+)\b", re.IGNORECASE)
 def resolve_product_identity(text: str) -> Optional[Tuple[str, Optional[str]]]:
     """Return (canonical_slug, matched_alias_or_None) for the first product found in text.
 
-    Matching is deterministic and case-insensitive. If no known product is found, return None.
+    Matching is deterministic and case-insensitive. Whitespace is normalized so that
+    aliases match even when words are split across lines or separated by extra spaces.
+    If no known product is found, return None.
     """
     if not text:
         return None
 
-    normalized = text.lower()
+    normalized = " ".join(text.lower().split())
     for alias in _ALIAS_ORDER:
         if alias in normalized:
             for slug, config in PRODUCT_ALIASES.items():
