@@ -36,6 +36,30 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "elephant pump",
         ],
     },
+    "hippo": {
+        "canonical_slug": "hippo",
+        "aliases": [
+            "hippo",
+            "hippo pump",
+            "diaphragm pump",
+        ],
+    },
+    "leopard": {
+        "canonical_slug": "leopard",
+        "aliases": [
+            "leopard",
+            "leopard electric pump",
+            "electric pump",
+        ],
+    },
+    "filters": {
+        "canonical_slug": "filters",
+        "aliases": [
+            "filters",
+            "filter",
+            "vr filters",
+        ],
+    },
 }
 
 # Ordered so longer aliases match before shorter ones to avoid partial collisions.
