@@ -25,6 +25,8 @@ export interface ChatAPIResponse {
   answer: string;
   sources: ChatSource[];
   retrieval: ChatRetrieval | null;
+  show_sources?: boolean;
+  intent?: string | null;
 }
 
 export interface ChatMessage {
@@ -33,5 +35,7 @@ export interface ChatMessage {
   content: string;
   sources: ChatSource[];
   retrieval: ChatRetrieval | null;
+  show_sources?: boolean;
+  intent?: string | null;
   error?: string;
 }

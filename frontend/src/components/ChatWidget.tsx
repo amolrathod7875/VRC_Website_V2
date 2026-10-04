@@ -234,6 +234,8 @@ export function ChatWidget() {
         content: result.answer,
         sources: result.sources,
         retrieval: result.retrieval,
+        show_sources: result.show_sources,
+        intent: result.intent,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
@@ -371,7 +373,7 @@ export function ChatWidget() {
           ) : (
             <>
               <div dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }} />
-              {!isUser && renderSources(msg.sources)}
+              {!isUser && msg.show_sources !== false && renderSources(msg.sources)}
             </>
           )}
         </div>

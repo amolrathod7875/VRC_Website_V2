@@ -11,6 +11,7 @@ class QueryIntent(str, Enum):
     GOVERNANCE = "governance"
     MODEL_IDENTIFIER = "model_identifier"
     PRODUCT_COMPARISON = "product_comparison"
+    GREETING = "greeting"
     UNKNOWN = "unknown"
 
 

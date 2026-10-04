@@ -35,3 +35,5 @@ class ChatResponse(BaseModel):
     answer: str
     sources: list[ChatSource] = []
     retrieval: ChatRetrieval | None = None
+    show_sources: bool = True
+    intent: str | None = None

@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
@@ -14,7 +14,11 @@ from app.rag.generation.generation_service import GenerationService
 from app.rag.generation.factory import LLMFactory
 from app.rag.services.rag_service import RAGService
 from app.rag.conversation.conversation_service import ConversationService
+from app.rag.greeting_detector import is_greeting_only
+from app.rag.greeting_response import get_greeting_response
+from app.rag.retrieval.query_classifier import QueryIntent
 from app.models.rag_document import RagDocument
+from app.rag.constants import SOURCE_TYPE_COMPANY_MASTER
 from sqlalchemy import select, func
 
 router = APIRouter()
@@ -56,11 +60,6 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=422, detail="Message must not be empty")
 
-    try:
-        service = _build_rag_service(db)
-    except RuntimeError as exc:
-        raise HTTPException(status_code=503, detail=str(exc)) from exc
-
     conversation_service = ConversationService(db)
 
     try:
@@ -74,6 +73,31 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
 
     recent_messages = await conversation_service.get_recent_messages(conversation.id, limit=8)
     active_context = conversation_service.get_active_product_context(recent_messages)
+
+    # Greeting-only messages bypass the entire RAG pipeline.
+    if is_greeting_only(request.message.strip()):
+        answer = get_greeting_response(request.message.strip())
+        await conversation_service.append_assistant_message(
+            conversation_id=conversation.id,
+            content=answer,
+            sources=[],
+            retrieval_metadata=None,
+        )
+        await db.commit()
+        return ChatResponse(
+            conversation_id=conversation.id,
+            answer=answer,
+            sources=[],
+            retrieval=None,
+            show_sources=False,
+            intent=QueryIntent.GREETING.value,
+        )
+
+    try:
+        service = _build_rag_service(db)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
     augmented_query = conversation_service.build_augmented_query(request.message.strip(), recent_messages, active_context)
 
     try:
@@ -88,7 +112,11 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
         await db.commit()
         raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
 
-    sources = [ChatSource(**source) for source in result.get("sources", [])]
+    intent = QueryIntent(result.get("intent", QueryIntent.UNKNOWN.value))
+    show_sources = _should_show_sources(intent, active_context, result.get("answer", ""), result.get("sources", []))
+    filtered_sources = _filter_sources_for_ui(result.get("sources", []), active_context)
+
+    sources = [ChatSource(**source) for source in filtered_sources]
     retrieval_data = result.get("retrieval")
     retrieval = ChatRetrieval(**retrieval_data) if retrieval_data else None
     answer = result.get("answer", "")
@@ -96,7 +124,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     await conversation_service.append_assistant_message(
         conversation_id=conversation.id,
         content=answer,
-        sources=result.get("sources", []),
+        sources=filtered_sources,
         retrieval_metadata=result.get("retrieval"),
     )
 
@@ -107,7 +135,74 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
         answer=answer,
         sources=sources,
         retrieval=retrieval,
+        show_sources=show_sources,
+        intent=intent.value,
     )
+
+
+def _should_show_sources(
+    intent: QueryIntent,
+    active_context: Dict[str, Optional[str]],
+    answer: str,
+    sources: list,
+) -> bool:
+    # Greeting and general company / governance / contact queries should not show sources.
+    if intent in (
+        QueryIntent.GREETING,
+        QueryIntent.GENERAL_COMPANY,
+        QueryIntent.CONTACT_LOCATION,
+        QueryIntent.GOVERNANCE,
+        QueryIntent.UNKNOWN,
+    ):
+        return False
+
+    # Product queries should show sources when we have resolved product context
+    # or when retrieval actually returned catalogue evidence.
+    if intent in (
+        QueryIntent.PRODUCT_TECHNICAL,
+        QueryIntent.PRODUCT_APPLICATION,
+        QueryIntent.MODEL_IDENTIFIER,
+        QueryIntent.PRODUCT_COMPARISON,
+    ):
+        has_product_context = bool(active_context and active_context.get("product_slug"))
+        has_catalogue_sources = any(src.get("source_type") == "catalogue" for src in sources)
+        return has_product_context or has_catalogue_sources
+
+    return False
+
+
+def _filter_sources_for_ui(
+    sources: list,
+    active_context: Dict[str, Optional[str]],
+) -> list:
+    resolved_slug = (active_context or {}).get("product_slug")
+    resolved_document = (active_context or {}).get("document")
+
+    seen = set()
+    filtered: list = []
+    for src in sources:
+        source_type = src.get("source_type")
+        document = src.get("document")
+        product_slug = src.get("product_slug")
+
+        # Hide raw Company Master from user-facing sources.
+        if source_type == SOURCE_TYPE_COMPANY_MASTER:
+            continue
+
+        # For product queries, prefer sources matching the resolved product.
+        if resolved_slug and product_slug and product_slug != resolved_slug:
+            continue
+
+        # Deduplicate by document_name.
+        doc_key = document
+        if doc_key in seen:
+            continue
+        seen.add(doc_key)
+
+        filtered.append(src)
+
+    # Limit to a reasonable number of source cards.
+    return filtered[:3]
 
 
 @router.get("/status")

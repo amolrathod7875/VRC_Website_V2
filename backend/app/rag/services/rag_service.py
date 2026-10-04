@@ -113,6 +113,7 @@ class RAGService:
                     "generation_duration_ms": 0.0,
                     "total_duration_ms": round((time.perf_counter() - start) * 1000, 2),
                 },
+                "intent": intent.value,
             }
 
         guard_triggered, guard_answer = _cross_product_guard(question, active_context, chunks)
@@ -141,6 +142,7 @@ class RAGService:
                     "generation_duration_ms": 0.0,
                     "total_duration_ms": round(total_duration, 2),
                 },
+                "intent": intent.value,
             }
 
         built = self.context_builder.build(chunks, effective_query)
@@ -174,6 +176,7 @@ class RAGService:
                     "generation_duration_ms": 0.0,
                     "total_duration_ms": round(total_duration, 2),
                 },
+                "intent": intent.value,
             }
 
         if not context:
@@ -199,6 +202,7 @@ class RAGService:
                     "generation_duration_ms": 0.0,
                     "total_duration_ms": round((time.perf_counter() - start) * 1000, 2),
                 },
+                "intent": intent.value,
             }
 
         conversation_context = ""
@@ -240,6 +244,7 @@ class RAGService:
                     "total_duration_ms": round(total_duration, 2),
                     "provider_error": True,
                 },
+                "intent": intent.value,
             }
 
         generation_duration = (time.perf_counter() - gen_start) * 1000
@@ -268,4 +273,5 @@ class RAGService:
                 "generation_duration_ms": round(generation_duration, 2),
                 "total_duration_ms": round(total_duration, 2),
             },
+            "intent": intent.value,
         }

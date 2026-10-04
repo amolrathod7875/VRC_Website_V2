@@ -40,6 +40,8 @@ export async function sendChatMessage(
     answer: string;
     sources: ChatSource[];
     retrieval: ChatRetrieval | null;
+    show_sources?: boolean;
+    intent?: string | null;
   };
 
   return {
@@ -47,6 +49,8 @@ export async function sendChatMessage(
     answer: data.answer ?? "",
     sources: data.sources ?? [],
     retrieval: data.retrieval ?? null,
+    show_sources: data.show_sources ?? true,
+    intent: data.intent ?? null,
   };
 }
 
