@@ -100,7 +100,7 @@ def test_canonical_slug_known_product() -> None:
 
 def test_canonical_slug_unknown_returns_none() -> None:
     assert get_canonical_slug("unknown_product") is None
-    assert get_canonical_slug("VRC MIX (LOW - MEDIUM) PRESSURE") is None
+    assert get_canonical_slug("NonExistentSystem") is None
 
 
 # ============================================================

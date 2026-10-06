@@ -6,6 +6,7 @@ Table types:
 - PART_NUMBER_TABLE: Part-number-based equipment tables (Pneumatic Stirrer)
 - VALVE_SPEC_TABLE: Valve dimension/pressure/material tables (Ball Valves)
 - SYSTEM_COMPONENT_TABLE: Component/system tables
+- SYSTEM_COMPARISON_TABLE: Feature/configuration comparison matrices
 - KEY_VALUE_TABLE: Simple key-value pairs
 - UNKNOWN_TABLE: Cannot determine type
 
@@ -94,6 +95,10 @@ def detect_table_type(headers: List[str], first_rows: List[TableRow], document_n
     ratio_model_headers = sum(1 for h in headers if re.search(r"\d+:\d+", h))
     if ratio_model_headers >= 1 and len(headers) >= 2:
         return "PUMP_MODEL_TABLE"
+
+    comparison_headers = sum(1 for h in headers if re.search(r"\b(yes|no|standard|optional)\b", h.lower()))
+    if comparison_headers >= 2 and len(headers) >= 3:
+        return "SYSTEM_COMPARISON_TABLE"
 
     for row in first_rows:
         row_text = " ".join(c.text for c in row.cells).lower()
@@ -655,6 +660,46 @@ def parse_valve_table(table: StructuredTable) -> List[Dict[str, Any]]:
     return results
 
 
+def parse_comparison_table(table: StructuredTable) -> List[Dict[str, Any]]:
+    """Parse feature/configuration comparison table."""
+    if table.table_type != "SYSTEM_COMPARISON_TABLE":
+        return []
+
+    headers = table.headers
+    if len(headers) < 2:
+        return []
+
+    results = []
+    for row in table.rows:
+        raw_cells = row.raw_cells if row.raw_cells else [c.text for c in row.cells]
+        if not raw_cells:
+            continue
+
+        label = raw_cells[0].strip() if raw_cells else ""
+        values = []
+        for label_idx, header in enumerate(headers):
+            if label_idx < len(raw_cells):
+                raw_value = raw_cells[label_idx]
+                values.append({
+                    "label": header,
+                    "raw_value": raw_value,
+                    "value": raw_value,
+                    "normalization_reason": None,
+                    "confidence": row.confidence,
+                })
+
+        results.append({
+            "model": label,
+            "values": values,
+            "confidence": row.confidence,
+            "table_type": table.table_type,
+            "source_page": table.source_page,
+            "issues": table.issues,
+        })
+
+    return results
+
+
 # ---------------------------------------------------------------------------
 # Generic table parser dispatcher
 # ---------------------------------------------------------------------------
@@ -667,6 +712,8 @@ def parse_structured_table(table: StructuredTable) -> List[Dict[str, Any]]:
         return parse_part_number_table(table)
     elif table.table_type == "VALVE_SPEC_TABLE":
         return parse_valve_table(table)
+    elif table.table_type == "SYSTEM_COMPARISON_TABLE":
+        return parse_comparison_table(table)
     return []
 
 
