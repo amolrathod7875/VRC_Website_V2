@@ -10,7 +10,7 @@ from app.rag.generation.factory import LLMFactory
 from app.rag.retrieval.reranker import Reranker
 from app.rag.config import rag_settings
 from app.rag.generation.prompts import ANSWER_UNAVAILABLE
-from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query
+from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query, _is_domain_followup
 from app.rag.constants import SOURCE_TYPE_CATALOGUE
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,10 @@ def _should_apply_product_filter(question: str, active_context: Optional[Dict[st
     if intent.value in ("product_comparison", "governance"):
         return False
     if intent.value == "general_company":
-        return False
+        # A technical follow-up (e.g. "discharge per cycle", "general output") asked
+        # while a product is the active context is still about that product, so isolate
+        # it. Generic company-overview questions (no product context) stay unfiltered.
+        return _is_domain_followup(question)
     normalized = f" {question.strip().lower()} "
     if any(hint in normalized for hint in _COMPARISON_HINTS):
         return False

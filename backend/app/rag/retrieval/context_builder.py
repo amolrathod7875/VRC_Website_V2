@@ -93,6 +93,38 @@ class ContextBuilder:
         conflicts = self._detect_conflicts(selected)
 
         context_parts = []
+        # Generic product-identity anchor: when the retrieved chunks all belong to one
+        # catalogue product, prefix the context with that identity so the LLM can answer
+        # "What is <product>?" / "Tell me about <product>" instead of treating the raw
+        # technical table as unattributed data. This is derived from chunk metadata, not
+        # a hardcoded product list.
+        product_slugs = {
+            (chunk.get("product_slug") or chunk.get("product"))
+            for chunk in selected
+            if chunk.get("source_type") == SOURCE_TYPE_CATALOGUE
+        }
+        product_slugs.discard(None)
+        if len(product_slugs) == 1:
+            slug = next(iter(product_slugs))
+            # Prefer a real product name from a catalogue chunk for this slug; fall back
+            # to the slug itself so the anchor is never empty.
+            product_name = next(
+                (chunk.get("product") for chunk in selected
+                 if chunk.get("product_slug") == slug and chunk.get("product")),
+                slug,
+            )
+            context_parts.insert(
+                0,
+                f"PRODUCT: {product_name} (catalogue product slug: {slug}). "
+                f"All technical data below is from the official {product_name} catalogue.",
+            )
+        elif len(product_slugs) > 1:
+            context_parts.insert(
+                0,
+                "NOTE: The retrieved context covers multiple products. "
+                "Attribute each specification to the correct product and do not merge them.",
+            )
+
         sources = []
         for chunk in selected:
             context_parts.append(chunk.get("text", ""))

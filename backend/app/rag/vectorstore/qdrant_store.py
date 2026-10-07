@@ -1,9 +1,12 @@
 from typing import Any, Dict, List, Optional
 import uuid
+import logging
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, FusionQuery
 from app.rag.config import rag_settings
 from app.rag.constants import STATUS_INDEXED
+
+logger = logging.getLogger(__name__)
 
 _POINT_ID_NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
 
@@ -46,11 +49,17 @@ class QdrantStore:
             ("product_slug", PayloadSchemaType.KEYWORD),
             ("document_id", PayloadSchemaType.KEYWORD),
             ("content_type", PayloadSchemaType.KEYWORD),
+            ("model", PayloadSchemaType.KEYWORD),
         ]:
             try:
                 self.client.create_payload_index(collection_name=self.collection_name, field_name=field, field_schema=schema_type)
             except Exception:
                 pass
+
+    @property
+    def _indexed_payload_fields(self) -> set:
+        """Payload fields that have a Qdrant keyword index (safe to filter on)."""
+        return {"source_type", "product_slug", "document_id", "content_type", "model"}
 
     async def upsert_points(
         self,
@@ -87,9 +96,17 @@ class QdrantStore:
     def _build_qdrant_filter(self, filters: Optional[Dict[str, Any]]) -> Optional[Filter]:
         if not filters:
             return None
+        # Only filter on payload fields that have a Qdrant keyword index. Passing an
+        # unindexed key (e.g. "model") raises a 400 from the Qdrant API. Unknown keys
+        # are skipped with a warning rather than silently mis-filtering.
         must = []
         for key, value in filters.items():
             if value is None:
+                continue
+            if key not in self._indexed_payload_fields:
+                logger.warning(
+                    "Skipping Qdrant filter on unindexed payload field %r", key
+                )
                 continue
             must.append(FieldCondition(key=key, match=MatchValue(value=value)))
         if not must:

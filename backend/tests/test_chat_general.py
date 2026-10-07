@@ -8,7 +8,7 @@ client = TestClient(app)
 
 def test_chat_endpoint_general_chat_bypasses_rag() -> None:
     mock_generator = AsyncMock()
-    mock_generator.answer_general.return_value = {
+    mock_generator.generate_general_answer.return_value = {
         "answer": "Artificial intelligence is a field of computer science.",
         "sources": [],
         "retrieval": {
@@ -43,7 +43,7 @@ def test_chat_endpoint_general_chat_bypasses_rag() -> None:
     assert data["sources"] == []
     assert data["show_sources"] is False
     assert data["intent"] == "general_chat"
-    mock_generator.answer_general.assert_called_once()
+    mock_generator.generate_general_answer.assert_called_once()
 
 
 def test_chat_endpoint_identity_returns_deterministic() -> None:
@@ -69,7 +69,7 @@ def test_chat_endpoint_identity_returns_deterministic() -> None:
 
 def test_chat_endpoint_general_side_turn_preserves_product_context() -> None:
     mock_generator = AsyncMock()
-    mock_generator.answer_general.return_value = {
+    mock_generator.generate_general_answer.return_value = {
         "answer": "Machine learning is a subset of AI.",
         "sources": [],
         "retrieval": {
@@ -106,12 +106,12 @@ def test_chat_endpoint_general_side_turn_preserves_product_context() -> None:
     data = response.json()
     assert data["intent"] == "general_chat"
     assert data["show_sources"] is False
-    mock_generator.answer_general.assert_called_once()
+    mock_generator.generate_general_answer.assert_called_once()
 
 
 def test_chat_endpoint_general_chat_general_failure() -> None:
     mock_generator = AsyncMock()
-    mock_generator.answer_general.side_effect = RuntimeError("Groq unavailable")
+    mock_generator.generate_general_answer.side_effect = RuntimeError("Groq unavailable")
 
     mock_conversation = MagicMock()
     mock_conversation.id = uuid4()

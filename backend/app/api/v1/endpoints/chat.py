@@ -182,7 +182,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             raise HTTPException(status_code=503, detail=str(exc)) from exc
 
         try:
-            result = await service.answer_general(
+            result = await service.generate_general_answer(
                 question=message,
                 recent_messages=recent_messages,
             )

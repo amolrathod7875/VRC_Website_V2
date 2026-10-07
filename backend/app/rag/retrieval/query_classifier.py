@@ -122,7 +122,13 @@ def classify_query(question: str) -> QueryIntent:
     if any(kw in normalized for kw in contact_keywords):
         return QueryIntent.CONTACT_LOCATION
 
-    product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi"]
+    # A catalogue request must outrank technical/discovery intents: "give me
+    # catalogue of Rhino" contains "rhino" (a technical keyword) and must still
+    # be classified as a catalogue request, not a product query.
+    if is_catalogue_request(question):
+        return QueryIntent.CATALOGUE_REQUEST
+
+    product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi", "variants", "variant", "workflow", "process", "mixing ratio", "mix ratio", "vrc", "rhino", "vria"]
     if any(kw in normalized for kw in product_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
 
@@ -141,9 +147,6 @@ def classify_query(question: str) -> QueryIntent:
     product_application_keywords = ["used for", "application", "compatible with", "suitable for", "coating", "painting", "spray"]
     if any(kw in normalized for kw in product_application_keywords):
         return QueryIntent.PRODUCT_APPLICATION
-
-    if is_catalogue_request(question):
-        return QueryIntent.CATALOGUE_REQUEST
 
     return QueryIntent.UNKNOWN
 
@@ -221,7 +224,7 @@ def get_intent_metadata(intent: QueryIntent) -> dict:
         }
     if intent == QueryIntent.PRODUCT_DISCOVERY:
         return {
-            "prefer_sections": ["applications", "technical specifications", "description", "features"],
+            "prefer_sections": ["applications", "technical specifications", "technical_model", "description", "features", "technical_variant", "system_component", "system_workflow", "system_comparison"],
             "downrank_sections": ["change log", "governance", "unknown_register", "full product master", "controlled search / seo terminology", "deployment / rag answering policy"],
             "prefer_source_types": ["catalogue"],
         }
@@ -274,6 +277,8 @@ def is_vr_coatings_domain_query(
         "technical specification", "cc ", "bar ", "psi",
         "used for", "application", "compatible with", "suitable for", "coating", "painting",
         "warranty", "price", "cost", "weight", "size", "material",
+        "discharge per cycle", "discharge", "variants", "configurations",
+        "mixing ratio", "components", "workflow", "process",
     ]
     if any(kw in normalized for kw in domain_keywords):
         return True

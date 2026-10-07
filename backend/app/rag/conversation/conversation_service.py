@@ -144,28 +144,35 @@ class ConversationService:
             # Explicit product mention wins; do not overwrite with stale assistant metadata.
             return context
 
-        # No explicit product in current message: derive context from recent assistant messages.
-        # Collect all sources from recent assistant messages and find the most recent product_slug.
-        all_sources = []
-        for msg in reversed(messages):
-            if msg.get("role") != "assistant":
-                continue
-            sources = msg.get("sources", []) or []
-            all_sources.extend(sources)
+        # No explicit product in current message: derive context from the MOST RECENT
+        # assistant message only. Scanning every prior assistant message caused a
+        # stale product (e.g. Dragon) to leak into a follow-up about a different
+        # product (e.g. Polyurea) that the most recent turn actually answered.
+        latest_assistant = next(
+            (m for m in reversed(messages) if m.get("role") == "assistant"), None
+        )
+        if latest_assistant:
+            for src in (latest_assistant.get("sources", []) or []):
+                if src.get("product_slug") and not context["product_slug"]:
+                    context["product_slug"] = src["product_slug"]
+                if src.get("document") and not context["document"]:
+                    context["document"] = src["document"]
 
-        for src in all_sources:
-            if src.get("product_slug") and not context["product_slug"]:
-                context["product_slug"] = src["product_slug"]
-            if src.get("document") and not context["document"]:
-                context["document"] = src["document"]
-
-        # If we have a product but no model, look for the model in the collected sources
-        # for the SAME product. This preserves model context across same-product follow-ups
-        # without carrying a model into a different product.
+        # Preserve a model across same-product follow-ups: scan assistant turns in
+        # reverse and take the most recent source whose product matches the resolved
+        # product. A later turn for a DIFFERENT product must not carry its model in.
         if context["product_slug"] and not context["model"]:
-            for src in all_sources:
-                if src.get("product_slug") == context["product_slug"] and src.get("model"):
-                    context["model"] = src["model"]
+            for msg in reversed(messages):
+                if msg.get("role") != "assistant":
+                    continue
+                for src in (msg.get("sources", []) or []):
+                    if (
+                        src.get("product_slug") == context["product_slug"]
+                        and src.get("model")
+                    ):
+                        context["model"] = src["model"]
+                        break
+                if context["model"]:
                     break
 
         return context
@@ -202,8 +209,10 @@ class ConversationService:
             parts.append(active_context["product_slug"])
         if active_context.get("model"):
             parts.append(active_context["model"])
-        if active_context.get("document"):
-            parts.append(active_context["document"])
+        # NOTE: do NOT append the raw document name here. Catalogue filenames end in
+        # ".pdf" and the query classifier's catalogue-request pattern matches \bpdf\b,
+        # so a document name in the query would misclassify a technical follow-up as a
+        # catalogue request. The product slug + model are enough to disambiguate.
 
         seen = set()
         unique_parts = []
