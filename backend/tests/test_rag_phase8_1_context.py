@@ -1,7 +1,5 @@
 """Phase 8.1 multi-product context hardening tests."""
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-
 from app.rag.product_identity import (
     resolve_product_identity,
     get_canonical_slug,
@@ -56,8 +54,7 @@ def test_extract_model_identifier() -> None:
 # ---------------------------------------------------------------------------
 
 def test_explicit_new_product_overrides_previous_active_product() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
@@ -76,8 +73,7 @@ def test_explicit_new_product_overrides_previous_active_product() -> None:
 # ---------------------------------------------------------------------------
 
 def test_product_switch_clears_stale_model() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about LION.", "sources": [], "retrieval_metadata": {}},
@@ -96,8 +92,7 @@ def test_product_switch_clears_stale_model() -> None:
 # ---------------------------------------------------------------------------
 
 def test_tiger_to_lion_followup_resolves_lion() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
@@ -117,8 +112,7 @@ def test_tiger_to_lion_followup_resolves_lion() -> None:
 # ---------------------------------------------------------------------------
 
 def test_lion_to_tiger_followup_resolves_tiger() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about LION.", "sources": [], "retrieval_metadata": {}},
@@ -191,26 +185,15 @@ def test_product_filter_not_applied_for_company_query() -> None:
 # ---------------------------------------------------------------------------
 
 def test_conversations_remain_isolated() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
-
-    mock_result = MagicMock()
-    mock_result.scalars.return_value.all.return_value = []
-    db.execute = AsyncMock(return_value=mock_result)
-
-    cid1 = MagicMock()
-    cid1.id = "11111111-1111-1111-1111-111111111111"
-    cid2 = MagicMock()
-    cid2.id = "22222222-2222-2222-2222-222222222222"
-
-    async def run():
-        msgs1 = await service.get_recent_messages(cid1.id, limit=4)
-        msgs2 = await service.get_recent_messages(cid2.id, limit=4)
-        assert msgs1 == []
-        assert msgs2 == []
-
-    import asyncio
-    asyncio.run(run())
+    service = ConversationService()
+def test_conversations_remain_isolated() -> None:
+    """Stateless design: context comes from request-provided history, not session state."""
+    msgs1 = ConversationService.get_active_product_context([])
+    msgs2 = ConversationService.get_active_product_context(
+        [{"role": "user", "content": "Tell me about Tiger 30:150."}]
+    )
+    assert msgs1 == {"product_slug": None, "model": None, "document": None}
+    assert msgs2["product_slug"] == "tiger"
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +221,7 @@ def test_alias_resolution_extensible() -> None:
 # ---------------------------------------------------------------------------
 
 def test_exact_tiger_30_150_preserved_in_active_context() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
@@ -258,8 +240,7 @@ def test_exact_tiger_30_150_preserved_in_active_context() -> None:
 # ---------------------------------------------------------------------------
 
 def test_price_question_does_not_inject_old_product_price() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "How much does Tiger 30:150 cost?", "sources": [], "retrieval_metadata": {}},
@@ -277,8 +258,7 @@ def test_price_question_does_not_inject_old_product_price() -> None:
 # ---------------------------------------------------------------------------
 
 def test_unknown_product_does_not_inherit_previous_specs() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
@@ -297,8 +277,7 @@ def test_unknown_product_does_not_inherit_previous_specs() -> None:
 # ---------------------------------------------------------------------------
 
 def test_company_topic_does_not_contaminate_product_retrieval() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
@@ -370,8 +349,7 @@ def test_lion_technical_query_requires_lion_catalogue_evidence() -> None:
 # ---------------------------------------------------------------------------
 
 def test_augmented_query_does_not_append_stale_identifiers() -> None:
-    db = AsyncMock()
-    service = ConversationService(db)
+    service = ConversationService()
 
     recent = [
         {"role": "assistant", "content": "Tiger 30:150 details.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},

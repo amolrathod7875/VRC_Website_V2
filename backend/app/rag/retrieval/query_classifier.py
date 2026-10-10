@@ -128,13 +128,19 @@ def classify_query(question: str) -> QueryIntent:
     if is_catalogue_request(question):
         return QueryIntent.CATALOGUE_REQUEST
 
-    product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi", "variants", "variant", "workflow", "process", "mixing ratio", "mix ratio", "vrc", "rhino", "vria"]
+    product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi", "variants", "variant", "workflow", "process", "mixing ratio", "mix ratio", "vrc", "discharge per cycle", "discharge"]
     if any(kw in normalized for kw in product_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
 
     yes_no_technical_keywords = ["have a pressure ratio", "have an output", "have a flow", "have a viscosity", "have a max"]
     if any(kw in normalized for kw in yes_no_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
+
+    # Identity questions: "What is X?" where X is a product/entity name
+    # These should be GENERAL_COMPANY, not PRODUCT_DISCOVERY
+    identity_question_pattern = re.compile(r"^what\s+is\s+\w+", re.IGNORECASE)
+    if identity_question_pattern.match(normalized):
+        return QueryIntent.GENERAL_COMPANY
 
     for pattern in PRODUCT_DISCOVERY_PATTERNS:
         if pattern.search(normalized):

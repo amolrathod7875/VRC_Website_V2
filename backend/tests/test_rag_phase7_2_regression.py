@@ -9,7 +9,6 @@ from app.rag.retrieval.query_classifier import classify_query, QueryIntent
 from app.rag.services.rag_service import RAGService
 from app.rag.generation.prompts import ANSWER_UNAVAILABLE
 from app.rag.ingestion.ingestion_service import IngestionService
-from app.models.rag_document import RagDocument
 from app.core.config import Settings
 
 
@@ -283,18 +282,18 @@ def test_evidence_guard_requires_fresh_retrieval():
 
 
 def test_registry_skips_unchanged_tiger():
-    mock_result = MagicMock()
-    mock_result.scalar_one_or_none.return_value = RagDocument(
-        document_name="Tiger.pdf",
-        sha256="9d9fa3fcbe4050d4bb60649ea87303c9bff9dcb2a6dcb687e4b83d1720e7e44e",
-    )
-    mock_db = AsyncMock()
-    mock_db.execute.return_value = mock_result
     mock_qdrant = MagicMock()
     mock_dense = MagicMock()
     mock_sparse = MagicMock()
+    mock_registry = MagicMock()
+    mock_registry.get_document_state_by_name.return_value = {
+        "sha256": "9d9fa3fcbe4050d4bb60649ea87303c9bff9dcb2a6dcb687e4b83d1720e7e44e",
+    }
 
-    service = IngestionService(db=mock_db, qdrant_store=mock_qdrant, dense=mock_dense, sparse=mock_sparse)
+    service = IngestionService(
+        qdrant_store=mock_qdrant, dense=mock_dense, sparse=mock_sparse,
+        document_registry=mock_registry,
+    )
 
     result = asyncio.run(
         service.ingest_catalogue(
@@ -306,18 +305,18 @@ def test_registry_skips_unchanged_tiger():
 
 
 def test_registry_skips_unchanged_company_master():
-    mock_result = MagicMock()
-    mock_result.scalar_one_or_none.return_value = RagDocument(
-        document_name="VR_Coatings_RAG_Monolithic_Knowledge_Base.txt",
-        sha256="f8c67d3b747c7a9a50e8fc2b424a4f9e549ffeaa2f4a977a19225aebb958c1f0",
-    )
-    mock_db = AsyncMock()
-    mock_db.execute.return_value = mock_result
     mock_qdrant = MagicMock()
     mock_dense = MagicMock()
     mock_sparse = MagicMock()
+    mock_registry = MagicMock()
+    mock_registry.get_document_state_by_name.return_value = {
+        "sha256": "f8c67d3b747c7a9a50e8fc2b424a4f9e549ffeaa2f4a977a19225aebb958c1f0",
+    }
 
-    service = IngestionService(db=mock_db, qdrant_store=mock_qdrant, dense=mock_dense, sparse=mock_sparse)
+    service = IngestionService(
+        qdrant_store=mock_qdrant, dense=mock_dense, sparse=mock_sparse,
+        document_registry=mock_registry,
+    )
 
     result = asyncio.run(
         service.ingest_company(

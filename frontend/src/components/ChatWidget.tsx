@@ -221,7 +221,7 @@ export function ChatWidget() {
     setStatus({ type: "loading" });
 
     try {
-      const result: ChatAPIResponse = await sendChatMessage(message, conversationId);
+      const result: ChatAPIResponse = await sendChatMessage(message, conversationId, messages);
 
       setConversationId(result.conversation_id);
       try {

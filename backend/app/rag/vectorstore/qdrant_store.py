@@ -5,15 +5,9 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, FusionQuery
 from app.rag.config import rag_settings
 from app.rag.constants import STATUS_INDEXED
+from app.rag.utils.ids import stable_point_id
 
 logger = logging.getLogger(__name__)
-
-_POINT_ID_NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
-
-
-def _stable_point_id(document_id: str, chunk_id: str) -> str:
-    raw = f"{document_id}:{chunk_id}"
-    return str(uuid.uuid5(_POINT_ID_NAMESPACE, raw))
 
 
 class QdrantStore:
@@ -48,6 +42,8 @@ class QdrantStore:
             ("source_type", PayloadSchemaType.KEYWORD),
             ("product_slug", PayloadSchemaType.KEYWORD),
             ("document_id", PayloadSchemaType.KEYWORD),
+            ("document_name", PayloadSchemaType.KEYWORD),
+            ("sha256", PayloadSchemaType.KEYWORD),
             ("content_type", PayloadSchemaType.KEYWORD),
             ("model", PayloadSchemaType.KEYWORD),
         ]:
@@ -59,7 +55,7 @@ class QdrantStore:
     @property
     def _indexed_payload_fields(self) -> set:
         """Payload fields that have a Qdrant keyword index (safe to filter on)."""
-        return {"source_type", "product_slug", "document_id", "content_type", "model"}
+        return {"source_type", "product_slug", "document_id", "document_name", "sha256", "content_type", "model"}
 
     async def upsert_points(
         self,
@@ -76,7 +72,7 @@ class QdrantStore:
             points = []
             for idx, payload in enumerate(batch_payloads):
                 sparse = batch_sparse[idx]
-                point_id = _stable_point_id(document_id, str(payload.get("chunk_id", idx)))
+                point_id = stable_point_id(document_id, str(payload.get("chunk_id", idx)))
                 points.append({
                     "id": point_id,
                     "vector": {
@@ -86,6 +82,12 @@ class QdrantStore:
                     "payload": payload,
                 })
             self.client.upsert(collection_name=self.collection_name, points=points)
+
+    def delete_by_document_name(self, document_name: str) -> None:
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=Filter(must=[FieldCondition(key="document_name", match=MatchValue(value=document_name))]),
+        )
 
     async def delete_by_document_id(self, document_id: str) -> None:
         self.client.delete(

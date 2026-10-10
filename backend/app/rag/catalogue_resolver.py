@@ -5,16 +5,13 @@ import os
 from typing import Any
 from urllib.parse import quote
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-
-from app.models.rag_document import RagDocument
 from app.rag.product_identity import resolve_product_identity, get_canonical_slug
+from app.rag.vectorstore.document_registry import DocumentRegistry
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Fallback mapping for catalogue filenames without product_slug in rag_documents.
+# Fallback mapping for catalogue filenames without product_slug in Qdrant payload.
 # Keys are lowercase filename stems; values are canonical product slugs.
 _FILENAME_FALLBACK: dict[str, str] = {
     "tiger.pdf": "tiger",
@@ -40,8 +37,13 @@ _FILENAME_FALLBACK: dict[str, str] = {
 
 
 class CatalogueResolver:
-    def __init__(self, db: AsyncSession, media_root: str | None = None, media_base_url: str | None = None) -> None:
-        self.db = db
+    def __init__(
+        self,
+        document_registry: DocumentRegistry | None = None,
+        media_root: str | None = None,
+        media_base_url: str | None = None,
+    ) -> None:
+        self.document_registry = document_registry or DocumentRegistry()
         self.media_root = media_root or settings.MEDIA_ROOT
         self.media_base_url = (media_base_url or settings.MEDIA_BASE_URL).rstrip("/")
 
@@ -61,54 +63,22 @@ class CatalogueResolver:
             return False
         return True
 
-    async def _db_catalogues(self, product_slug: str) -> list[RagDocument]:
+    def _get_catalogues_from_registry(self, product_slug: str) -> list[dict[str, Any]]:
+        """Get catalogue documents from Qdrant registry matching product_slug."""
         slug = (product_slug or "").strip().lower()
         if not slug:
             return []
 
-        result = await self.db.execute(
-            select(RagDocument)
-            .where(
-                RagDocument.source_type == "catalogue",
-                RagDocument.status == "indexed",
-            )
-            .order_by(RagDocument.document_name.asc())
-        )
-        all_docs = list(result.scalars().all())
-
-        matched: list[RagDocument] = []
-        for doc in all_docs:
-            doc_slug = (doc.product_slug or "").strip().lower()
-            doc_slugs = doc.product_slugs or []
-            if isinstance(doc_slugs, str):
-                try:
-                    import json
-                    doc_slugs = json.loads(doc_slugs)
-                except Exception:
-                    doc_slugs = []
-            if slug == doc_slug:
-                matched.append(doc)
-                continue
-            if slug in [s.lower() for s in doc_slugs if isinstance(s, str)]:
-                matched.append(doc)
-                continue
-        return matched
-
-    async def resolve(self, product_slug: str) -> list[dict[str, Any]]:
-        slug = (product_slug or "").strip().lower()
-        if not slug:
-            return []
-
-        docs = await self._db_catalogues(slug)
+        docs = self.document_registry.find_documents_by_product_slug(slug)
         if not docs:
-            logger.info("No catalogue documents found in DB", extra={"product_slug": slug})
+            logger.info("No catalogue documents found in Qdrant registry", extra={"product_slug": slug})
             return []
 
         catalogues: list[dict[str, Any]] = []
         seen_documents: set[str] = set()
 
         for doc in docs:
-            document_name = doc.document_name or ""
+            document_name = doc.get("document_name") or ""
             if not document_name:
                 continue
 
@@ -136,6 +106,9 @@ class CatalogueResolver:
 
     def _product_name(self, slug: str) -> str:
         return slug.replace("-", " ").replace("_", " ").title()
+
+    async def resolve(self, product_slug: str) -> list[dict[str, Any]]:
+        return self._get_catalogues_from_registry(product_slug)
 
     async def resolve_from_message(self, message: str) -> tuple[str | None, list[dict[str, Any]]]:
         resolved = resolve_product_identity(message)

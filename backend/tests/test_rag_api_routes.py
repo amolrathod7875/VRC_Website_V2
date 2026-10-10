@@ -14,16 +14,11 @@ def test_chat_endpoint_post_works() -> None:
         "retrieval": {"chunks_used": 4},
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
         with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
             mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+            mock_cs.validate_history = MagicMock(return_value=[])
             mock_cs.get_active_product_context = MagicMock(return_value={})
             mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio of Tiger 30:150?")
             MockConvService.return_value = mock_cs

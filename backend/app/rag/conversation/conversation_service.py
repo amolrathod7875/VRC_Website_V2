@@ -3,9 +3,6 @@ import json
 import logging
 import re
 from typing import Any, Dict, List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc, delete
-from app.models.rag_conversation import RagConversation, RagMessage
 from app.rag.product_identity import resolve_product_identity, extract_model_identifier
 
 logger = logging.getLogger(__name__)
@@ -20,88 +17,73 @@ TECHNICAL_TERM_MAPPING = [
 
 
 class ConversationService:
-    def __init__(self, db: AsyncSession) -> None:
-        self.db = db
+    """Stateless conversation context builder.
+    
+    This service no longer persists conversations to PostgreSQL.
+    Instead, it builds product context from the request-provided history.
+    The frontend manages conversation state and sends recent history with each request.
+    """
 
-    async def get_or_create_conversation(self, conversation_id: Optional[str]) -> RagConversation:
-        if conversation_id:
-            try:
-                cid = uuid.UUID(conversation_id)
-            except (ValueError, TypeError):
-                raise ValueError("Invalid conversation_id format")
+    def __init__(self) -> None:
+        pass  # No database session needed
 
-            result = await self.db.execute(
-                select(RagConversation).where(RagConversation.id == cid, RagConversation.status == "active")
-            )
-            conversation = result.scalar_one_or_none()
-            if not conversation:
-                raise ValueError("Conversation not found")
-            return conversation
+    @staticmethod
+    def generate_conversation_id() -> str:
+        """Generate a new conversation ID for client-side tracking."""
+        return str(uuid.uuid4())
 
-        conversation = RagConversation(status="active")
-        self.db.add(conversation)
-        await self.db.flush()
-        await self.db.refresh(conversation)
-        return conversation
+    @staticmethod
+    def validate_history(history: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Validate and sanitize client-provided conversation history."""
+        if not history:
+            return []
+        
+        validated = []
+        for msg in history:
+            if not isinstance(msg, dict):
+                continue
+            
+            role = msg.get("role")
+            content = msg.get("content")
+            
+            if role not in ("user", "assistant"):
+                continue
+            if not content or not isinstance(content, str):
+                continue
+            if len(content) > MAX_HISTORY_CHARS:
+                content = content[:MAX_HISTORY_CHARS]
+            
+            validated_msg = {
+                "role": role,
+                "content": content,
+            }
+            
+            # Preserve sources and retrieval_metadata if present (from previous assistant messages)
+            if role == "assistant":
+                if "sources" in msg and isinstance(msg["sources"], list):
+                    validated_msg["sources"] = msg["sources"]
+                if "retrieval_metadata" in msg and isinstance(msg["retrieval_metadata"], dict):
+                    validated_msg["retrieval_metadata"] = msg["retrieval_metadata"]
+            
+            validated.append(validated_msg)
+        
+        # Keep only the most recent messages
+        return validated[-MAX_HISTORY_MESSAGES:]
 
-    async def append_user_message(self, conversation_id: uuid.UUID, content: str) -> RagMessage:
-        message = RagMessage(
-            conversation_id=conversation_id,
-            role="user",
-            content=content,
-        )
-        self.db.add(message)
-        await self.db.flush()
-        await self.db.refresh(message)
-        return message
-
-    async def append_assistant_message(
-        self,
-        conversation_id: uuid.UUID,
-        content: str,
-        sources: Optional[List[Dict[str, Any]]] = None,
-        retrieval_metadata: Optional[Dict[str, Any]] = None,
-    ) -> RagMessage:
-        message = RagMessage(
-            conversation_id=conversation_id,
-            role="assistant",
-            content=content,
-            sources=json.dumps(sources or []),
-            retrieval_metadata=json.dumps(retrieval_metadata or {}),
-        )
-        self.db.add(message)
-        await self.db.flush()
-        await self.db.refresh(message)
-        return message
-
-    async def get_recent_messages(self, conversation_id: uuid.UUID, limit: int = MAX_HISTORY_MESSAGES) -> List[Dict[str, Any]]:
-        result = await self.db.execute(
-            select(RagMessage)
-            .where(RagMessage.conversation_id == conversation_id)
-            .order_by(desc(RagMessage.created_at))
-            .limit(limit)
-        )
-        rows = result.scalars().all()
-        rows.reverse()
-
-        messages: List[Dict[str, Any]] = []
-        for row in rows:
-            messages.append({
-                "role": row.role,
-                "content": row.content,
-                "sources": json.loads(row.sources) if row.sources else [],
-                "retrieval_metadata": json.loads(row.retrieval_metadata) if row.retrieval_metadata else {},
-            })
-        return messages
-
-    def _explicit_product_in_message(self, message: Dict[str, Any]) -> Optional[str]:
+    @staticmethod
+    def _explicit_product_in_message(message: Dict[str, Any]) -> Optional[str]:
         content = message.get("content", "") or ""
         resolved = resolve_product_identity(content)
         if not resolved:
             return None
         return resolved[0]
 
-    def get_active_product_context(self, messages: List[Dict[str, Any]]) -> Dict[str, Optional[str]]:
+    @staticmethod
+    def get_active_product_context(messages: List[Dict[str, Any]]) -> Dict[str, Optional[str]]:
+        """Extract active product context from conversation history.
+        
+        This is a stateless version that works with request-provided history.
+        """
         context: Dict[str, Optional[str]] = {
             "product_slug": None,
             "model": None,
@@ -112,7 +94,7 @@ class ConversationService:
             return context
 
         latest_user = next((m for m in reversed(messages) if m.get("role") == "user"), None)
-        explicit_slug = self._explicit_product_in_message(latest_user) if latest_user else None
+        explicit_slug = ConversationService._explicit_product_in_message(latest_user) if latest_user else None
 
         if explicit_slug:
             context["product_slug"] = explicit_slug
@@ -145,14 +127,20 @@ class ConversationService:
             return context
 
         # No explicit product in current message: derive context from the MOST RECENT
-        # assistant message only. Scanning every prior assistant message caused a
-        # stale product (e.g. Dragon) to leak into a follow-up about a different
-        # product (e.g. Polyurea) that the most recent turn actually answered.
-        latest_assistant = next(
-            (m for m in reversed(messages) if m.get("role") == "assistant"), None
+        # assistant message that has sources. This handles cases where the latest
+        # assistant turn was a non-product response (e.g. a joke) with no sources —
+        # we fall back to the most recent assistant message that DID carry product
+        # context. This prevents stale product leakage across explicit product
+        # switches while preserving context through non-product interjections.
+        latest_assistant_with_sources = next(
+            (
+                m for m in reversed(messages)
+                if m.get("role") == "assistant" and (m.get("sources") or [])
+            ),
+            None,
         )
-        if latest_assistant:
-            for src in (latest_assistant.get("sources", []) or []):
+        if latest_assistant_with_sources:
+            for src in (latest_assistant_with_sources.get("sources", []) or []):
                 if src.get("product_slug") and not context["product_slug"]:
                     context["product_slug"] = src["product_slug"]
                 if src.get("document") and not context["document"]:
@@ -177,7 +165,8 @@ class ConversationService:
 
         return context
 
-    def _normalize_technical_terms(self, text: str) -> str:
+    @staticmethod
+    def _normalize_technical_terms(text: str) -> str:
         result = text
         for term, replacement in TECHNICAL_TERM_MAPPING:
             result = re.sub(rf"\b{re.escape(term)}\b", replacement, result, flags=re.IGNORECASE)
@@ -187,23 +176,24 @@ class ConversationService:
             result = re.sub(r"\bratio\b", "pressure ratio", result, flags=re.IGNORECASE)
         return result
 
-    def build_augmented_query(self, question: str, recent_messages: List[Dict[str, Any]], active_context: Dict[str, Optional[str]]) -> str:
+    @staticmethod
+    def build_augmented_query(question: str, recent_messages: List[Dict[str, Any]], active_context: Dict[str, Optional[str]]) -> str:
         if not recent_messages:
             return question
 
         # `question` is the current user message. Use it directly for explicit-product detection.
-        explicit_slug = self._explicit_product_in_message({"content": question})
+        explicit_slug = ConversationService._explicit_product_in_message({"content": question})
 
         # Explicit current-turn product mention overrides old context; do not augment with stale identifiers.
         if explicit_slug:
-            return self._normalize_technical_terms(question)
+            return ConversationService._normalize_technical_terms(question)
 
-        is_ambiguous = self._is_ambiguous_followup(question)
+        is_ambiguous = ConversationService._is_ambiguous_followup(question)
 
         if not is_ambiguous:
-            return self._normalize_technical_terms(question)
+            return ConversationService._normalize_technical_terms(question)
 
-        normalized_question = self._normalize_technical_terms(question)
+        normalized_question = ConversationService._normalize_technical_terms(question)
         parts = [normalized_question]
         if active_context.get("product_slug"):
             parts.append(active_context["product_slug"])
@@ -224,7 +214,8 @@ class ConversationService:
 
         return " ".join(unique_parts)
 
-    def _is_ambiguous_followup(self, question: str) -> bool:
+    @staticmethod
+    def _is_ambiguous_followup(question: str) -> bool:
         q = question.strip().lower()
         ambiguous_patterns = [
             "its ", "it's ", "its", "this ", "that ", "these ", "those ",
@@ -241,7 +232,8 @@ class ConversationService:
             return True
         return False
 
-    def build_generation_context(self, recent_messages: List[Dict[str, Any]], retrieval_context: str) -> str:
+    @staticmethod
+    def build_generation_context(recent_messages: List[Dict[str, Any]], retrieval_context: str) -> str:
         parts = []
         if recent_messages:
             parts.append("CONVERSATION HISTORY (for context only - do not treat as factual authority):")

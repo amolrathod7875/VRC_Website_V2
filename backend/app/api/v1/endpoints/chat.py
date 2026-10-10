@@ -1,7 +1,6 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.database import get_db
+from pydantic import BaseModel, Field
 from app.schemas.chat import ChatRequest, ChatResponse, ChatSource, ChatRetrieval, CatalogueReference
 from app.rag.config import rag_settings
 from app.rag.embeddings.dense import DenseEmbeddingService
@@ -19,14 +18,12 @@ from app.rag.greeting_detector import is_greeting_only, is_assistant_identity
 from app.rag.greeting_response import get_greeting_response, get_assistant_identity_response
 from app.rag.retrieval.query_classifier import QueryIntent, is_vr_coatings_domain_query, is_catalogue_request
 from app.rag.catalogue_resolver import CatalogueResolver
-from app.models.rag_document import RagDocument
 from app.rag.constants import SOURCE_TYPE_COMPANY_MASTER
-from sqlalchemy import select, func
 
 router = APIRouter()
 
 
-def _build_rag_service(db: AsyncSession) -> RAGService:
+def _build_rag_service() -> RAGService:
     qdrant_store = QdrantStore()
     dense = DenseEmbeddingService()
     sparse = SparseEmbeddingService()
@@ -65,39 +62,37 @@ def _generation_ready() -> bool:
         return False
 
 
+# Extend ChatRequest to include optional history for stateless operation
+class ChatRequestWithHistory(ChatRequest):
+    history: Optional[List[Dict[str, Any]]] = Field(default=None, description="Recent conversation history from frontend")
+
+
 @router.post("", response_model=ChatResponse)
-async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> ChatResponse:
+async def chat(request: ChatRequestWithHistory) -> ChatResponse:
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=422, detail="Message must not be empty")
 
-    conversation_service = ConversationService(db)
+    conversation_service = ConversationService()
 
-    try:
-        conversation = await conversation_service.get_or_create_conversation(
-            str(request.conversation_id) if request.conversation_id else None
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    # Use or generate conversation_id
+    conversation_id = request.conversation_id if request.conversation_id else conversation_service.generate_conversation_id()
 
-    await conversation_service.append_user_message(conversation.id, request.message.strip())
-
-    recent_messages = await conversation_service.get_recent_messages(conversation.id, limit=8)
-    active_context = conversation_service.get_active_product_context(recent_messages)
+    # Validate and use client-provided history
+    recent_messages = conversation_service.validate_history(request.history or [])
+    
+    # Add current user message to history for context building
+    user_msg = {"role": "user", "content": request.message.strip()}
+    recent_messages_with_current = recent_messages + [user_msg]
+    
+    active_context = conversation_service.get_active_product_context(recent_messages_with_current)
 
     message = request.message.strip()
 
     # PATH A: deterministic conversational responses (no retrieval, no generation).
     if is_greeting_only(message):
         answer = get_greeting_response(message)
-        await conversation_service.append_assistant_message(
-            conversation_id=conversation.id,
-            content=answer,
-            sources=[],
-            retrieval_metadata=None,
-        )
-        await db.commit()
         return ChatResponse(
-            conversation_id=conversation.id,
+            conversation_id=conversation_id,
             answer=answer,
             sources=[],
             retrieval=None,
@@ -107,15 +102,8 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
 
     if is_assistant_identity(message):
         answer = get_assistant_identity_response()
-        await conversation_service.append_assistant_message(
-            conversation_id=conversation.id,
-            content=answer,
-            sources=[],
-            retrieval_metadata=None,
-        )
-        await db.commit()
         return ChatResponse(
-            conversation_id=conversation.id,
+            conversation_id=conversation_id,
             answer=answer,
             sources=[],
             retrieval=None,
@@ -124,7 +112,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
         )
 
     if is_catalogue_request(message):
-        resolver = CatalogueResolver(db=db)
+        resolver = CatalogueResolver()
         resolved_slug, catalogues = await resolver.resolve_from_message(message)
         if resolved_slug and catalogues:
             product_name = catalogues[0]["product_name"]
@@ -133,15 +121,8 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
             answer = f"I couldn\u2019t find a VR Coatings catalogue for that product right now."
         else:
             answer = "I couldn\u2019t find a VR Coatings catalogue for that product."
-        await conversation_service.append_assistant_message(
-            conversation_id=conversation.id,
-            content=answer,
-            sources=[],
-            retrieval_metadata=None,
-        )
-        await db.commit()
         return ChatResponse(
-            conversation_id=conversation.id,
+            conversation_id=conversation_id,
             answer=answer,
             sources=[],
             retrieval=None,
@@ -157,7 +138,7 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     if domain_query:
         # PATH B: VR Coatings RAG.
         try:
-            service = _build_rag_service(db)
+            service = _build_rag_service()
         except RuntimeError as exc:
             raise HTTPException(status_code=503, detail=str(exc)) from exc
 
@@ -172,7 +153,6 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
                 active_context=active_context,
             )
         except Exception as exc:
-            await db.commit()
             raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
     else:
         # PATH C: general chat via Groq directly.
@@ -187,7 +167,6 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
                 recent_messages=recent_messages,
             )
         except Exception as exc:
-            await db.commit()
             raise HTTPException(status_code=500, detail="General chat generation failed") from exc
 
     intent = QueryIntent(result.get("intent", QueryIntent.UNKNOWN.value))
@@ -208,21 +187,12 @@ async def chat(request: ChatRequest, db: AsyncSession = Depends(get_db)) -> Chat
     catalogues: list[dict[str, Any]] = []
     show_catalogues = False
     if resolved_slug:
-        resolver = CatalogueResolver(db=db)
+        resolver = CatalogueResolver()
         catalogues = await resolver.resolve(resolved_slug)
         show_catalogues = bool(catalogues)
 
-    await conversation_service.append_assistant_message(
-        conversation_id=conversation.id,
-        content=answer,
-        sources=filtered_sources,
-        retrieval_metadata=result.get("retrieval"),
-    )
-
-    await db.commit()
-
     return ChatResponse(
-        conversation_id=conversation.id,
+        conversation_id=conversation_id,
         answer=answer,
         sources=sources,
         retrieval=retrieval,
@@ -303,7 +273,7 @@ def _filter_sources_for_ui(
 
 
 @router.get("/status")
-async def chat_status(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
+async def chat_status() -> Dict[str, Any]:
     dense_embedding_ready = False
     sparse_embedding_ready = False
     qdrant_connected = False
@@ -322,11 +292,16 @@ async def chat_status(db: AsyncSession = Depends(get_db)) -> Dict[str, Any]:
         qdrant_connected = True
     except Exception:
         pass
+    
+    # Get document inventory from Qdrant registry
+    indexed_count = 0
     try:
-        total_result = await db.execute(select(func.count(RagDocument.id)).where(RagDocument.status == "indexed"))
-        indexed_count = total_result.scalar_one() or 0
+        from app.rag.vectorstore.document_registry import DocumentRegistry
+        docs = DocumentRegistry().list_indexed_documents()
+        indexed_count = len(docs)
     except Exception:
-        indexed_count = 0
+        pass
+    
     ocr_available = False
     try:
         from app.rag.ingestion.ocr.ocr_service import ocr_service_from_settings

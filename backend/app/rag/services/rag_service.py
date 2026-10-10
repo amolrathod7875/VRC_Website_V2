@@ -10,7 +10,7 @@ from app.rag.generation.factory import LLMFactory
 from app.rag.retrieval.reranker import Reranker
 from app.rag.config import rag_settings
 from app.rag.generation.prompts import ANSWER_UNAVAILABLE
-from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query, _is_domain_followup
+from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query, _is_domain_followup, QueryIntent
 from app.rag.constants import SOURCE_TYPE_CATALOGUE
 
 logger = logging.getLogger(__name__)

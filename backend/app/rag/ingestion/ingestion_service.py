@@ -1,12 +1,8 @@
 import logging
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from app.core.database import Base
-from app.models.rag_document import RagDocument, RagIngestionRun
 from app.rag.utils.hashing import calculate_sha256
-from app.rag.utils.ids import generate_document_id
+from app.rag.utils.ids import generate_document_id_for
 from app.rag.ingestion.pdf_parser import extract_pages, page_needs_ocr
 from app.rag.ingestion.pdf_table_parser import extract_tables
 from app.rag.ingestion.catalogue_chunker import chunk_catalogue
@@ -18,6 +14,7 @@ from app.rag.ingestion.metadata_builder import build_catalogue_metadata, build_c
 from app.rag.vectorstore.qdrant_store import QdrantStore
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
+from app.rag.vectorstore.document_registry import DocumentRegistry
 from app.rag.config import rag_settings
 from app.rag.constants import (
     SOURCE_TYPE_CATALOGUE,
@@ -73,50 +70,40 @@ def _family_slug_for_document(document_name: str) -> Optional[str]:
 class IngestionService:
     def __init__(
         self,
-        db: AsyncSession,
         qdrant_store: QdrantStore,
         dense: DenseEmbeddingService,
         sparse: SparseEmbeddingService,
+        document_registry: Optional[DocumentRegistry] = None,
     ) -> None:
-        self.db = db
         self.qdrant_store = qdrant_store
         self.dense = dense
         self.sparse = sparse
+        self.document_registry = document_registry or DocumentRegistry(qdrant_store=qdrant_store)
 
-    async def _get_document(self, document_name: str) -> Optional[RagDocument]:
-        result = await self.db.execute(select(RagDocument).where(RagDocument.document_name == document_name))
-        return result.scalar_one_or_none()
+    def _get_document_state(self, document_name: str, source_type: str) -> Optional[Dict[str, Any]]:
+        """Get document state from Qdrant registry by document_name."""
+        return self.document_registry.get_document_state_by_name(document_name)
+
+    def _get_deterministic_document_id(self, document_name: str, source_type: str) -> str:
+        """Generate deterministic document ID for a source file."""
+        return generate_document_id_for(document_name, source_type)
 
     async def ingest_catalogue(self, file_path: Path) -> Dict[str, Any]:
         document_name = file_path.name
         sha256 = calculate_sha256(file_path)
-        existing = await self._get_document(document_name)
-        if existing and existing.sha256 == sha256:
+        source_type = SOURCE_TYPE_CATALOGUE
+
+        existing_state = self._get_document_state(document_name, source_type)
+        if existing_state and existing_state.get("sha256") == sha256:
+            logger.info("Catalogue unchanged, skipping: %s", document_name)
             return {"status": "skipped", "document_name": document_name, "reason": "unchanged"}
 
-        if existing:
-            document_id = existing.qdrant_document_id or generate_document_id()
-        else:
-            document_id = generate_document_id()
-            existing = RagDocument(
-                document_name=document_name,
-                source_type=SOURCE_TYPE_CATALOGUE,
-                storage_path=str(file_path),
-                sha256=sha256,
-                status=STATUS_PROCESSING,
-                qdrant_document_id=document_id,
-            )
-            self.db.add(existing)
-            await self.db.flush()
+        document_id = self._get_deterministic_document_id(document_name, source_type)
+        old_document_id = existing_state.get("document_id") if existing_state else None
 
-        run = RagIngestionRun(
-            document_id=existing.id,
-            document_name=document_name,
-            source_type=SOURCE_TYPE_CATALOGUE,
-            status="started",
-        )
-        self.db.add(run)
-        await self.db.flush()
+        if existing_state and existing_state.get("sha256") != sha256:
+            logger.info("Catalogue changed, will replace: %s (old hash: %s, new hash: %s)",
+                        document_name, existing_state.get("sha256"), sha256)
 
         try:
             pages, ocr_results = extract_pages(str(file_path), enable_ocr=True)
@@ -127,44 +114,44 @@ class IngestionService:
             product_slug = get_canonical_slug(document_name) or document_name.lower().replace(" ", "_").replace(".pdf", "")
             is_multi = _is_multi_product_document(document_name)
             is_system = _is_system_catalogue_document(document_name, product_slug)
+
             if is_multi:
                 chunks = chunk_multi_product_catalogue(document_name, pages, tables, document_id, ocr_results=ocr_results)
                 family_slug = _family_slug_for_document(document_name)
                 child_slugs = sorted({c.get("product_slug") for c in chunks if c.get("product_slug")})
                 if family_slug and family_slug not in child_slugs:
                     child_slugs.insert(0, family_slug)
-                existing.product_slug = family_slug or (child_slugs[0] if child_slugs else product_slug)
-                existing.product_slugs = child_slugs
+                parent_slug = family_slug or (child_slugs[0] if child_slugs else product_slug)
                 for chunk in chunks:
                     chunk_slug = chunk.get("product_slug")
                     if chunk_slug and chunk_slug != family_slug:
                         chunk["parent_product_slug"] = family_slug
             elif is_system:
                 chunks = chunk_system_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
-                existing.product_slug = product_slug
-                existing.product_slugs = [product_slug]
+                parent_slug = product_slug
+                child_slugs = [product_slug]
             else:
                 chunks = chunk_catalogue(document_name, pages, tables, product_slug, document_id, ocr_results=ocr_results)
-                existing.product_slug = product_slug
-                existing.product_slugs = [product_slug]
+                parent_slug = product_slug
+                child_slugs = [product_slug]
 
             if not chunks:
                 raise ValueError("No chunks generated")
 
             texts = [c["text"] for c in chunks]
-            print(f"Embedding {len(texts)} catalogue chunks...")
+            logger.info("Embedding %d catalogue chunks for %s", len(texts), document_name)
             dense_vectors = self.dense.embed_documents(texts)
             sparse_vectors = self.sparse.embed_documents(texts)
 
-            if existing.qdrant_document_id:
-                await self.qdrant_store.delete_by_document_id(document_id)
-
             payloads = []
             for idx, chunk in enumerate(chunks):
-                metadata = build_catalogue_metadata(document_id, document_name, str(file_path), sha256, product_slug, chunk)
+                chunk_with_slugs = dict(chunk)
+                chunk_with_slugs["product_slug"] = chunk.get("product_slug") or parent_slug
+                chunk_with_slugs["product_slugs"] = child_slugs
+                metadata = build_catalogue_metadata(document_id, document_name, str(file_path), sha256, parent_slug, chunk_with_slugs)
                 payloads.append(metadata)
 
-            print(f"Uploading {len(payloads)} points to Qdrant...")
+            logger.info("Uploading %d points to Qdrant for %s", len(payloads), document_name)
             await self.qdrant_store.upsert_points(
                 document_id=document_id,
                 dense_vectors=dense_vectors,
@@ -172,54 +159,31 @@ class IngestionService:
                 payloads=payloads,
             )
 
-            existing.sha256 = sha256
-            existing.qdrant_document_id = document_id
-            existing.chunk_count = len(chunks)
-            existing.status = STATUS_INDEXED
-            existing.last_ingested_at = existing.updated_at
-            run.status = STATUS_INDEXED
-            run.chunks_created = len(chunks)
-            await self.db.commit()
-            return {"status": "indexed", "document_name": document_name, "chunks": len(chunks)}
+            if old_document_id and old_document_id != document_id:
+                deleted = self.document_registry.delete_document_points(old_document_id)
+                logger.info("Deleted %d stale points for %s (old doc_id: %s)", deleted, document_name, old_document_id)
+            return {"status": "indexed", "document_name": document_name, "chunks": len(chunks), "document_id": document_id}
+
         except Exception as exc:
-            existing.status = STATUS_FAILED
-            existing.last_error = str(exc)
-            run.status = STATUS_FAILED
-            run.error = str(exc)
-            await self.db.commit()
             logger.exception("Failed to ingest catalogue %s", document_name)
             return {"status": "failed", "document_name": document_name, "error": str(exc)}
 
     async def ingest_company(self, file_path: Path) -> Dict[str, Any]:
         document_name = file_path.name
         sha256 = calculate_sha256(file_path)
-        existing = await self._get_document(document_name)
-        if existing and existing.sha256 == sha256:
+        source_type = SOURCE_TYPE_COMPANY_MASTER
+
+        existing_state = self._get_document_state(document_name, source_type)
+        if existing_state and existing_state.get("sha256") == sha256:
+            logger.info("Company master unchanged, skipping: %s", document_name)
             return {"status": "skipped", "document_name": document_name, "reason": "unchanged"}
 
-        if existing:
-            document_id = existing.qdrant_document_id or generate_document_id()
-        else:
-            document_id = generate_document_id()
-            existing = RagDocument(
-                document_name=document_name,
-                source_type=SOURCE_TYPE_COMPANY_MASTER,
-                storage_path=str(file_path),
-                sha256=sha256,
-                status=STATUS_PROCESSING,
-                qdrant_document_id=document_id,
-            )
-            self.db.add(existing)
-            await self.db.flush()
+        document_id = self._get_deterministic_document_id(document_name, source_type)
+        old_document_id = existing_state.get("document_id") if existing_state else None
 
-        run = RagIngestionRun(
-            document_id=existing.id,
-            document_name=document_name,
-            source_type=SOURCE_TYPE_COMPANY_MASTER,
-            status="started",
-        )
-        self.db.add(run)
-        await self.db.flush()
+        if existing_state and existing_state.get("sha256") != sha256:
+            logger.info("Company master changed, will replace: %s (old hash: %s, new hash: %s)",
+                        document_name, existing_state.get("sha256"), sha256)
 
         try:
             text = file_path.read_text(encoding="utf-8")
@@ -229,7 +193,7 @@ class IngestionService:
                 raise ValueError("No chunks generated")
 
             total = len(chunks)
-            print(f"Parsed {len(sections)} sections, {total} company chunks")
+            logger.info("Parsed %d sections, %d company chunks", len(sections), total)
 
             texts = [c["text"] for c in chunks]
             dense_vectors = []
@@ -237,13 +201,10 @@ class IngestionService:
             batch_size = max(1, rag_settings.RAG_EMBED_BATCH_SIZE)
             for start in range(0, total, batch_size):
                 end = min(start + batch_size, total)
-                print(f"Embedding company chunks: {end} / {total}")
+                logger.info("Embedding company chunks: %d / %d", end, total)
                 batch_texts = texts[start:end]
                 dense_vectors.extend(self.dense.embed_documents(batch_texts))
                 sparse_vectors.extend(self.sparse.embed_documents(batch_texts))
-
-            if existing.qdrant_document_id:
-                await self.qdrant_store.delete_by_document_id(document_id)
 
             payloads = []
             for chunk in chunks:
@@ -253,7 +214,7 @@ class IngestionService:
             qdrant_batch = max(1, rag_settings.RAG_QDRANT_UPSERT_BATCH_SIZE)
             for start in range(0, len(payloads), qdrant_batch):
                 end = min(start + qdrant_batch, len(payloads))
-                print(f"Uploading company points: {end} / {len(payloads)}")
+                logger.info("Uploading company points: %d / %d", end, len(payloads))
                 await self.qdrant_store.upsert_points(
                     document_id=document_id,
                     dense_vectors=dense_vectors[start:end],
@@ -261,20 +222,13 @@ class IngestionService:
                     payloads=payloads[start:end],
                 )
 
-            existing.sha256 = sha256
-            existing.qdrant_document_id = document_id
-            existing.chunk_count = len(chunks)
-            existing.status = STATUS_INDEXED
-            existing.last_ingested_at = existing.updated_at
-            run.status = STATUS_INDEXED
-            run.chunks_created = len(chunks)
-            await self.db.commit()
-            return {"status": "indexed", "document_name": document_name, "chunks": len(chunks)}
+            if old_document_id and old_document_id != document_id:
+                deleted = self.document_registry.delete_document_points(old_document_id)
+                logger.info("Deleted %d stale points for %s (old doc_id: %s)", deleted, document_name, old_document_id)
+
+            logger.info("Successfully indexed company master: %s (%d chunks)", document_name, len(chunks))
+            return {"status": "indexed", "document_name": document_name, "chunks": len(chunks), "document_id": document_id}
+
         except Exception as exc:
-            existing.status = STATUS_FAILED
-            existing.last_error = str(exc)
-            run.status = STATUS_FAILED
-            run.error = str(exc)
-            await self.db.commit()
             logger.exception("Failed to ingest company knowledge %s", document_name)
             return {"status": "failed", "document_name": document_name, "error": str(exc)}

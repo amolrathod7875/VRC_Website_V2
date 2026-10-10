@@ -1,4 +1,4 @@
-import type { ChatAPIResponse, ChatSource, ChatRetrieval, CatalogueReference } from "./chatTypes";
+import type { ChatAPIResponse, ChatSource, ChatRetrieval, CatalogueReference, HistoryMessage, ChatMessage } from "./chatTypes";
 
 const API_BASE =
   (process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000/api/v1").replace(
@@ -6,13 +6,35 @@ const API_BASE =
     ""
   );
 
+const MAX_HISTORY_MESSAGES = 8;
+
+function formatHistoryForBackend(messages: ChatMessage[]): HistoryMessage[] {
+  return messages.slice(-MAX_HISTORY_MESSAGES).map((msg) => ({
+    role: msg.role,
+    content: msg.content,
+    sources: msg.sources,
+    retrieval_metadata: msg.retrieval
+      ? {
+          chunks_used: msg.retrieval.chunks_used,
+          retrieval_duration_ms: msg.retrieval.retrieval_duration_ms,
+          generation_duration_ms: msg.retrieval.generation_duration_ms,
+          total_duration_ms: msg.retrieval.total_duration_ms,
+        }
+      : undefined,
+  }));
+}
+
 export async function sendChatMessage(
   message: string,
-  conversationId?: string | null
+  conversationId?: string | null,
+  history?: ChatMessage[]
 ): Promise<ChatAPIResponse> {
   const body: Record<string, unknown> = { message };
   if (conversationId) {
     body.conversation_id = conversationId;
+  }
+  if (history && history.length > 0) {
+    body.history = formatHistoryForBackend(history);
   }
 
   const res = await fetch(`${API_BASE}/chat`, {
