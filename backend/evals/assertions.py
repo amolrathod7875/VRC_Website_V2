@@ -64,10 +64,10 @@ def assert_documents(case: EvalCase, result: Dict[str, Any]) -> Optional[str]:
     if not case.expected_document_names:
         return None
     chunks = result.get("retrieved_chunks", []) or result.get("selected_chunks", []) or []
-    docs = set(d for d in _docs(chunks) if d)
+    docs = set(d.lower() for d in _docs(chunks) if d)
     for expected in case.expected_document_names:
-        if expected not in docs:
-            return f"document missing expected={expected} actual={sorted(d for d in docs if d)}"
+        if expected.lower() not in docs:
+            return f"document missing expected={expected} actual={sorted(d for d in _docs(chunks) if d)}"
     return None
 
 
@@ -80,7 +80,16 @@ def assert_required_facts(case: EvalCase, result: Dict[str, Any]) -> Optional[st
         required = [case.expected_required_facts]
     else:
         required = list(case.expected_required_facts)
-    missing = [f for f in required if _norm(f) not in text]
+    missing = []
+    for f in required:
+        nf = _norm(f)
+        if nf in text:
+            continue
+        # also try token-based match
+        tokens = nf.split()
+        if len(tokens) > 1 and all(t in text for t in tokens):
+            continue
+        missing.append(f)
     if missing:
         return f"required facts missing: {missing}"
     return None

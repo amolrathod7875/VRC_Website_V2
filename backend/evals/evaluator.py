@@ -77,7 +77,9 @@ class RagEvaluator:
         service = self._ensure_service()
         cs = ConversationService()
         conversation_history = self._build_conversation_history(case)
-        active_context = cs.get_active_product_context(conversation_history)
+        # Include current message for proper product identity resolution
+        history_with_current = list(conversation_history) + [{"role": "user", "content": case.question.strip()}]
+        active_context = cs.get_active_product_context(history_with_current)
         augmented_query = cs.build_augmented_query(case.question, conversation_history, active_context)
 
         message = case.question
