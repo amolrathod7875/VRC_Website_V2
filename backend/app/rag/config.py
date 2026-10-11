@@ -16,7 +16,6 @@ class SettingsProxy:
 class RagSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=str(Path(__file__).resolve().parent.parent.parent.parent / ".env"), extra="ignore")
 
-    DATABASE_URL: str = ""
     QDRANT_URL: str = ""
     QDRANT_API_KEY: str = ""
     QDRANT_COLLECTION_NAME: str = "vr_coatings_knowledge"
@@ -39,14 +38,7 @@ class RagSettings(BaseSettings):
     GROQ_API_KEY: str = ""
     GROQ_MODEL: str = "qwen/qwen3.8-27b"
 
-    def database_url(self) -> str:
-        if self.DATABASE_URL:
-            return self.DATABASE_URL
-        try:
-            from app.core.config import settings as main_settings
-            return getattr(main_settings, "DATABASE_URL", "")
-        except Exception:
-            return ""
+
 
 
 rag_settings = RagSettings()

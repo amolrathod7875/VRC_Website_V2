@@ -57,9 +57,7 @@ uvicorn app.main:app --reload
 ## Database Setup
 
 ```bash
-docker compose up postgres -d
 cd backend
-alembic upgrade head
 ```
 
 ## Full Stack (Docker)
@@ -101,8 +99,6 @@ Removed endpoints (no longer registered; routes return 404):
 
 ```bash
 cd backend
-alembic revision --autogenerate -m "description"
-alembic upgrade head
 ```
 
 ## Notes

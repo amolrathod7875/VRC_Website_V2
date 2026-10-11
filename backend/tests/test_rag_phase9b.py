@@ -47,7 +47,7 @@ def test_manifest_excludes_indexed_and_review_required() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)
@@ -75,7 +75,7 @@ def test_manifest_contains_expected_count() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)
@@ -103,7 +103,7 @@ def test_manifest_entries_have_required_fields() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)

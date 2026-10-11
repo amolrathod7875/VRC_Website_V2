@@ -208,8 +208,8 @@ def test_recovery_script_idempotent() -> None:
     import sys
     from app.core.config import settings
 
-    if not settings.DATABASE_URL:
-        pytest.skip("DATABASE_URL not configured - PostgreSQL-free environment")
+    if not getattr(settings, "DATABASE_URL", ""):
+        pytest.skip("PostgreSQL not configured - PostgreSQL-free environment")
 
     # Run recovery script twice; second run should not insert duplicates
     result1 = subprocess.run(
@@ -219,7 +219,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path('/home/vr-coatings/Desktop/website_V2/backend').resolve()))
 from app.core.config import settings
 import psycopg
-PG_DSN = settings.DATABASE_URL.replace('postgresql+psycopg://', 'postgresql://')
+PG_DSN = getattr(settings, "DATABASE_URL", "").replace('postgresql+psycopg://', 'postgresql://')
 with psycopg.connect(PG_DSN) as conn:
     with conn.cursor() as cur:
         cur.execute('SELECT count(*) FROM rag_documents')
@@ -241,7 +241,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path('/home/vr-coatings/Desktop/website_V2/backend').resolve()))
 from app.core.config import settings
 import psycopg
-PG_DSN = settings.DATABASE_URL.replace('postgresql+psycopg://', 'postgresql://')
+PG_DSN = getattr(settings, "DATABASE_URL", "").replace('postgresql+psycopg://', 'postgresql://')
 with psycopg.connect(PG_DSN) as conn:
     with conn.cursor() as cur:
         cur.execute('SELECT count(*) FROM rag_documents')

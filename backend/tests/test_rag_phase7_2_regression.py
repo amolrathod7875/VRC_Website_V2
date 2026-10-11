@@ -327,6 +327,7 @@ def test_registry_skips_unchanged_company_master():
     assert result["reason"] == "unchanged"
 
 
-def test_database_url_reads_from_environment():
-    settings = Settings(DATABASE_URL="postgresql+psycopg://vrcoatings:vrcoatings@postgres:5432/vrcoatings")
-    assert settings.DATABASE_URL == "postgresql+psycopg://vrcoatings:vrcoatings@postgres:5432/vrcoatings"
+def test_database_url_config_obsolete():
+    from app.core import config
+    # In DB-free setup, DATABASE_URL is removed from settings
+    assert not hasattr(config.Settings(), "DATABASE_URL") or getattr(config.Settings(), "DATABASE_URL", "") == ""

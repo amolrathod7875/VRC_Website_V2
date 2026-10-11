@@ -1,6 +1,6 @@
 """Tests demonstrating that the removed PostgreSQL-backed content APIs are no
 longer required by the frontend and that the application starts cleanly without
-DATABASE_URL configured.
+PostgreSQL not configured.
 
 Phase 10R.3 removed these read-only routes:
   - /api/v1/products, /api/v1/applications, /api/v1/blogs, /api/v1/faqs,
@@ -24,7 +24,7 @@ def _ensure_no_db_url():
 
 
 def test_app_starts_without_database_url():
-    """The FastAPI app must import and serve routes with DATABASE_URL unset."""
+    """The FastAPI app must import and serve routes without PostgreSQL configuration."""
     _ensure_no_db_url()
     from app.main import app
     client = TestClient(app)

@@ -1,7 +1,7 @@
 """Test that the chat API works without PostgreSQL configured.
 
 In the PostgreSQL-free migration, the chat endpoint should function correctly
-even when DATABASE_URL is not set, since ConversationService is stateless
+even when PostgreSQL is not configured, since ConversationService is stateless
 and all document state lives in Qdrant.
 """
 import os
@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 
 
 def test_chat_api_works_without_database_url():
-    """Chat endpoint should work when DATABASE_URL is not set."""
+    """Chat endpoint should work when PostgreSQL is not configured."""
     if os.environ.get("DATABASE_URL"):
         os.environ.pop("DATABASE_URL", None)
 
