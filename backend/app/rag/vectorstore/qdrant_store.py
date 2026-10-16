@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional
 import uuid
 import logging
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, FusionQuery
+from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, MatchAny, FusionQuery
 from app.rag.config import rag_settings
 from app.rag.constants import STATUS_INDEXED
 from app.rag.utils.ids import stable_point_id
@@ -104,6 +104,16 @@ class QdrantStore:
         must = []
         for key, value in filters.items():
             if value is None:
+                continue
+            # A list of product slugs (comparison queries) maps to the indexed
+            # product_slug field with a MatchAny condition so any of the named
+            # products can match.
+            if key == "product_slugs" and isinstance(value, (list, tuple)):
+                vals = [v for v in value if v]
+                if vals:
+                    must.append(
+                        FieldCondition(key="product_slug", match=MatchAny(any=vals))
+                    )
                 continue
             if key not in self._indexed_payload_fields:
                 logger.warning(

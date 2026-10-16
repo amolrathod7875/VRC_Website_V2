@@ -14,11 +14,12 @@ from evals.case_schema import EvalCase
 from evals.mock_generation import MockGenerationService
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
+from app.rag.config import rag_settings
 from app.rag.retrieval.hybrid_retriever import HybridRetriever
 from app.rag.retrieval.context_builder import ContextBuilder
 from app.rag.retrieval.reranker import Reranker
 from app.rag.retrieval.query_classifier import classify_query, QueryIntent, is_vr_coatings_domain_query
-from app.rag.services.rag_service import RAGService, _should_apply_product_filter
+from app.rag.services.rag_service import RAGService, _should_apply_product_filter, _get_comparison_product_slugs
 from app.rag.conversation.conversation_service import ConversationService
 from app.rag.catalogue_resolver import CatalogueResolver
 from app.rag.product_identity import resolve_product_identity, extract_model_identifier
@@ -232,7 +233,22 @@ class RagEvaluator:
                 product_slug = active_context.get("product_slug")
                 if product_slug:
                     retrieval_filters.setdefault("product_slug", product_slug)
+                model = active_context.get("model")
+                if model:
+                    retrieval_filters.setdefault("model", model)
+            elif intent.value == QueryIntent.PRODUCT_COMPARISON.value:
+                # Comparison queries name several products: retrieve chunks for any
+                # of them via a MatchAny filter on product_slug.
+                comparison_slugs = _get_comparison_product_slugs(message)
+                if comparison_slugs:
+                    retrieval_filters["product_slugs"] = comparison_slugs
             applied_filter = dict(retrieval_filters)
+
+            retrieval_limit = rag_settings.RAG_FINAL_TOP_K
+            if intent.value == QueryIntent.PRODUCT_DISCOVERY.value:
+                # Discovery queries name no product: cast a wider net so
+                # application-bearing chunks across products surface in the top K.
+                retrieval_limit = rag_settings.RAG_FINAL_TOP_K * 2
 
             dense_query = self.dense.embed_query(augmented_query)
             sparse_query = self.sparse.embed_query(augmented_query)
@@ -240,7 +256,19 @@ class RagEvaluator:
                 dense_query=dense_query,
                 sparse_query=sparse_query,
                 filters=retrieval_filters or None,
+                limit=retrieval_limit,
             )
+            if not chunks and retrieval_filters.get("model") and retrieval_filters.get("product_slug"):
+                # A model filter can exclude every row when the catalogue stores
+                # untagged combined table rows (e.g. CUB / Barrel Pump). Retry
+                # product-only so the context builder can isolate the model row.
+                product_only = {"product_slug": retrieval_filters["product_slug"]}
+                chunks = await self.retriever.retrieve(
+                    dense_query=dense_query,
+                    sparse_query=sparse_query,
+                    filters=product_only,
+                    limit=retrieval_limit,
+                )
 
             if not chunks:
                 answer_text = ANSWER_UNAVAILABLE
@@ -272,20 +300,20 @@ class RagEvaluator:
 
             show_sources = bool(sources) and answer_text != ANSWER_UNAVAILABLE
 
-            resolver = CatalogueResolver()
-            resolved_slug = active_context.get("product_slug")
-            if resolved_slug:
+            # Optimization: only fetch catalogues if the case expects them
+            catalogues = []
+            if case.expected_catalogues:
                 try:
-                    catalogues = await resolver.resolve(resolved_slug)
+                    resolver = CatalogueResolver()
+                    resolved_slug = active_context.get("product_slug")
+                    if resolved_slug:
+                        catalogues = await resolver.resolve(resolved_slug)
+                    else:
+                        resolved = resolve_product_identity(message)
+                        if resolved:
+                            catalogues = await resolver.resolve(resolved[0])
                 except Exception:
-                    pass
-            else:
-                resolved = resolve_product_identity(message)
-                if resolved:
-                    try:
-                        catalogues = await resolver.resolve(resolved[0])
-                    except Exception:
-                        pass
+                    catalogues = []
 
         return {
             "case_id": case.id,
