@@ -12,11 +12,14 @@ class HybridRetriever:
         dense_query: List[float],
         sparse_query: Any,
         filters: Optional[Dict[str, Any]] = None,
+        limit: Optional[int] = None,
     ) -> List[Dict[str, Any]]:
+        if limit is None:
+            limit = rag_settings.RAG_FINAL_TOP_K
         results = await self.qdrant_store.hybrid_search(
             dense_query=dense_query,
             sparse_query=sparse_query,
-            limit=rag_settings.RAG_FINAL_TOP_K,
+            limit=limit,
             filters=filters,
         )
         chunks = []

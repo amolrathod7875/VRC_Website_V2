@@ -3,7 +3,11 @@ import json
 import logging
 import re
 from typing import Any, Dict, List, Optional
-from app.rag.product_identity import resolve_product_identity, extract_model_identifier
+from app.rag.product_identity import (
+    PRODUCT_ALIASES,
+    resolve_product_identity,
+    extract_model_identifier,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -123,6 +127,23 @@ class ConversationService:
                     if src.get("product_slug") == explicit_slug and src.get("document") and not context["document"]:
                         context["document"] = src["document"]
                 break
+
+            # Preserve a model across same-product follow-ups even when the current
+            # message names the product explicitly (e.g. "Kingfisher" after a
+            # "Kingfisher Silver" turn should keep Silver unless overridden).
+            if context["product_slug"] and not context["model"]:
+                for msg in reversed(messages):
+                    if msg.get("role") != "assistant":
+                        continue
+                    for src in (msg.get("sources", []) or []):
+                        if (
+                            src.get("product_slug") == context["product_slug"]
+                            and src.get("model")
+                        ):
+                            context["model"] = src["model"]
+                            break
+                    if context["model"]:
+                        break
             # Explicit product mention wins; do not overwrite with stale assistant metadata.
             return context
 
@@ -145,6 +166,24 @@ class ConversationService:
                     context["product_slug"] = src["product_slug"]
                 if src.get("document") and not context["document"]:
                     context["document"] = src["document"]
+
+        # Extract a model identifier from the current message only when there is no
+        # product context yet; a shorthand reference (e.g. "30:1" for "30:150") must
+        # not override a preserved model from assistant sources.
+        latest_user = next((m for m in reversed(messages) if m.get("role") == "user"), None)
+        if latest_user and not context.get("product_slug"):
+            extracted_model = extract_model_identifier(latest_user.get("content", "") or "")
+            if extracted_model:
+                context["model"] = extracted_model
+
+        # Named variant detection: e.g. "Gold" for Kingfisher, "Aluminium" for VRIA.
+        # Check if any alias of the active product matches the message as a
+        # product+variant composite, and if so use the variant word as the model.
+        product_slug = context.get("product_slug")
+        if product_slug:
+            variant = ConversationService._extract_named_variant(latest_user.get("content", "") or "", product_slug)
+            if variant:
+                context["model"] = variant
 
         # Preserve a model across same-product follow-ups: scan assistant turns in
         # reverse and take the most recent source whose product matches the resolved
@@ -231,6 +270,34 @@ class ConversationService:
         if len(words) <= 4 and not any(word in q for word in ["what is", "what are", "tell me", "describe", "explain", "where is", "when was", "how much", "how many"]):
             return True
         return False
+
+    @staticmethod
+    def _extract_named_variant(message: str, product_slug: str) -> Optional[str]:
+        """Extract a named model variant from a message for the given product.
+
+        E.g. for product_slug "kingfisher" with aliases ["kingfisher silver",
+        "kingfisher gold"], a message "Gold" returns "Gold" (preserving casing).
+        """
+        product_info = PRODUCT_ALIASES.get(product_slug)
+        if not product_info:
+            return None
+        aliases = product_info.get("aliases", [])
+        q = message.strip().lower()
+        # Collect variant words: aliases that are "<product> <variant>"
+        variants: Dict[str, str] = {}  # lowercase -> original casing
+        for alias in aliases:
+            alias_stripped = alias.strip()
+            alias_norm = alias_stripped.lower()
+            if alias_norm.startswith(product_slug + " "):
+                variant_part = alias_stripped[len(product_slug) + 1:].strip()
+                if variant_part:
+                    variants[variant_part.lower()] = variant_part
+        # Check if any variant word appears as a standalone word in the message
+        message_words = set(q.split())
+        for variant_lower, variant_orig in sorted(variants.items(), key=lambda x: -len(x[0])):
+            if variant_lower in message_words:
+                return variant_orig.capitalize()
+        return None
 
     @staticmethod
     def build_generation_context(recent_messages: List[Dict[str, Any]], retrieval_context: str) -> str:

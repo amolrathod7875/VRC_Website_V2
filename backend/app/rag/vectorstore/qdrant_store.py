@@ -115,6 +115,15 @@ class QdrantStore:
                         FieldCondition(key="product_slug", match=MatchAny(any=vals))
                     )
                 continue
+            # A list of document names (parent -> child catalogue fallback) maps to
+            # the indexed document_name field with MatchAny.
+            if key == "document_names" and isinstance(value, (list, tuple)):
+                vals = [v for v in value if v]
+                if vals:
+                    must.append(
+                        FieldCondition(key="document_name", match=MatchAny(any=vals))
+                    )
+                continue
             if key not in self._indexed_payload_fields:
                 logger.warning(
                     "Skipping Qdrant filter on unindexed payload field %r", key

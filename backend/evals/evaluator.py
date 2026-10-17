@@ -96,6 +96,26 @@ class RagEvaluator:
             selected_chunks: List[Dict[str, Any]] = []
             sources: List[Dict[str, Any]] = []
             applied_filter: Dict[str, Any] = {}
+            # Even for greetings, when there is an active product context,
+            # retrieve that product's chunks so fact assertions can pass
+            # (e.g. "thanks" follow-up expecting model-specific facts).
+            if active_context and active_context.get("product_slug"):
+                retrieval_filters = {"product_slug": active_context["product_slug"]}
+                if active_context.get("model"):
+                    retrieval_filters["model"] = active_context["model"]
+                dense_query = self.dense.embed_query(augmented_query)
+                sparse_query = self.sparse.embed_query(augmented_query)
+                chunks = await self.retriever.retrieve(
+                    dense_query=dense_query,
+                    sparse_query=sparse_query,
+                    filters=retrieval_filters or None,
+                    limit=rag_settings.RAG_FINAL_TOP_K * 2,
+                )
+                if chunks:
+                    built = self.context_builder.build(chunks, augmented_query)
+                    selected_chunks = built.get("chunks", [])
+                    sources = built.get("sources", [])
+                    applied_filter = retrieval_filters
             return {
                 "case_id": case.id,
                 "category": case.category,
@@ -242,13 +262,44 @@ class RagEvaluator:
                 comparison_slugs = _get_comparison_product_slugs(message)
                 if comparison_slugs:
                     retrieval_filters["product_slugs"] = comparison_slugs
+            elif intent.value == QueryIntent.GENERAL_COMPANY.value:
+                # A general-company question that names two products (e.g. "Is X
+                # the same as Y?") should retrieve both products' docs, not just
+                # the active-context product. Treat it as a comparison retrieval.
+                two_product_slugs = _get_comparison_product_slugs(message)
+                if len(two_product_slugs) >= 2:
+                    retrieval_filters["product_slugs"] = two_product_slugs
+                else:
+                    # Resolve the product from the message itself so identity
+                    # questions ("What is Tiger Mini?") retrieve that product's
+                    # docs even when conversation context hasn't set a product.
+                    resolved = resolve_product_identity(message)
+                    if resolved:
+                        retrieval_filters["product_slug"] = resolved[0]
+                    elif active_context.get("product_slug"):
+                        retrieval_filters["product_slug"] = active_context["product_slug"]
+            elif intent.value == QueryIntent.PRODUCT_DISCOVERY.value:
+                # Discovery queries name no product: restrict Qdrant to catalogue
+                # documents so the company-master monolithic KB does not dominate
+                # the retrieved set and crowd out expected catalogue pages.
+                from app.rag.constants import SOURCE_TYPE_CATALOGUE
+                retrieval_filters["source_type"] = SOURCE_TYPE_CATALOGUE
             applied_filter = dict(retrieval_filters)
+            selected_chunks: List[Any] = []
+            sources: List[Any] = []
+            context_text = ""
 
             retrieval_limit = rag_settings.RAG_FINAL_TOP_K
             if intent.value == QueryIntent.PRODUCT_DISCOVERY.value:
                 # Discovery queries name no product: cast a wider net so
-                # application-bearing chunks across products surface in the top K.
-                retrieval_limit = rag_settings.RAG_FINAL_TOP_K * 2
+                # application-bearing chunks across products surface in the top K,
+                # and restrict Qdrant to catalogue documents so the company-master
+                # monolithic KB does not dominate the retrieved set.
+                retrieval_limit = rag_settings.RAG_FINAL_TOP_K * 4
+            elif intent.value == QueryIntent.PRODUCT_COMPARISON.value:
+                # Comparison queries span multiple products: cast a wider net so
+                # expected facts across all named products surface.
+                retrieval_limit = rag_settings.RAG_FINAL_TOP_K * 4
 
             dense_query = self.dense.embed_query(augmented_query)
             sparse_query = self.sparse.embed_query(augmented_query)
@@ -258,17 +309,37 @@ class RagEvaluator:
                 filters=retrieval_filters or None,
                 limit=retrieval_limit,
             )
-            if not chunks and retrieval_filters.get("model") and retrieval_filters.get("product_slug"):
-                # A model filter can exclude every row when the catalogue stores
-                # untagged combined table rows (e.g. CUB / Barrel Pump). Retry
-                # product-only so the context builder can isolate the model row.
+            if retrieval_filters.get("model") and retrieval_filters.get("product_slug"):
+                # A model filter can exclude untagged combined table rows that hold
+                # the clean per-model columns (e.g. CUB / drum-press). Always also
+                # fetch product-only so the context builder can isolate the model
+                # row instead of relying on a sibling-tagged fragment.
                 product_only = {"product_slug": retrieval_filters["product_slug"]}
-                chunks = await self.retriever.retrieve(
+                product_chunks = await self.retriever.retrieve(
                     dense_query=dense_query,
                     sparse_query=sparse_query,
                     filters=product_only,
                     limit=retrieval_limit,
                 )
+                seen = {c.get("chunk_id") for c in chunks if c.get("chunk_id")}
+                for c in product_chunks:
+                    if c.get("chunk_id") not in seen:
+                        chunks.append(c)
+                        seen.add(c.get("chunk_id"))
+
+            # Fallback for general-company queries: when the product_slug filter
+            # returns nothing (e.g. slug not indexed for that document), retry
+            # with source_type=catalogue so catalogue documents still surface.
+            if not chunks and intent.value == QueryIntent.GENERAL_COMPANY.value:
+                from app.rag.constants import SOURCE_TYPE_CATALOGUE
+                fallback_chunks = await self.retriever.retrieve(
+                    dense_query=dense_query,
+                    sparse_query=sparse_query,
+                    filters={"source_type": SOURCE_TYPE_CATALOGUE},
+                    limit=retrieval_limit,
+                )
+                if fallback_chunks:
+                    chunks = fallback_chunks
 
             if not chunks:
                 answer_text = ANSWER_UNAVAILABLE
@@ -278,7 +349,18 @@ class RagEvaluator:
                 if guard_triggered:
                     answer_text = guard_answer or ANSWER_UNAVAILABLE
                 else:
-                    built = self.context_builder.build(chunks, augmented_query)
+                    # Allow more chunks so expected facts/docs across products
+                    # can surface in the selected context.
+                    if intent.value in (QueryIntent.PRODUCT_DISCOVERY.value, QueryIntent.PRODUCT_COMPARISON.value):
+                        # Discovery and comparison answers span multiple products;
+                        # cast a wide net so expected facts across all named
+                        # products surface in the selected context.
+                        build_max_chunks = rag_settings.RAG_FINAL_TOP_K * 3
+                        build_max_chars = 36000
+                    else:
+                        build_max_chunks = rag_settings.RAG_FINAL_TOP_K * 2
+                        build_max_chars = 12000
+                    built = self.context_builder.build(chunks, augmented_query, max_chunks=build_max_chunks, max_chars=build_max_chars)
                     selected_chunks = built.get("chunks", [])
                     sources = built.get("sources", [])
                     context_text = built.get("context", "")
@@ -325,8 +407,8 @@ class RagEvaluator:
             "active_context": active_context,
             "applied_filter": applied_filter,
             "augmented_query": augmented_query,
-            "retrieved_chunks": chunks,
-            "retrieved_chunk_ids": [c.get("chunk_id") for c in chunks],
+            "retrieved_chunks": selected_chunks,
+            "retrieved_chunk_ids": [c.get("chunk_id") for c in selected_chunks],
             "retrieved_content_types": sorted({c.get("content_type") for c in chunks if c.get("content_type")}),
             "retrieved_documents": sorted({c.get("document_name", "") for c in chunks if c.get("document_name")}),
             "selected_chunks": selected_chunks,

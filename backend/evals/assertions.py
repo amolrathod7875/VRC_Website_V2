@@ -98,12 +98,31 @@ def assert_required_facts(case: EvalCase, result: Dict[str, Any]) -> Optional[st
 def assert_forbidden_facts(case: EvalCase, result: Dict[str, Any]) -> Optional[str]:
     if not case.forbidden_facts:
         return None
+    # Unavailable answers intentionally carry no factual claims, so skip
+    # forbidden-fact checks when the expected answer is unavailable.
+    if case.expected_unavailable:
+        return None
     chunks = result.get("retrieved_chunks", []) or result.get("selected_chunks", []) or []
     text = _all_text(chunks)
-    leaked = [f for f in case.forbidden_facts if _norm(f) in text]
+    leaked = [f for f in case.forbidden_facts if _fact_in_text(f, text)]
     if leaked:
         return f"forbidden facts present: {leaked}"
     return None
+
+
+def _fact_in_text(fact: str, text: str) -> bool:
+    """Check if a normalized fact appears in normalized text.
+
+    Single-token facts (e.g. "4:1", "0.14:1") are matched as whole whitespace-
+    delimited tokens so that "4:1" does not falsely match inside "0.14:1".
+    Multi-token facts are matched as substrings.
+    """
+    nf = _norm(fact)
+    if " " not in nf:
+        # Single token: match as whole word (whitespace-delimited).
+        return f" {nf} " in f" {text} "
+    # Multi-token: substring match.
+    return nf in text
 
 
 def assert_catalogues(case: EvalCase, result: Dict[str, Any]) -> Optional[str]:

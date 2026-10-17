@@ -13,6 +13,14 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "tiger 30:150",
         ],
     },
+    "tiger-mini": {
+        "canonical_slug": "tiger-mini",
+        "aliases": [
+            "tiger mini",
+            "tiger-mini",
+            "tiger mini pdf",
+        ],
+    },
     "lion": {
         "canonical_slug": "lion",
         "aliases": [
@@ -346,12 +354,49 @@ def resolve_product_identity(text: str) -> Optional[Tuple[str, Optional[str]]]:
         return None
 
     normalized = " ".join(text.lower().split())
+    best_slug: Optional[str] = None
+    best_alias: Optional[str] = None
+    best_pos: Optional[int] = None
+    for alias in _ALIAS_ORDER:
+        pos = normalized.find(alias)
+        if pos == -1:
+            continue
+        for slug, config in PRODUCT_ALIASES.items():
+            if alias in [a.lower() for a in config.get("aliases", [])]:
+                # Earliest mention in text wins; ties (same start) keep the longer
+                # alias because _ALIAS_ORDER is longest-first.
+                if best_pos is None or pos < best_pos:
+                    best_pos = pos
+                    best_slug = slug
+                    best_alias = alias
+                break
+    if best_slug is None:
+        return None
+    return best_slug, best_alias
+
+
+def resolve_all_product_identities(text: str) -> List[Tuple[str, str]]:
+    """Return all (canonical_slug, matched_alias) products mentioned in text.
+
+    Used for comparison and multi-product discovery where a single message names
+    several products. Order follows _ALIAS_ORDER (longest alias first) so that
+    composite aliases (e.g. "kingfisher gold") are resolved before shorter ones.
+    """
+    if not text:
+        return []
+
+    normalized = " ".join(text.lower().split())
+    found: List[Tuple[str, str]] = []
+    seen: set = set()
     for alias in _ALIAS_ORDER:
         if alias in normalized:
             for slug, config in PRODUCT_ALIASES.items():
                 if alias in [a.lower() for a in config.get("aliases", [])]:
-                    return slug, alias
-    return None
+                    if slug not in seen:
+                        seen.add(slug)
+                        found.append((slug, alias))
+                    break
+    return found
 
 
 def get_canonical_slug(raw: Optional[str]) -> Optional[str]:

@@ -80,6 +80,7 @@ COMPARISON_PATTERNS = [
     re.compile(r"\bvs\b", re.IGNORECASE),
     re.compile(r"\bversus\b", re.IGNORECASE),
     re.compile(r"\bdifference\s+between\b", re.IGNORECASE),
+    re.compile(r"\bis\s+.+?\s+(?:the\s+)?same\s+as\s+.+\b", re.IGNORECASE),
 ]
 
 PRODUCT_DISCOVERY_PATTERNS = [
@@ -103,16 +104,38 @@ AFFIRMATIVE_YES_NO_PATTERNS = [
 
 MODEL_IDENTIFIER_PATTERN = re.compile(r"^([A-Za-z]+)?\s*\d+:\d+$", re.IGNORECASE)
 
+# Pure product-identity questions: "What is/are <product>?"
+_IDENTITY_PRODUCT_RE = re.compile(r"^what\s+(?:is|are)\s+(.+?)\s*\?\s*$", re.IGNORECASE)
+
+# Attributes that product catalogues do not carry, so questions about them
+# cannot be answered from the catalogue context and must be unavailable.
+_UNANSWERABLE_ATTRIBUTE_RE = re.compile(
+    r"\b(how much (does|is)|what (is|are) the (price|cost|weight)|price of|cost of|"
+    r"weight of|delivery time|how long does delivery|warranty period|warranty of|"
+    r"warranty does|certified|certification|ce certification|atex certified)\b",
+    re.IGNORECASE,
+)
+
 
 def classify_query(question: str) -> QueryIntent:
     normalized = question.strip().lower()
 
-    if MODEL_IDENTIFIER_PATTERN.match(normalized):
-        return QueryIntent.MODEL_IDENTIFIER
-
+    # Comparison queries ("X vs Y", "compare X and Y", "X is the same as Y")
+    # must win over short-bare-product classification: "VRIA vs VRIAD" is 3
+    # words and resolves to a product, but it's a comparison, not identity.
     for pattern in COMPARISON_PATTERNS:
         if pattern.search(normalized):
             return QueryIntent.PRODUCT_COMPARISON
+
+    # A short bare product mention (e.g. "Tiger 30:150", "Kingfisher") is a
+    # product-identity reference, not a technical model-identifier query.
+    if len(normalized.split()) <= 3:
+        resolved = resolve_product_identity(normalized)
+        if resolved:
+            return QueryIntent.GENERAL_COMPANY
+
+    if MODEL_IDENTIFIER_PATTERN.match(normalized):
+        return QueryIntent.MODEL_IDENTIFIER
 
     governance_keywords = ["unknown", "tbc", "proposed", "inferred", "conflict", "data status", "governance"]
     if any(kw in normalized for kw in governance_keywords):
@@ -128,23 +151,31 @@ def classify_query(question: str) -> QueryIntent:
     if is_catalogue_request(question):
         return QueryIntent.CATALOGUE_REQUEST
 
+    # Pure product-identity questions "What is/are <product>?" are GENERAL_COMPANY
+    # even when the product name contains words that look technical (e.g. "vrc",
+    # "spray") or is multi-word ("tiger mini", "VRC MIX HP"). The matched alias
+    # must equal the whole subject so that "What is the pressure ratio of Tiger
+    # 30:150?" stays a technical query rather than an identity query.
+    _m = _IDENTITY_PRODUCT_RE.match(normalized)
+    if _m:
+        subject = _m.group(1).strip()
+        resolved = resolve_product_identity(subject)
+        if resolved and resolved[1] == subject:
+            return QueryIntent.GENERAL_COMPANY
+
     product_technical_keywords = ["pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure", "technical specification", "cc ", "bar ", "psi", "variants", "variant", "workflow", "process", "mixing ratio", "mix ratio", "vrc", "discharge per cycle", "discharge"]
+    # Discovery questions ("Which product can be used for...") name no product
+    # and must win over keyword-based technical classification even when they
+    # contain technical-looking words (e.g. "viscosity"). Check discovery first.
+    for pattern in PRODUCT_DISCOVERY_PATTERNS:
+        if pattern.search(normalized):
+            return QueryIntent.PRODUCT_DISCOVERY
     if any(kw in normalized for kw in product_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
 
     yes_no_technical_keywords = ["have a pressure ratio", "have an output", "have a flow", "have a viscosity", "have a max"]
     if any(kw in normalized for kw in yes_no_technical_keywords):
         return QueryIntent.PRODUCT_TECHNICAL
-
-    # Identity questions: "What is X?" where X is a product/entity name
-    # These should be GENERAL_COMPANY, not PRODUCT_DISCOVERY
-    identity_question_pattern = re.compile(r"^what\s+is\s+\w+", re.IGNORECASE)
-    if identity_question_pattern.match(normalized):
-        return QueryIntent.GENERAL_COMPANY
-
-    for pattern in PRODUCT_DISCOVERY_PATTERNS:
-        if pattern.search(normalized):
-            return QueryIntent.PRODUCT_DISCOVERY
 
     general_company_keywords = ["vr coatings", "company", "manufacture", "manufacturing", "products", "about", "tell me about", "what is", "what does"]
     if any(kw in normalized for kw in general_company_keywords):
@@ -179,6 +210,12 @@ def evaluate_evidence_guard(question: str, context: str) -> Tuple[bool, str]:
 
     normalized_context = " ".join(context.strip().lower().split())
     normalized_question = " ".join(question.strip().lower().split())
+
+    # Questions about attributes that product catalogues do not carry
+    # (pricing, weight, delivery, warranty, certification) cannot be answered
+    # from the catalogue context.
+    if _UNANSWERABLE_ATTRIBUTE_RE.search(normalized_question):
+        return True, "This information is not available in the current VR Coatings knowledge base."
 
     if is_affirmative_yes_no(question):
         return False, ""
@@ -281,7 +318,8 @@ def is_vr_coatings_domain_query(
     domain_keywords = [
         "pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure",
         "technical specification", "cc ", "bar ", "psi",
-        "used for", "application", "compatible with", "suitable for", "coating", "painting",
+        "used for", "application", "applications", "compatible with", "suitable for",
+        "coating", "painting",
         "warranty", "price", "cost", "weight", "size", "material",
         "discharge per cycle", "discharge", "variants", "configurations",
         "mixing ratio", "components", "workflow", "process",
@@ -289,15 +327,14 @@ def is_vr_coatings_domain_query(
     if any(kw in normalized for kw in domain_keywords):
         return True
 
-    # 2. Confident contextual product follow-up.
     if active_context and active_context.get("product_slug"):
-        if _is_domain_followup(question):
+        if _is_domain_followup(question, active_context):
             return True
 
     return False
 
 
-def _is_domain_followup(question: str) -> bool:
+def _is_domain_followup(question: str, active_context: Optional[Dict[str, Optional[str]]] = None) -> bool:
     q = question.strip().lower()
 
     general_knowledge_indicators = [
