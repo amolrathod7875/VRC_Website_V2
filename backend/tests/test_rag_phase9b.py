@@ -47,7 +47,7 @@ def test_manifest_excludes_indexed_and_review_required() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)
@@ -75,7 +75,7 @@ def test_manifest_contains_expected_count() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)
@@ -103,7 +103,7 @@ def test_manifest_entries_have_required_fields() -> None:
 
     with patch("scripts.run_phase9b_bulk.get_qdrant_point_count", return_value=5306), \
          patch("qdrant_client.QdrantClient", return_value=mock_client), \
-         patch("app.core.database.async_session_factory") as mock_session:
+         patch("app.core.config.settings", autospec=True) as mock_session:
         mock_db = MagicMock()
         mock_session.return_value.__aenter__ = MagicMock(return_value=mock_db)
         mock_session.return_value.__aexit__ = MagicMock(return_value=False)
@@ -247,7 +247,7 @@ def test_canonical_slug_known_products() -> None:
 
 def test_canonical_slug_unknown_returns_none() -> None:
     assert get_canonical_slug("unknown_product") is None
-    assert get_canonical_slug("VRC MIX (LOW - MEDIUM) PRESSURE") is None
+    assert get_canonical_slug("NonExistentSystem") is None
 
 
 # ============================================================
@@ -296,35 +296,41 @@ def test_cross_product_isolation_new_products() -> None:
 # 11. second-run idempotency
 # ============================================================
 def test_second_run_skips_unchanged() -> None:
-    import asyncio
     from app.rag.ingestion.ingestion_service import IngestionService
-    from unittest.mock import AsyncMock, MagicMock, patch
-    import tempfile
+    from app.rag.utils.ids import generate_document_id_for
+    from app.rag.constants import SOURCE_TYPE_CATALOGUE
+    from unittest.mock import MagicMock, patch
+    import asyncio, tempfile, os
 
-    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
-        tmp_path = tmp.name
-        tmp.write(b"dummy pdf content")
+    tmp_dir = tempfile.mkdtemp()
+    tmp_path = os.path.join(tmp_dir, "dummy.pdf")
+    with open(tmp_path, "wb") as f:
+        f.write(b"dummy pdf content")
 
-    db = MagicMock()
+    document_id = generate_document_id_for("dummy.pdf", SOURCE_TYPE_CATALOGUE)
+    old_points = {
+        f"point_{i}": {
+            "document_id": document_id,
+            "document_name": "dummy.pdf",
+            "source_type": SOURCE_TYPE_CATALOGUE,
+            "sha256": "dummy_hash",
+            "chunk_id": f"chunk_{i}",
+            "product_slug": "tiger",
+            "text": f"old chunk {i}",
+        } for i in range(3)
+    }
 
-    async def mock_execute(query):
-        result = MagicMock()
-        result.scalar_one_or_none.return_value = existing_doc
-        return result
+    from tests.test_ingestion_safety import FakeQdrantClient, FakeQdrantStore, FakeDocumentRegistry
+    client = FakeQdrantClient(points=old_points)
+    store = FakeQdrantStore(client=client)
+    registry = FakeDocumentRegistry(qdrant_store=store)
 
-    db.execute = mock_execute
-    db.flush = AsyncMock()
-    db.commit = AsyncMock()
-
-    qdrant = MagicMock()
-    dense = MagicMock()
-    sparse = MagicMock()
-
-    service = IngestionService(db=db, qdrant_store=qdrant, dense=dense, sparse=sparse)
-
-    existing_doc = MagicMock()
-    existing_doc.sha256 = "dummy_hash"
-    existing_doc.qdrant_document_id = "doc-123"
+    service = IngestionService(
+        qdrant_store=store,
+        dense=MagicMock(),
+        sparse=MagicMock(),
+        document_registry=registry,
+    )
 
     with patch("app.rag.ingestion.ingestion_service.calculate_sha256", return_value="dummy_hash"):
         result = asyncio.run(service.ingest_catalogue(Path(tmp_path)))

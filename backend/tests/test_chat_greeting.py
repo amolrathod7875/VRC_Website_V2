@@ -1,5 +1,4 @@
 from unittest.mock import AsyncMock, MagicMock, patch
-from uuid import uuid4
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -7,15 +6,10 @@ client = TestClient(app)
 
 
 def test_chat_endpoint_greeting_bypasses_rag() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[])
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[])
         mock_cs.get_active_product_context = MagicMock(return_value={})
         mock_cs.build_augmented_query = MagicMock(return_value="hey")
         MockConvService.return_value = mock_cs
@@ -31,15 +25,11 @@ def test_chat_endpoint_greeting_bypasses_rag() -> None:
 
 
 def test_chat_endpoint_greeting_hello() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[])
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[])
+        mock_cs.get_active_product_context = MagicMock(return_value={})
         MockConvService.return_value = mock_cs
 
         response = client.post("/api/v1/chat", json={"message": "hello"})
@@ -60,16 +50,11 @@ def test_chat_endpoint_greeting_plus_product_query_runs_rag() -> None:
         "intent": "product_technical",
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
         with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
             mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
+            mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+            mock_cs.validate_history = MagicMock(return_value=[])
             mock_cs.get_active_product_context = MagicMock(return_value={})
             mock_cs.build_augmented_query = MagicMock(return_value="tell me about tiger 30:150")
             MockConvService.return_value = mock_cs
@@ -84,15 +69,11 @@ def test_chat_endpoint_greeting_plus_product_query_runs_rag() -> None:
 
 
 def test_chat_endpoint_greeting_how_are_you() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[])
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[])
+        mock_cs.get_active_product_context = MagicMock(return_value={})
         MockConvService.return_value = mock_cs
 
         response = client.post("/api/v1/chat", json={"message": "how are you?"})
@@ -104,15 +85,11 @@ def test_chat_endpoint_greeting_how_are_you() -> None:
 
 
 def test_chat_endpoint_greeting_thanks() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[])
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[])
+        mock_cs.get_active_product_context = MagicMock(return_value={})
         MockConvService.return_value = mock_cs
 
         response = client.post("/api/v1/chat", json={"message": "thanks"})
@@ -124,15 +101,11 @@ def test_chat_endpoint_greeting_thanks() -> None:
 
 
 def test_chat_endpoint_greeting_bye() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[])
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[])
+        mock_cs.get_active_product_context = MagicMock(return_value={})
         MockConvService.return_value = mock_cs
 
         response = client.post("/api/v1/chat", json={"message": "bye"})
@@ -144,15 +117,10 @@ def test_chat_endpoint_greeting_bye() -> None:
 
 
 def test_chat_endpoint_greeting_inside_product_conversation() -> None:
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
         mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-        mock_cs.append_user_message = AsyncMock()
-        mock_cs.append_assistant_message = AsyncMock()
-        mock_cs.get_recent_messages = AsyncMock(return_value=[
+        mock_cs.generate_conversation_id = MagicMock(return_value="test-conv-id")
+        mock_cs.validate_history = MagicMock(return_value=[
             {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
             {"role": "assistant", "content": "Tiger 30:150 is a spray pump.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
         ])
@@ -160,7 +128,7 @@ def test_chat_endpoint_greeting_inside_product_conversation() -> None:
         mock_cs.build_augmented_query = MagicMock(return_value="thanks")
         MockConvService.return_value = mock_cs
 
-        response = client.post("/api/v1/chat", json={"message": "thanks", "conversation_id": str(mock_conversation.id)})
+        response = client.post("/api/v1/chat", json={"message": "thanks", "conversation_id": "test-conv-id"})
 
     assert response.status_code == 200
     data = response.json()

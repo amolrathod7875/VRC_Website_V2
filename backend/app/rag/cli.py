@@ -4,8 +4,6 @@ import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, List
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from app.core.database import Base
 from app.rag.ingestion.ingestion_service import IngestionService
 from app.rag.ingestion.pdf_parser import extract_pages, page_needs_ocr
 from app.rag.ingestion.pdf_table_parser import extract_tables
@@ -20,14 +18,9 @@ from app.rag.retrieval.context_builder import ContextBuilder
 from app.rag.retrieval.reranker import Reranker
 from app.rag.config import rag_settings
 from app.rag.product_identity import get_canonical_slug
+from app.rag.vectorstore.document_registry import DocumentRegistry
 
 logger = logging.getLogger(__name__)
-
-
-def get_session() -> AsyncSession:
-    engine = create_async_engine(rag_settings.database_url(), echo=False, future=True)
-    session_factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
-    return session_factory()
 
 
 def _write_debug_file(path: str, payload: Any) -> None:
@@ -39,33 +32,31 @@ def _write_debug_file(path: str, payload: Any) -> None:
 
 
 async def _ingest_catalogue(file_path: str) -> None:
-    async with get_session() as db:
-        qdrant = QdrantStore()
-        try:
-            await qdrant.ensure_collection()
-        except RuntimeError as exc:
-            logger.error("Qdrant unavailable: %s", exc)
-            print(f"Qdrant unavailable: {exc}")
-            return
-        service = IngestionService(db=db, qdrant_store=qdrant, dense=DenseEmbeddingService(), sparse=SparseEmbeddingService())
-        result = await service.ingest_catalogue(Path(file_path))
-        logger.info(result)
-        print(result)
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    service = IngestionService(qdrant_store=qdrant, dense=DenseEmbeddingService(), sparse=SparseEmbeddingService())
+    result = await service.ingest_catalogue(Path(file_path))
+    logger.info(result)
+    print(result)
 
 
 async def _ingest_company(file_path: str) -> None:
-    async with get_session() as db:
-        qdrant = QdrantStore()
-        try:
-            await qdrant.ensure_collection()
-        except RuntimeError as exc:
-            logger.error("Qdrant unavailable: %s", exc)
-            print(f"Qdrant unavailable: {exc}")
-            return
-        service = IngestionService(db=db, qdrant_store=qdrant, dense=DenseEmbeddingService(), sparse=SparseEmbeddingService())
-        result = await service.ingest_company(Path(file_path))
-        logger.info(result)
-        print(result)
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    service = IngestionService(qdrant_store=qdrant, dense=DenseEmbeddingService(), sparse=SparseEmbeddingService())
+    result = await service.ingest_company(Path(file_path))
+    logger.info(result)
+    print(result)
 
 
 async def _inspect_catalogue(file_path: str) -> None:
@@ -134,115 +125,106 @@ def _count_chunk_types(chunks: List[Dict[str, Any]]) -> Dict[str, int]:
 
 
 async def _search(query: str) -> None:
-    async with get_session() as db:
-        qdrant = QdrantStore()
-        try:
-            await qdrant.ensure_collection()
-        except RuntimeError as exc:
-            logger.error("Qdrant unavailable: %s", exc)
-            print(f"Qdrant unavailable: {exc}")
-            return
-        retriever = HybridRetriever(qdrant_store=qdrant)
-        dense = DenseEmbeddingService()
-        sparse = SparseEmbeddingService()
-        dense_query = dense.embed_query(query)
-        sparse_query = sparse.embed_query(query)
-        chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
-        print(f"QUERY: {query}")
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    retriever = HybridRetriever(qdrant_store=qdrant)
+    dense = DenseEmbeddingService()
+    sparse = SparseEmbeddingService()
+    dense_query = dense.embed_query(query)
+    sparse_query = sparse.embed_query(query)
+    chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
+    print(f"QUERY: {query}")
+    print("")
+    print("RRF RESULTS:")
+    for idx, chunk in enumerate(chunks, start=1):
+        print(f"  {idx}. score={chunk.get('score')}")
+        print(f"     document={chunk.get('document_name')} product={chunk.get('product')} section={chunk.get('section')} model={chunk.get('model')} page={chunk.get('page_number')} authority={chunk.get('authority_priority')}")
+        print(f"     text={(chunk.get('text','')[:300]).replace(chr(10), ' ')}")
         print("")
-        print("RRF RESULTS:")
-        for idx, chunk in enumerate(chunks, start=1):
-            print(f"  {idx}. score={chunk.get('score')}")
-            print(f"     document={chunk.get('document_name')} product={chunk.get('product')} section={chunk.get('section')} model={chunk.get('model')} page={chunk.get('page_number')} authority={chunk.get('authority_priority')}")
-            print(f"     text={(chunk.get('text','')[:300]).replace(chr(10), ' ')}")
-            print("")
 
 
 async def _context(query: str) -> None:
-    async with get_session() as db:
-        qdrant = QdrantStore()
-        try:
-            await qdrant.ensure_collection()
-        except RuntimeError as exc:
-            logger.error("Qdrant unavailable: %s", exc)
-            print(f"Qdrant unavailable: {exc}")
-            return
-        retriever = HybridRetriever(qdrant_store=qdrant)
-        dense = DenseEmbeddingService()
-        sparse = SparseEmbeddingService()
-        dense_query = dense.embed_query(query)
-        sparse_query = sparse.embed_query(query)
-        chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
-        context_builder = ContextBuilder()
-        built = context_builder.build(chunks, query)
-        print(f"QUERY: {query}")
-        print("")
-        print("CONTEXT:")
-        print(built.get("context", "")[:4000])
-        print("")
-        print("SOURCES:")
-        for src in built.get("sources", []):
-            print(f"  - {src}")
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    retriever = HybridRetriever(qdrant_store=qdrant)
+    dense = DenseEmbeddingService()
+    sparse = SparseEmbeddingService()
+    dense_query = dense.embed_query(query)
+    sparse_query = sparse.embed_query(query)
+    chunks = await retriever.retrieve(dense_query=dense_query, sparse_query=sparse_query, filters=None)
+    context_builder = ContextBuilder()
+    built = context_builder.build(chunks, query)
+    print(f"QUERY: {query}")
+    print("")
+    print("CONTEXT:")
+    print(built.get("context", "")[:4000])
+    print("")
+    print("SOURCES:")
+    for src in built.get("sources", []):
+        print(f"  - {src}")
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="VR Coatings RAG ingestion CLI")
-    subparsers = parser.add_subparsers(dest="command")
+async def _status() -> None:
+    """Show ingestion status from Qdrant registry."""
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    
+    registry = DocumentRegistry(qdrant_store=qdrant)
+    docs = registry.list_indexed_documents()
+    
+    catalogues = [d for d in docs if d.get("source_type") == "catalogue"]
+    company = [d for d in docs if d.get("source_type") == "company_master"]
+    
+    print(f"Total indexed documents: {len(docs)}")
+    print(f"  Catalogues: {len(catalogues)}")
+    print(f"  Company Master: {len(company)}")
+    print()
+    
+    for doc in sorted(catalogues, key=lambda x: x.get("document_name", "")):
+        print(f"  {doc.get('document_name')} (slug: {doc.get('product_slug')}, chunks: {doc.get('chunk_count')}, hash: {(doc.get('sha256') or '')[:16]}...)")
+    
+    for doc in company:
+        print(f"  {doc.get('document_name')} (chunks: {doc.get('chunk_count')}, hash: {(doc.get('sha256') or '')[:16]}...)")
 
-    subparsers.add_parser("ingest-all", help="Ingest catalogues and company master")
 
-    catalogue_parser = subparsers.add_parser("ingest-catalogues", help="Ingest all catalogues")
-    catalogue_parser.add_argument("path", nargs="?", default=rag_settings.RAG_CATALOGUE_ROOT)
-
-    company_parser = subparsers.add_parser("ingest-company", help="Ingest company master")
-    company_parser.add_argument("path", nargs="?", default=rag_settings.RAG_COMPANY_KB_PATH)
-
-    file_parser = subparsers.add_parser("ingest-file", help="Ingest a single file")
-    file_parser.add_argument("path", help="Path to PDF or TXT file")
-
-    inspect_parser = subparsers.add_parser("inspect-file", help="Inspect parsing without indexing")
-    inspect_parser.add_argument("path", help="Path to PDF or TXT file")
-
-    subparsers.add_parser("status", help="Show ingestion status")
-
-    search_parser = subparsers.add_parser("search", help="Retrieval-only search")
-    search_parser.add_argument("query", help="Search query")
-
-    context_parser = subparsers.add_parser("context", help="Show context that would be sent to LLM")
-    context_parser.add_argument("query", help="Search query")
-
-    subparsers.add_parser("ocr-status", help="Show OCR engine diagnostics")
-
-    args = parser.parse_args()
-    if args.command == "ingest-all":
-        asyncio.run(_ingest_catalogue(rag_settings.RAG_CATALOGUE_ROOT))
-        asyncio.run(_ingest_company(rag_settings.RAG_COMPANY_KB_PATH))
-    elif args.command == "ingest-catalogues":
-        asyncio.run(_ingest_catalogue(args.path))
-    elif args.command == "ingest-company":
-        asyncio.run(_ingest_company(args.path))
-    elif args.command == "ingest-file":
-        path = Path(args.path)
-        if path.suffix.lower() == ".pdf":
-            asyncio.run(_ingest_catalogue(args.path))
-        else:
-            asyncio.run(_ingest_company(args.path))
-    elif args.command == "inspect-file":
-        path = Path(args.path)
-        if path.suffix.lower() == ".pdf":
-            asyncio.run(_inspect_catalogue(args.path))
-        else:
-            asyncio.run(_inspect_company(args.path))
-    elif args.command == "search":
-        asyncio.run(_search(args.query))
-    elif args.command == "context":
-        asyncio.run(_context(args.query))
-    elif args.command == "ocr-status":
-        print(json.dumps(_ocr_status(), ensure_ascii=False, indent=2))
-    elif args.command == "status":
-        print("Status command not implemented in CLI yet.")
-    else:
-        parser.print_help()
+async def _list_documents() -> None:
+    """List all indexed documents with details."""
+    qdrant = QdrantStore()
+    try:
+        await qdrant.ensure_collection()
+    except RuntimeError as exc:
+        logger.error("Qdrant unavailable: %s", exc)
+        print(f"Qdrant unavailable: {exc}")
+        return
+    
+    registry = DocumentRegistry(qdrant_store=qdrant)
+    docs = registry.list_indexed_documents()
+    
+    for doc in sorted(docs, key=lambda x: (x.get("source_type", ""), x.get("document_name", ""))):
+        print(f"Document ID: {doc.get('document_id')}")
+        print(f"  Name: {doc.get('document_name')}")
+        print(f"  Type: {doc.get('source_type')}")
+        print(f"  Product Slug: {doc.get('product_slug')}")
+        print(f"  Product Slugs: {doc.get('product_slugs')}")
+        print(f"  Chunks: {doc.get('chunk_count')}")
+        print(f"  Hash: {doc.get('sha256')}")
+        print(f"  Path: {doc.get('storage_path')}")
+        print()
 
 
 def _ocr_status() -> Dict[str, Any]:
@@ -288,6 +270,70 @@ def _ocr_status() -> Dict[str, Any]:
         status["error"] = str(exc)
 
     return status
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="VR Coatings RAG ingestion CLI")
+    subparsers = parser.add_subparsers(dest="command")
+
+    subparsers.add_parser("ingest-all", help="Ingest catalogues and company master")
+
+    catalogue_parser = subparsers.add_parser("ingest-catalogues", help="Ingest all catalogues")
+    catalogue_parser.add_argument("path", nargs="?", default=rag_settings.RAG_CATALOGUE_ROOT)
+
+    company_parser = subparsers.add_parser("ingest-company", help="Ingest company master")
+    company_parser.add_argument("path", nargs="?", default=rag_settings.RAG_COMPANY_KB_PATH)
+
+    file_parser = subparsers.add_parser("ingest-file", help="Ingest a single file")
+    file_parser.add_argument("path", help="Path to PDF or TXT file")
+
+    inspect_parser = subparsers.add_parser("inspect-file", help="Inspect parsing without indexing")
+    inspect_parser.add_argument("path", help="Path to PDF or TXT file")
+
+    subparsers.add_parser("status", help="Show ingestion status from Qdrant registry")
+
+    subparsers.add_parser("list-documents", help="List all indexed documents with details")
+
+    search_parser = subparsers.add_parser("search", help="Retrieval-only search")
+    search_parser.add_argument("query", help="Search query")
+
+    context_parser = subparsers.add_parser("context", help="Show context that would be sent to LLM")
+    context_parser.add_argument("query", help="Search query")
+
+    subparsers.add_parser("ocr-status", help="Show OCR engine diagnostics")
+
+    args = parser.parse_args()
+    if args.command == "ingest-all":
+        asyncio.run(_ingest_catalogue(rag_settings.RAG_CATALOGUE_ROOT))
+        asyncio.run(_ingest_company(rag_settings.RAG_COMPANY_KB_PATH))
+    elif args.command == "ingest-catalogues":
+        asyncio.run(_ingest_catalogue(args.path))
+    elif args.command == "ingest-company":
+        asyncio.run(_ingest_company(args.path))
+    elif args.command == "ingest-file":
+        path = Path(args.path)
+        if path.suffix.lower() == ".pdf":
+            asyncio.run(_ingest_catalogue(args.path))
+        else:
+            asyncio.run(_ingest_company(args.path))
+    elif args.command == "inspect-file":
+        path = Path(args.path)
+        if path.suffix.lower() == ".pdf":
+            asyncio.run(_inspect_catalogue(args.path))
+        else:
+            asyncio.run(_inspect_company(args.path))
+    elif args.command == "search":
+        asyncio.run(_search(args.query))
+    elif args.command == "context":
+        asyncio.run(_context(args.query))
+    elif args.command == "ocr-status":
+        print(json.dumps(_ocr_status(), ensure_ascii=False, indent=2))
+    elif args.command == "status":
+        asyncio.run(_status())
+    elif args.command == "list-documents":
+        asyncio.run(_list_documents())
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":

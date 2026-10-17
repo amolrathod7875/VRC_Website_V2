@@ -2,6 +2,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import uuid4
 from fastapi.testclient import TestClient
 from app.main import app
+from app.rag.retrieval.query_classifier import QueryIntent
 
 client = TestClient(app)
 
@@ -19,21 +20,8 @@ def test_chat_endpoint_returns_conversation_id() -> None:
         "retrieval": {"chunks_used": 4},
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio of Tiger 30:150?")
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
+        response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
 
     assert response.status_code == 200
     data = response.json()
@@ -51,21 +39,8 @@ def test_chat_endpoint_returns_structured_response() -> None:
         "retrieval": {"chunks_used": 4},
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio of Tiger 30:150?")
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
+        response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
 
     assert response.status_code == 200
     data = response.json()
@@ -82,21 +57,8 @@ def test_chat_endpoint_no_context_returns_unavailable() -> None:
         "retrieval": {"chunks_used": 0},
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio?")
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio?"})
+        response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio?"})
 
     assert response.status_code == 200
     data = response.json()
@@ -108,18 +70,8 @@ def test_chat_endpoint_provider_failure_returns_error() -> None:
     mock_service = AsyncMock()
     mock_service.answer.side_effect = RuntimeError("Groq unavailable")
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio?"})
+        response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio?"})
 
     assert response.status_code == 500
 
@@ -132,43 +84,16 @@ def test_chat_endpoint_missing_retrieval_metadata() -> None:
         "retrieval": None,
     }
 
-    mock_conversation = MagicMock()
-    mock_conversation.id = uuid4()
-
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is the pressure ratio of Tiger 30:150?")
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
+        response = client.post("/api/v1/chat", json={"message": "What is the pressure ratio of Tiger 30:150?"})
 
     assert response.status_code == 200
     data = response.json()
     assert data["retrieval"] is None
 
 
-def test_chat_endpoint_invalid_conversation_id_returns_404() -> None:
-    with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-        mock_cs = MagicMock()
-        mock_cs.get_or_create_conversation = AsyncMock(side_effect=ValueError("Conversation not found"))
-        MockConvService.return_value = mock_cs
-
-        response = client.post("/api/v1/chat", json={"message": "test", "conversation_id": str(uuid4())})
-
-    assert response.status_code == 404
-
-
 def test_chat_endpoint_existing_conversation_continues() -> None:
     existing_id = uuid4()
-    mock_conversation = MagicMock()
-    mock_conversation.id = existing_id
-
     mock_service = AsyncMock()
     mock_service.answer.return_value = {
         "answer": "1985",
@@ -176,21 +101,14 @@ def test_chat_endpoint_existing_conversation_continues() -> None:
         "retrieval": {"chunks_used": 1},
     }
 
-    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[
-                {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
-                {"role": "assistant", "content": "Tiger 30:150 is a spray pump.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
-            ])
-            mock_cs.get_active_product_context = MagicMock(return_value={"product_slug": "tiger", "model": "30:150", "document": "Tiger.pdf"})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is its output?")
-            MockConvService.return_value = mock_cs
+    # Provide history to simulate existing conversation
+    history = [
+        {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
+        {"role": "assistant", "content": "Tiger 30:150 is a spray pump.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
+    ]
 
-            response = client.post("/api/v1/chat", json={"message": "What is its output?", "conversation_id": str(existing_id)})
+    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
+        response = client.post("/api/v1/chat", json={"message": "What is its output?", "conversation_id": str(existing_id), "history": history})
 
     assert response.status_code == 200
     data = response.json()
@@ -199,9 +117,6 @@ def test_chat_endpoint_existing_conversation_continues() -> None:
 
 def test_chat_endpoint_augments_followup_query() -> None:
     existing_id = uuid4()
-    mock_conversation = MagicMock()
-    mock_conversation.id = existing_id
-
     mock_service = AsyncMock()
     mock_service.answer.return_value = {
         "answer": "150 cc",
@@ -209,20 +124,12 @@ def test_chat_endpoint_augments_followup_query() -> None:
         "retrieval": {"chunks_used": 2},
     }
 
-    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[
-                {"role": "assistant", "content": "Tiger 30:150 details.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
-            ])
-            mock_cs.get_active_product_context = MagicMock(return_value={"product_slug": "tiger", "model": "30:150", "document": "Tiger.pdf"})
-            mock_cs.build_augmented_query = MagicMock(return_value="What is its output? tiger 30:150")
-            MockConvService.return_value = mock_cs
+    history = [
+        {"role": "assistant", "content": "Tiger 30:150 details.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
+    ]
 
-            response = client.post("/api/v1/chat", json={"message": "What is its output?", "conversation_id": str(existing_id)})
+    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
+        response = client.post("/api/v1/chat", json={"message": "What is its output?", "conversation_id": str(existing_id), "history": history})
 
     assert response.status_code == 200
     data = response.json()
@@ -231,9 +138,6 @@ def test_chat_endpoint_augments_followup_query() -> None:
 
 def test_chat_endpoint_topic_switch_resets_active_context() -> None:
     existing_id = uuid4()
-    mock_conversation = MagicMock()
-    mock_conversation.id = existing_id
-
     mock_service = AsyncMock()
     mock_service.answer.return_value = {
         "answer": "1985",
@@ -241,22 +145,14 @@ def test_chat_endpoint_topic_switch_resets_active_context() -> None:
         "retrieval": {"chunks_used": 1},
     }
 
-    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=mock_conversation)
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[
-                {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
-                {"role": "assistant", "content": "Tiger 30:150 details.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
-                {"role": "user", "content": "When was VR Coatings founded?", "sources": [], "retrieval_metadata": {}},
-            ])
-            mock_cs.get_active_product_context = MagicMock(return_value={"product_slug": None, "model": None, "document": "VR_Coatings_RAG_Monolithic_Knowledge_Base.txt"})
-            mock_cs.build_augmented_query = MagicMock(return_value="When was VR Coatings founded?")
-            MockConvService.return_value = mock_cs
+    history = [
+        {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
+        {"role": "assistant", "content": "Tiger 30:150 details.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
+        {"role": "user", "content": "When was VR Coatings founded?", "sources": [], "retrieval_metadata": {}},
+    ]
 
-            response = client.post("/api/v1/chat", json={"message": "When was VR Coatings founded?", "conversation_id": str(existing_id)})
+    with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
+        response = client.post("/api/v1/chat", json={"message": "When was VR Coatings founded?", "conversation_id": str(existing_id), "history": history})
 
     assert response.status_code == 200
     data = response.json()
@@ -265,14 +161,10 @@ def test_chat_endpoint_topic_switch_resets_active_context() -> None:
 
 def test_chat_endpoint_catalogue_request_bypasses_rag() -> None:
     with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            MockConvService.return_value = mock_cs
+        with patch("app.api.v1.endpoints.chat.CatalogueResolver") as MockResolver:
+            mock_resolver = AsyncMock()
+            mock_resolver.resolve_from_message = AsyncMock(return_value=("rhino", [{"product_slug": "rhino", "product_name": "Rhino", "document_name": "rhino.pdf", "url": "/media/catalogues/rhino.pdf"}]))
+            MockResolver.return_value = mock_resolver
 
             response = client.post("/api/v1/chat", json={"message": "give me catalogue of rhino"})
 
@@ -290,14 +182,10 @@ def test_chat_endpoint_catalogue_request_bypasses_rag() -> None:
 
 def test_chat_endpoint_catalogue_request_tiger() -> None:
     with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            MockConvService.return_value = mock_cs
+        with patch("app.api.v1.endpoints.chat.CatalogueResolver") as MockResolver:
+            mock_resolver = AsyncMock()
+            mock_resolver.resolve_from_message = AsyncMock(return_value=("tiger", [{"product_slug": "tiger", "product_name": "Tiger", "document_name": "Tiger.pdf", "url": "/media/catalogues/Tiger.pdf"}]))
+            MockResolver.return_value = mock_resolver
 
             response = client.post("/api/v1/chat", json={"message": "give me catalogue of Tiger"})
 
@@ -315,14 +203,10 @@ def test_chat_endpoint_catalogue_request_tiger() -> None:
 
 def test_chat_endpoint_unknown_catalogue_returns_error() -> None:
     with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={})
-            MockConvService.return_value = mock_cs
+        with patch("app.api.v1.endpoints.chat.CatalogueResolver") as MockResolver:
+            mock_resolver = AsyncMock()
+            mock_resolver.resolve_from_message = AsyncMock(return_value=(None, []))
+            MockResolver.return_value = mock_resolver
 
             response = client.post("/api/v1/chat", json={"message": "give me catalogue of Ferrari"})
 
@@ -346,20 +230,50 @@ def test_chat_endpoint_unavailable_clears_sources() -> None:
     }
 
     with patch("app.api.v1.endpoints.chat._build_rag_service", return_value=mock_service):
-        with patch("app.api.v1.endpoints.chat.ConversationService") as MockConvService:
-            mock_cs = MagicMock()
-            mock_cs.get_or_create_conversation = AsyncMock(return_value=MagicMock(id=uuid4()))
-            mock_cs.append_user_message = AsyncMock()
-            mock_cs.append_assistant_message = AsyncMock()
-            mock_cs.get_recent_messages = AsyncMock(return_value=[])
-            mock_cs.get_active_product_context = MagicMock(return_value={"product_slug": "tiger"})
-            mock_cs.build_augmented_query = MagicMock(return_value="How much does Tiger cost?")
-            MockConvService.return_value = mock_cs
-
-            response = client.post("/api/v1/chat", json={"message": "How much does Tiger cost?"})
+        response = client.post("/api/v1/chat", json={"message": "How much does Tiger cost?"})
 
     assert response.status_code == 200
     data = response.json()
     assert "not available" in data["answer"]
     assert data["show_sources"] is False
     assert data["sources"] == []
+
+
+def test_chat_endpoint_greeting() -> None:
+    with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
+        response = client.post("/api/v1/chat", json={"message": "hello"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "greeting"
+    assert data["show_sources"] is False
+    mock_rag.assert_not_called()
+
+
+def test_chat_endpoint_assistant_identity() -> None:
+    with patch("app.api.v1.endpoints.chat._build_rag_service") as mock_rag:
+        response = client.post("/api/v1/chat", json={"message": "who are you"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "assistant_identity"
+    assert data["show_sources"] is False
+    mock_rag.assert_not_called()
+
+
+def test_chat_endpoint_general_chat() -> None:
+    mock_service = AsyncMock()
+    mock_service.generate_general_answer.return_value = {
+        "answer": "I am a helpful assistant.",
+        "sources": [],
+        "retrieval": None,
+        "intent": "general_chat",
+    }
+
+    with patch("app.api.v1.endpoints.chat._build_generation_service", return_value=mock_service):
+        with patch("app.api.v1.endpoints.chat.is_vr_coatings_domain_query", return_value=False):
+            response = client.post("/api/v1/chat", json={"message": "What is the meaning of life?"})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["intent"] == "general_chat"

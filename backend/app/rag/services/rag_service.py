@@ -10,7 +10,7 @@ from app.rag.generation.factory import LLMFactory
 from app.rag.retrieval.reranker import Reranker
 from app.rag.config import rag_settings
 from app.rag.generation.prompts import ANSWER_UNAVAILABLE
-from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query
+from app.rag.retrieval.query_classifier import evaluate_evidence_guard, classify_query, QueryIntent
 from app.rag.constants import SOURCE_TYPE_CATALOGUE
 
 logger = logging.getLogger(__name__)
@@ -24,11 +24,27 @@ def _should_apply_product_filter(question: str, active_context: Optional[Dict[st
     if intent.value in ("product_comparison", "governance"):
         return False
     if intent.value == "general_company":
-        return False
+        # A question about a specific product (product_slug present in the active
+        # context) is about that product, so isolate it. Generic company-overview
+        # questions (no product context) are already filtered out above.
+        return True
     normalized = f" {question.strip().lower()} "
     if any(hint in normalized for hint in _COMPARISON_HINTS):
         return False
     return True
+
+
+def _get_comparison_product_slugs(question: str) -> List[str]:
+    """Resolve every product named in a comparison question to its canonical slug.
+
+    Returns slugs in the order their aliases appear in the question (longest alias
+    first), deduplicated. Returns an empty list when no known product is mentioned.
+    """
+    if not question:
+        return []
+    from app.rag.product_identity import resolve_all_product_identities
+
+    return [slug for slug, _ in resolve_all_product_identities(question)]
 
 
 def _cross_product_guard(question: str, active_context: Optional[Dict[str, Optional[str]]], chunks: List[Dict[str, Any]]) -> tuple[bool, str]:

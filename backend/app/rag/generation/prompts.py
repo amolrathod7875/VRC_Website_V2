@@ -17,7 +17,7 @@ SYSTEM_PROMPT = (
     "13. Do NOT generate source references, citations, or retrieval explanations inside the answer text. The UI renders sources separately.\n"
     "14. Do not infer that a product, feature, certification, service, country, application, or capability is absent merely because it is not listed in the retrieved context.\n"
     "15. If the user asks whether something exists and the context provides neither explicit positive nor explicit negative evidence, return the unavailable response.\n"
-    "16. Absence of mention is not evidence of absence. Return the unavailable response unless the context explicitly supports the claim.\n"
+    "16. When the context contains the requested value, answer it directly and concisely. Missing context alone is not evidence of absence.\n"
     "17. If the context includes a CONVERSATION HISTORY section, use it ONLY to resolve references like 'its', 'this', 'that', or follow-up intent. "
     "The conversation history is NOT an independent source of facts. All factual claims must come from the RETRIEVED KNOWLEDGE section.\n"
 )

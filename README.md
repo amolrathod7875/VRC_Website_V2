@@ -57,9 +57,7 @@ uvicorn app.main:app --reload
 ## Database Setup
 
 ```bash
-docker compose up postgres -d
 cd backend
-alembic upgrade head
 ```
 
 ## Full Stack (Docker)
@@ -70,31 +68,37 @@ docker compose up --build
 
 ## API Endpoints
 
-- `GET /api/v1/health` - Health check
-- `GET /api/v1/products` - List products
-- `GET /api/v1/products/{slug}` - Get product by slug
-- `GET /api/v1/applications` - List applications
-- `GET /api/v1/applications/{slug}` - Get application by slug
-- `GET /api/v1/blogs` - List published blogs
-- `GET /api/v1/blogs/{slug}` - Get blog by slug
-- `GET /api/v1/faqs` - List FAQs
-- `GET /api/v1/jobs` - List jobs
-- `GET /api/v1/jobs/{slug}` - Get job by slug
-- `POST /api/v1/jobs/{id}/apply` - Apply for a job
-- `POST /api/v1/contact` - Submit contact form
-- `GET /api/v1/clients` - List clients
-- `GET /api/v1/partners` - List partners
-- `GET /api/v1/partners/{slug}` - Get partner by slug
-- `GET /api/v1/industries` - List industries
-- `GET /api/v1/industries/{slug}` - Get industry by slug
-- `GET /api/v1/media/{id}` - Get media asset metadata
+> Phase 10R.3 removed the PostgreSQL-backed website content APIs. Products,
+> applications, blogs, FAQs, clients, partners, industries and media metadata
+> are now served exclusively from static frontend data modules
+> (`frontend/src/lib/data.ts`, `faqs.ts`, `clients.ts`, `partnersData.ts`,
+> `careerData.ts`, `contactData.ts`). Physical media (catalogues, images,
+> videos, PDFs, certificates) is still served from the `/media/` static mount.
+
+Active endpoints:
+
+- `GET /health` - Health check
+- `POST /api/v1/chat` - RAG chatbot (Qdrant-backed, PostgreSQL-free)
+- `GET /api/v1/chat/status` - Chatbot readiness status
+
+Removed endpoints (no longer registered; routes return 404):
+
+- `GET /api/v1/products` (+ `/{slug}`)
+- `GET /api/v1/applications` (+ `/{slug}`)
+- `GET /api/v1/blogs` (+ `/{slug}`)
+- `GET /api/v1/faqs` (+ `/category/{category}`)
+- `GET /api/v1/clients`
+- `GET /api/v1/partners` (+ `/{slug}`)
+- `GET /api/v1/industries` (+ `/{slug}`)
+- `GET /api/v1/media/{asset_id}` - database-backed metadata only
+- `GET /api/v1/jobs` (+ `/{slug}`) - legacy listing; careers page uses static data
+- `POST /api/v1/jobs/{id}/apply` - legacy application storage
+- `POST /api/v1/contact` - legacy contact submission storage
 
 ## Migrations
 
 ```bash
 cd backend
-alembic revision --autogenerate -m "description"
-alembic upgrade head
 ```
 
 ## Notes

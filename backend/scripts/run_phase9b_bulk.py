@@ -50,8 +50,6 @@ from app.rag.config import rag_settings
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
 from app.rag.vectorstore.qdrant_store import QdrantStore
-from app.models.rag_document import RagDocument, RagIngestionRun
-from app.core.database import async_session_factory
 
 
 CATALOGUE_ROOT = Path(__file__).resolve().parent.parent / "storage" / "catalogues"
@@ -165,13 +163,16 @@ def get_qdrant_points_for_document(document_id: str) -> int:
 
 
 async def get_postgres_document_count() -> int:
-    from sqlalchemy import func
-    from app.models.rag_document import RagDocument
-
-    async with async_session_factory() as db:
-        from sqlalchemy import select, func
-        result = await db.execute(select(func.count()).select_from(RagDocument))
-        return result.scalar_one()
+    # DB-free: use Qdrant as source of truth
+    from app.rag.vectorstore.qdrant_store import QdrantStore
+    from qdrant_client.models import Filter, FieldCondition, MatchValue
+    try:
+        store = QdrantStore()
+        # count all points with document_id
+        cnt = store.client.count(collection_name=store.collection_name).count
+        return int(cnt) if cnt else 0
+    except Exception:
+        return 0
 
 
 def pre_ocr_inventory(file_path: str, existing_points: int = 0) -> PreOCRInventory:

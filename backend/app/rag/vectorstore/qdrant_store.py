@@ -1,16 +1,13 @@
 from typing import Any, Dict, List, Optional
 import uuid
+import logging
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, FusionQuery
+from qdrant_client.models import Distance, VectorParams, SparseVectorParams, PayloadSchemaType, Fusion, Prefetch, SparseVector, Filter, FieldCondition, MatchValue, MatchAny, FusionQuery
 from app.rag.config import rag_settings
 from app.rag.constants import STATUS_INDEXED
+from app.rag.utils.ids import stable_point_id
 
-_POINT_ID_NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
-
-
-def _stable_point_id(document_id: str, chunk_id: str) -> str:
-    raw = f"{document_id}:{chunk_id}"
-    return str(uuid.uuid5(_POINT_ID_NAMESPACE, raw))
+logger = logging.getLogger(__name__)
 
 
 class QdrantStore:
@@ -45,12 +42,20 @@ class QdrantStore:
             ("source_type", PayloadSchemaType.KEYWORD),
             ("product_slug", PayloadSchemaType.KEYWORD),
             ("document_id", PayloadSchemaType.KEYWORD),
+            ("document_name", PayloadSchemaType.KEYWORD),
+            ("sha256", PayloadSchemaType.KEYWORD),
             ("content_type", PayloadSchemaType.KEYWORD),
+            ("model", PayloadSchemaType.KEYWORD),
         ]:
             try:
                 self.client.create_payload_index(collection_name=self.collection_name, field_name=field, field_schema=schema_type)
             except Exception:
                 pass
+
+    @property
+    def _indexed_payload_fields(self) -> set:
+        """Payload fields that have a Qdrant keyword index (safe to filter on)."""
+        return {"source_type", "product_slug", "document_id", "document_name", "sha256", "content_type", "model"}
 
     async def upsert_points(
         self,
@@ -67,7 +72,7 @@ class QdrantStore:
             points = []
             for idx, payload in enumerate(batch_payloads):
                 sparse = batch_sparse[idx]
-                point_id = _stable_point_id(document_id, str(payload.get("chunk_id", idx)))
+                point_id = stable_point_id(document_id, str(payload.get("chunk_id", idx)))
                 points.append({
                     "id": point_id,
                     "vector": {
@@ -78,6 +83,12 @@ class QdrantStore:
                 })
             self.client.upsert(collection_name=self.collection_name, points=points)
 
+    def delete_by_document_name(self, document_name: str) -> None:
+        self.client.delete(
+            collection_name=self.collection_name,
+            points_selector=Filter(must=[FieldCondition(key="document_name", match=MatchValue(value=document_name))]),
+        )
+
     async def delete_by_document_id(self, document_id: str) -> None:
         self.client.delete(
             collection_name=self.collection_name,
@@ -87,9 +98,36 @@ class QdrantStore:
     def _build_qdrant_filter(self, filters: Optional[Dict[str, Any]]) -> Optional[Filter]:
         if not filters:
             return None
+        # Only filter on payload fields that have a Qdrant keyword index. Passing an
+        # unindexed key (e.g. "model") raises a 400 from the Qdrant API. Unknown keys
+        # are skipped with a warning rather than silently mis-filtering.
         must = []
         for key, value in filters.items():
             if value is None:
+                continue
+            # A list of product slugs (comparison queries) maps to the indexed
+            # product_slug field with a MatchAny condition so any of the named
+            # products can match.
+            if key == "product_slugs" and isinstance(value, (list, tuple)):
+                vals = [v for v in value if v]
+                if vals:
+                    must.append(
+                        FieldCondition(key="product_slug", match=MatchAny(any=vals))
+                    )
+                continue
+            # A list of document names (parent -> child catalogue fallback) maps to
+            # the indexed document_name field with MatchAny.
+            if key == "document_names" and isinstance(value, (list, tuple)):
+                vals = [v for v in value if v]
+                if vals:
+                    must.append(
+                        FieldCondition(key="document_name", match=MatchAny(any=vals))
+                    )
+                continue
+            if key not in self._indexed_payload_fields:
+                logger.warning(
+                    "Skipping Qdrant filter on unindexed payload field %r", key
+                )
                 continue
             must.append(FieldCondition(key=key, match=MatchValue(value=value)))
         if not must:

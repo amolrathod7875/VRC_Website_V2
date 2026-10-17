@@ -38,6 +38,13 @@ export interface ChatAPIResponse {
   show_catalogues?: boolean;
 }
 
+export interface HistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+  sources?: ChatSource[];
+  retrieval_metadata?: Record<string, unknown>;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant";

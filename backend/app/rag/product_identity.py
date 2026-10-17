@@ -13,6 +13,14 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "tiger 30:150",
         ],
     },
+    "tiger-mini": {
+        "canonical_slug": "tiger-mini",
+        "aliases": [
+            "tiger mini",
+            "tiger-mini",
+            "tiger mini pdf",
+        ],
+    },
     "lion": {
         "canonical_slug": "lion",
         "aliases": [
@@ -257,12 +265,66 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "polegun",
         ],
     },
+    "barrel-pump": {
+        "canonical_slug": "barrel-pump",
+        "aliases": [
+            "barrel pump",
+            "barrel-pump",
+            "barrel pump 210 liters",
+        ],
+    },
     "vrid": {
         "canonical_slug": "vrid",
         "aliases": [
             "vrid",
             "vrid gun",
             "airless manual dispensing gun vrid",
+        ],
+    },
+    "dragon": {
+        "canonical_slug": "dragon",
+        "aliases": [
+            "dragon",
+            "dragon pfp",
+            "dragon passive fire protection",
+        ],
+    },
+    "polyurea": {
+        "canonical_slug": "polyurea",
+        "aliases": [
+            "polyurea",
+            "polyurea spray equipment",
+            "two component polyurea",
+        ],
+    },
+    "tube-varnish-coating-system": {
+        "canonical_slug": "tube-varnish-coating-system",
+        "aliases": [
+            "tube varnish coating system",
+            "tube coating system",
+            "varnish coating system",
+        ],
+    },
+    "vrc-mix-low-medium-pressure": {
+        "canonical_slug": "vrc-mix-low-medium-pressure",
+        "aliases": [
+            "vrc mix low medium pressure",
+            "vrc mix low-medium pressure",
+            "vrc mix low medium",
+            "vrc mix low-medium",
+            "vrc mix (low - medium) pressure",
+            "vrc mix (low-medium) pressure",
+            "vrc mix low-medium-pressure",
+        ],
+    },
+    "vrc-mix-hp": {
+        "canonical_slug": "vrc-mix-hp",
+        "aliases": [
+            "vrc mix hp",
+            "vrc-mix hp",
+            "vrc - mix hp",
+            "vrc mix hp (te)",
+            "vrc mix hp (fm) (pcs)",
         ],
     },
 }
@@ -284,18 +346,57 @@ _MODEL_PATTERN = re.compile(r"\b([A-Za-z]+)?\s*(\d+:\d+)\b", re.IGNORECASE)
 def resolve_product_identity(text: str) -> Optional[Tuple[str, Optional[str]]]:
     """Return (canonical_slug, matched_alias_or_None) for the first product found in text.
 
-    Matching is deterministic and case-insensitive. If no known product is found, return None.
+    Matching is deterministic and case-insensitive. Whitespace is normalized so that
+    aliases match even when words are split across lines or separated by extra spaces.
+    If no known product is found, return None.
     """
     if not text:
         return None
 
-    normalized = text.lower()
+    normalized = " ".join(text.lower().split())
+    best_slug: Optional[str] = None
+    best_alias: Optional[str] = None
+    best_pos: Optional[int] = None
+    for alias in _ALIAS_ORDER:
+        pos = normalized.find(alias)
+        if pos == -1:
+            continue
+        for slug, config in PRODUCT_ALIASES.items():
+            if alias in [a.lower() for a in config.get("aliases", [])]:
+                # Earliest mention in text wins; ties (same start) keep the longer
+                # alias because _ALIAS_ORDER is longest-first.
+                if best_pos is None or pos < best_pos:
+                    best_pos = pos
+                    best_slug = slug
+                    best_alias = alias
+                break
+    if best_slug is None:
+        return None
+    return best_slug, best_alias
+
+
+def resolve_all_product_identities(text: str) -> List[Tuple[str, str]]:
+    """Return all (canonical_slug, matched_alias) products mentioned in text.
+
+    Used for comparison and multi-product discovery where a single message names
+    several products. Order follows _ALIAS_ORDER (longest alias first) so that
+    composite aliases (e.g. "kingfisher gold") are resolved before shorter ones.
+    """
+    if not text:
+        return []
+
+    normalized = " ".join(text.lower().split())
+    found: List[Tuple[str, str]] = []
+    seen: set = set()
     for alias in _ALIAS_ORDER:
         if alias in normalized:
             for slug, config in PRODUCT_ALIASES.items():
                 if alias in [a.lower() for a in config.get("aliases", [])]:
-                    return slug, alias
-    return None
+                    if slug not in seen:
+                        seen.add(slug)
+                        found.append((slug, alias))
+                    break
+    return found
 
 
 def get_canonical_slug(raw: Optional[str]) -> Optional[str]:

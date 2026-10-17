@@ -48,6 +48,10 @@ backend/.rag_cache/
 .rag_cache/
 .tmp_test_ocr_cache*
 
+# Generated evaluation results (do not commit large JSON artifacts)
+backend/evals/results/
+backend/final_report.md
+
 # Database
 backend/storage/uploads/
 *.sql.gz

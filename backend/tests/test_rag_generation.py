@@ -12,7 +12,7 @@ def test_system_prompt_contains_grounding_rules() -> None:
     assert "tbc" in prompt
     assert "catalogue" in prompt
     assert "company master" in prompt
-    assert "absence of mention is not evidence of absence" in prompt
+    assert "missing context alone is not evidence of absence" in prompt
     assert "do not infer that a product, feature, certification, service, country, application, or capability is absent merely because it is not listed" in prompt
 
 
