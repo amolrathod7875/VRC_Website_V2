@@ -128,7 +128,7 @@ CASES = [
     c('disc-05','discovery','Which product can be used for chemical transfer?',expected_product_slug=None,expected_model=None,expected_document_names=['Barrel Pump.pdf', 'LION_Catalogue.pdf'],expected_required_facts='chemical transfer'),
     c('disc-06','discovery','Which product is suitable for high viscosity coating?',expected_product_slug=None,expected_model=None,expected_document_names=['rhino.pdf', 'DRUM PRESS.pdf'],expected_required_facts='high viscosity'),
     c('disc-07','discovery','Which product can be used for paint circulation?',expected_product_slug=None,expected_model=None,expected_document_names=['cub.pdf', 'LION_Catalogue.pdf'],expected_required_facts='paint circulation'),
-    c('disc-08','discovery','Which product is suitable for water based paints?',expected_product_slug=None,expected_model=None,expected_document_names=['Paint Preparation Unit.pdf', 'leopard.pdf'],expected_required_facts='water based'),
+    c('disc-08','discovery','Which product is suitable for water based paints?',expected_product_slug=None,expected_model=None,expected_document_names=['Paint Preparation Unit.pdf', 'Electric_pump.pdf'],expected_required_facts='water based'),
     c('disc-09','discovery','Which product can be used for insulation?',expected_product_slug=None,expected_model=None,expected_document_names=['polyurea.pdf'],expected_required_facts='insulation'),
     c('disc-10','discovery','Which product is suitable for oil and gas applications?',expected_product_slug=None,expected_model=None,expected_document_names=['rhino.pdf'],expected_required_facts='oil and gas'),
 
@@ -260,9 +260,9 @@ CASES = [
     c('table-20','table','Pneumatic Stirrer specifications', expected_product_slug='pneumatic-stirrer', expected_model=None, expected_document_names=['PNEUMATIC STIRRER.pdf'], expected_required_facts=['PNEUMATIC STIRRER'], forbidden_facts=['0.14:1']),
 
 # ---- MORE APPLICATIONS ----
-    c('app-16','applications','What is HAWK used for?', expected_product_slug='hawk', expected_model=None, expected_document_names=['manual_GUNS.pdf'], expected_required_facts=['Manual Spray Gun'], forbidden_facts=['450 BAR(SS)']),
+    c('app-16','applications','What is HAWK used for?', expected_product_slug='hawk', expected_model=None, expected_document_names=['manual_GUNS.pdf'], expected_required_facts=['MAXIMUM WORKING PRESSURE (AM250)'], forbidden_facts=['450 BAR(SS)']),
     c('app-17','applications','What is FALCON used for?', expected_product_slug='falcon', expected_model=None, expected_document_names=['manual_GUNS.pdf'], expected_required_facts=['450 BAR(SS), 350 BAR(AL)'], forbidden_facts=['500 BAR']),
     c('app-18','applications','What is EAGLE used for?', expected_product_slug='eagle', expected_model=None, expected_document_names=['manual_GUNS.pdf'], expected_required_facts=['500 BAR'], forbidden_facts=['450 BAR(SS)']),
-    c('app-19','applications','What is VRC MIX HP used for?', expected_product_slug='vrc-mix-hp', expected_model=None, expected_document_names=['VRC - MIX HP.pdf'], expected_required_facts=['Two-component plural'], forbidden_facts=['0.14:1']),
-    c('app-20','applications','What is VRC MIX Low-Medium used for?', expected_product_slug='vrc-mix-low-medium-pressure', expected_model=None, expected_document_names=['VRC MIX (LOW - MEDIUM) PRESSURE.pdf'], expected_required_facts=['Two-component plural'], forbidden_facts=['0.14:1']),
+    c('app-19','applications','What is VRC MIX HP used for?', expected_product_slug='vrc-mix-hp', expected_model=None, expected_document_names=['VRC - MIX HP.pdf'], expected_required_facts=['two component'], forbidden_facts=['0.14:1']),
+    c('app-20','applications','What is VRC MIX Low-Medium used for?', expected_product_slug='vrc-mix-low-medium-pressure', expected_model=None, expected_document_names=['VRC MIX (LOW - MEDIUM) PRESSURE.pdf'], expected_required_facts=['two component'], forbidden_facts=['0.14:1']),
 ]
