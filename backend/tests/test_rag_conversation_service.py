@@ -233,7 +233,7 @@ def test_unknown_product_does_not_inherit_previous_specs() -> None:
     messages = [
         make_message("user", "Tell me about Tiger 30:150."),
         make_message("assistant", "Tiger 30:150 outputs 150 cc.", sources=[{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}]),
-        make_message("user", "What is Cheetah?"),
+        make_message("user", "What is WidgetX?"),
     ]
 
     ctx = ConversationService.get_active_product_context(messages)

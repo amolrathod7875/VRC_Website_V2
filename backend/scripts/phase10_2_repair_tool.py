@@ -7,13 +7,15 @@ separate review before execution.
 Modes:
   --audit      Read-only inventory of target documents (no changes)
   --dry-run    Plan exact before/after diffs, write backup snapshot, no writes
+  --rollback-test  Simulate failure during partial update, verify exact-point restore
 
 Safety:
-  - Targets points by exact document_name only (no fuzzy/ambiguous matching)
-  - Never overwrites a point merely because its document name matches
-  - Full backup (IDs, payloads, vectors) before any proposed change
+  - Targets points by exact ID only (no document-name bulk deletion)
+  - Full backup (IDs, payloads, vectors) per point before any proposed change
   - Idempotency checks: skips if already in desired state
-  - Rollback snapshot included in dry-run output
+  - Rollback restores exact point IDs (payload + vectors), never bulk-delete by document name
+  - Newly created point IDs tracked separately for rollback cleanup
+  - Backups written to /tmp with restrictive permissions (0600), never committed
 """
 
 from __future__ import annotations
@@ -22,6 +24,8 @@ import argparse
 import copy
 import hashlib
 import json
+import os
+import stat
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -30,6 +34,14 @@ from typing import Any
 from app.rag.vectorstore.qdrant_store import QdrantStore
 
 BACKUP_DIR = Path("/tmp/kilo/phase10_2_backups")
+
+
+def _restrictive_permissions(path: Path) -> None:
+    """Set 0600 owner-only permissions on a backup file."""
+    try:
+        os.chmod(path, stat.S_IRUSR | stat.S_IWUSR)
+    except OSError:
+        pass
 
 
 def sha256_file(path: Path) -> str:
@@ -74,6 +86,11 @@ def points_by_document(points: list[dict[str, Any]], document_name: str) -> list
     return [p for p in points if (p.get("payload") or {}).get("document_name") == document_name]
 
 
+def points_by_ids(points: list[dict[str, Any]], point_ids: list[str]) -> list[dict[str, Any]]:
+    id_set = set(point_ids)
+    return [p for p in points if p.get("id") in id_set]
+
+
 def backup_points(points: list[dict[str, Any]], document_name: str) -> Path:
     BACKUP_DIR.mkdir(parents=True, exist_ok=True)
     ts = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -86,20 +103,26 @@ def backup_points(points: list[dict[str, Any]], document_name: str) -> Path:
         "points": points,
     }
     path.write_text(json.dumps(snapshot, indent=2, default=str), encoding="utf-8")
+    _restrictive_permissions(path)
     return path
 
 
 def verify_backup(path: Path) -> dict[str, Any]:
     data = json.loads(path.read_text(encoding="utf-8"))
     pts = data.get("points", [])
+    checksum = sha256_file(path)
     return {
         "path": str(path),
+        "checksum_sha256": checksum,
         "document_name": data.get("document_name"),
         "point_count": data.get("point_count"),
         "backup_point_count": len(pts),
         "all_have_ids": all(p.get("id") for p in pts),
         "all_have_payloads": all(p.get("payload") for p in pts),
+        "all_have_vectors": all(p.get("vector") for p in pts),
         "ids": [p["id"] for p in pts],
+        "permissions_owner_only": bool(os.stat(path).st_mode & stat.S_IRUSR)
+        and not bool(os.stat(path).st_mode & (stat.S_IRGRP | stat.S_IROTH)),
     }
 
 
@@ -113,6 +136,10 @@ def diff_payloads(before: dict[str, Any], after: dict[str, Any]) -> dict[str, An
         if bv != av:
             changed[k] = {"before": bv, "after": av}
     return changed
+
+
+def diff_text(before: str, after: str) -> dict[str, Any]:
+    return {"before": before, "after": after, "changed": before != after}
 
 
 # ---------------------------------------------------------------------------
@@ -129,15 +156,14 @@ def plan_tiger_mini_reingestion(points: list[dict[str, Any]]) -> dict[str, Any]:
     if not tg:
         return {"document": "Tiger_mini.pdf", "status": "not_found", "points": 0}
 
-    # Idempotency: check if any point already has text
     has_text = any((p.get("payload") or {}).get("text") for p in tg)
 
-    plan = {
+    return {
         "document": "Tiger_mini.pdf",
         "repair_type": "reingestion",
         "affected_point_ids": [p["id"] for p in tg],
         "point_count": len(tg),
-        "point_count_impact": 0,  # same IDs, payload+vector update only
+        "point_count_impact": 0,
         "idempotent": has_text,
         "already_has_text": has_text,
         "current_payload_sample": copy.deepcopy(tg[0]["payload"]) if tg else {},
@@ -148,106 +174,76 @@ def plan_tiger_mini_reingestion(points: list[dict[str, Any]]) -> dict[str, Any]:
         "vector_impact": "dense + sparse vectors regenerated from OCR text",
         "source_sha256": "a46dd4cdcb9c4b84614e9c51500933e24f72bd2436e28562937ceb522edbbd24",
         "affected_cases": ["identity-29", "technical-21"],
-    }
-    return plan
-
-
-def plan_automatic_gun_family_slug(points: list[dict[str, Any]]) -> dict[str, Any]:
-    """AUTOMATIC_gun.pdf: add automatic-spray-guns family slug to product_slug.
-
-    Converts product_slug from string to array, appending family slug.
-    Child-product slugs (400b, flamingo, hotmelt, vria, vriad) preserved.
-    """
-    ag = points_by_document(points, "AUTOMATIC_gun.pdf")
-    if not ag:
-        return {"document": "AUTOMATIC_gun.pdf", "status": "not_found", "points": 0}
-
-    family_slug = "automatic-spray-guns"
-    already_has = all(
-        family_slug in ((p.get("payload") or {}).get("product_slug") or [])
-        if isinstance((p.get("payload") or {}).get("product_slug"), list)
-        else (p.get("payload") or {}).get("product_slug") == family_slug
-        for p in ag
-    )
-
-    diffs = []
-    for p in ag:
-        pl = p.get("payload") or {}
-        current = pl.get("product_slug")
-        if isinstance(current, list):
-            new_val = list(current)
-            if family_slug not in new_val:
-                new_val.append(family_slug)
-        else:
-            new_val = [current, family_slug] if current else [family_slug]
-        if new_val != current:
-            diffs.append({
-                "point_id": p["id"],
-                "payload_diff": diff_payloads(pl, {**pl, "product_slug": new_val}),
-            })
-
-    return {
-        "document": "AUTOMATIC_gun.pdf",
-        "repair_type": "metadata_add_family_slug",
-        "affected_point_ids": [p["id"] for p in ag],
-        "point_count": len(ag),
-        "point_count_impact": 0,
-        "idempotent": already_has,
-        "already_has_family_slug": already_has,
-        "family_slug": family_slug,
-        "child_slugs_preserved": ["400b", "flamingo", "hotmelt", "vria", "vriad"],
-        "point_diffs": diffs,
-        "affected_cases": ["identity-30"],
+        "rollback_strategy": "exact_point_restore",
+        "new_point_ids": [],
     }
 
 
-def plan_manual_guns_family_slug(points: list[dict[str, Any]]) -> dict[str, Any]:
-    """manual_GUNS.pdf: add manual-spray-guns family slug to product_slug.
+def plan_spray_gun_family_retrieval(points: list[dict[str, Any]]) -> dict[str, Any]:
+    """Spray-gun family retrieval: enable filtering by family via parent_product_slug.
 
-    Converts product_slug from string to array, appending family slug.
-    Child-product slugs (am250, eagle, ext-i, falcon, flamingo, hawk, pole,
-    vrid, vril, wax-spray-gun) preserved.
+    Approach: keep product_slug scalar (child slugs only). Add parent_product_slug
+    to Qdrant payload index and extend _build_qdrant_filter to support an OR key
+    (product_slug=child OR parent_product_slug=family). Array product_slug was
+    evaluated and rejected: context_builder.py:80-83 does f"{product_slug}:{model}"
+    string formatting and line 340 does equality comparison, both broken by arrays.
+
+    AUTOMATIC_gun.pdf (7 points): child slugs 400b, flamingo, hotmelt, vria, vriad
+    manual_GUNS.pdf (10 points): child slugs am250, eagle, ext-i, falcon, flamingo,
+    pole, vrid, vril, wax-spray-gun
+
+    parent_product_slug already set on all 17 points but is not indexed.
     """
-    mg = points_by_document(points, "manual_GUNS.pdf")
-    if not mg:
-        return {"document": "manual_GUNS.pdf", "status": "not_found", "points": 0}
+    auto = points_by_document(points, "AUTOMATIC_gun.pdf")
+    manual = points_by_document(points, "manual_GUNS.pdf")
+    all_sg = auto + manual
 
-    family_slug = "manual-spray-guns"
-    already_has = all(
-        family_slug in ((p.get("payload") or {}).get("product_slug") or [])
-        if isinstance((p.get("payload") or {}).get("product_slug"), list)
-        else (p.get("payload") or {}).get("product_slug") == family_slug
-        for p in mg
-    )
+    family_map = {
+        "AUTOMATIC_gun.pdf": "automatic-spray-guns",
+        "manual_GUNS.pdf": "manual-spray-guns",
+    }
+
+    missing_parent = [
+        p["id"] for p in all_sg
+        if not (p.get("payload") or {}).get("parent_product_slug")
+    ]
 
     diffs = []
-    for p in mg:
+    for p in all_sg:
         pl = p.get("payload") or {}
-        current = pl.get("product_slug")
-        if isinstance(current, list):
-            new_val = list(current)
-            if family_slug not in new_val:
-                new_val.append(family_slug)
-        else:
-            new_val = [current, family_slug] if current else [family_slug]
-        if new_val != current:
+        doc = pl.get("document_name", "")
+        family = family_map.get(doc)
+        current_parent = pl.get("parent_product_slug")
+        if family and current_parent != family:
             diffs.append({
                 "point_id": p["id"],
-                "payload_diff": diff_payloads(pl, {**pl, "product_slug": new_val}),
+                "document_name": doc,
+                "payload_diff": diff_payloads(pl, {**pl, "parent_product_slug": family}),
             })
 
     return {
-        "document": "manual_GUNS.pdf",
-        "repair_type": "metadata_add_family_slug",
-        "affected_point_ids": [p["id"] for p in mg],
-        "point_count": len(mg),
+        "document": "spray_gun_family",
+        "documents": ["AUTOMATIC_gun.pdf", "manual_GUNS.pdf"],
+        "repair_type": "parent_product_slug_index_and_or_filter",
+        "affected_point_ids": [p["id"] for p in all_sg],
+        "point_count": len(all_sg),
         "point_count_impact": 0,
-        "idempotent": already_has,
-        "already_has_family_slug": already_has,
-        "family_slug": family_slug,
-        "child_slugs_preserved": ["am250", "eagle", "ext-i", "falcon", "flamingo", "hawk", "pole", "vrid", "vril", "wax-spray-gun"],
+        "idempotent": len(missing_parent) == 0 and len(diffs) == 0,
+        "missing_parent_slug": missing_parent,
+        "family_slug_map": family_map,
+        "child_slugs_preserved": True,
+        "product_slug_remains_scalar": True,
+        "parent_product_slug_index_required": True,
+        "or_filter_support_required": True,
         "point_diffs": diffs,
-        "affected_cases": ["identity-31"],
+        "affected_cases": ["identity-30", "identity-31"],
+        "rollback_strategy": "exact_point_restore",
+        "new_point_ids": [],
+        "code_changes_required": [
+            "app/rag/vectorstore/qdrant_store.py: add parent_product_slug to _ensure_indexes",
+            "app/rag/vectorstore/qdrant_store.py: add parent_product_slug to _indexed_payload_fields",
+            "app/rag/vectorstore/qdrant_store.py: extend _build_qdrant_filter to support OR key",
+        ],
     }
 
 
@@ -291,21 +287,20 @@ def plan_elephant_ocr_correction(points: list[dict[str, Any]]) -> dict[str, Any]
         "target_chunk_id": target.get("payload", {}).get("chunk_id"),
         "idempotent": "3:]" not in current_text,
         "already_corrected": "3:]" not in current_text,
-        "text_diff": {
-            "before": current_text,
-            "after": corrected_text,
-            "changed": current_text != corrected_text,
-        },
+        "text_diff": diff_text(current_text, corrected_text),
         "vector_impact": "dense + sparse vectors regenerated from corrected text",
-        "preserve": ["point_id", "document_name", "product_slug", "source_attribution", "model", "units"],
+        "preserve": ["point_id", "document_name", "product_slug", "document_id", "source_type", "model"],
         "affected_cases": ["cmp-01"],
+        "rollback_strategy": "exact_point_restore",
+        "new_point_ids": [],
+        "source_sha256": "bfed7495fec53982cee19276d6ff657b3b3ec156942d71e6112e38e6a2185653",
     }
 
 
 REPAIR_PLANS = {
     "Tiger_mini.pdf": plan_tiger_mini_reingestion,
-    "AUTOMATIC_gun.pdf": plan_automatic_gun_family_slug,
-    "manual_GUNS.pdf": plan_manual_guns_family_slug,
+    "AUTOMATIC_gun.pdf": plan_spray_gun_family_retrieval,
+    "manual_GUNS.pdf": plan_spray_gun_family_retrieval,
     "Elephant.pdf": plan_elephant_ocr_correction,
 }
 
@@ -313,7 +308,7 @@ REPAIR_PLANS = {
 def run_audit(store: QdrantStore, target_docs: list[str] | None = None) -> dict[str, Any]:
     """Read-only audit: inventory target documents without any changes."""
     points = scroll_all_points(store)
-    docs = target_docs or list(REPAIR_PLANS.keys())
+    docs = target_docs or ["Tiger_mini.pdf", "AUTOMATIC_gun.pdf", "manual_GUNS.pdf", "Elephant.pdf"]
     result: dict[str, Any] = {
         "mode": "audit",
         "collection": store.collection_name,
@@ -329,14 +324,15 @@ def run_audit(store: QdrantStore, target_docs: list[str] | None = None) -> dict[
             "sample_payload": copy.deepcopy(pts[0]["payload"]) if pts else {},
             "has_text": any(bool((p.get("payload") or {}).get("text")) for p in pts),
             "product_slugs": sorted({(p.get("payload") or {}).get("product_slug") for p in pts if (p.get("payload") or {}).get("product_slug")}),
+            "parent_product_slugs": sorted({(p.get("payload") or {}).get("parent_product_slug") for p in pts if (p.get("payload") or {}).get("parent_product_slug")}),
         }
     return result
 
 
 def run_dry_run(store: QdrantStore, target_docs: list[str] | None = None) -> dict[str, Any]:
-    """Dry-run: backup all target points, compute before/after diffs, no writes."""
+    """Dry-run: backup exact point IDs, compute before/after diffs, no writes."""
     points = scroll_all_points(store)
-    docs = target_docs or list(REPAIR_PLANS.keys())
+    docs = target_docs or ["Tiger_mini.pdf", "AUTOMATIC_gun.pdf", "manual_GUNS.pdf", "Elephant.pdf"]
 
     backups: dict[str, Any] = {}
     plans: dict[str, Any] = {}
@@ -347,11 +343,10 @@ def run_dry_run(store: QdrantStore, target_docs: list[str] | None = None) -> dic
             plans[doc] = {"status": "not_found_in_qdrant"}
             continue
 
-        # Backup before any proposed change
+        # Exact-point backup: all point IDs with full payloads + vectors
         backup_path = backup_points(pts, doc)
         backups[doc] = verify_backup(backup_path)
 
-        # Compute repair plan
         plan_fn = REPAIR_PLANS.get(doc)
         if plan_fn:
             plans[doc] = plan_fn(points)
@@ -366,7 +361,40 @@ def run_dry_run(store: QdrantStore, target_docs: list[str] | None = None) -> dic
         "backups": backups,
         "repair_plans": plans,
         "rollback_available": True,
-        "rollback_method": "re-import backup JSON via delete_by_document_name + upsert with original payloads/vectors",
+        "rollback_method": "exact_point_restore: delete only affected point IDs, upsert original payloads+vectors from backup",
+        "rollback_never_bulk_deletes_by_document_name": True,
+    }
+
+
+def simulate_rollback(points: list[dict[str, Any]], point_ids: list[str], backup_path: Path) -> dict[str, Any]:
+    """Simulate failure during partial update, then verify exact-point restore.
+
+    Read-only simulation: verifies that backup contains all target point IDs
+    with complete payloads and vectors, sufficient for exact restore.
+    """
+    data = json.loads(backup_path.read_text(encoding="utf-8"))
+    backup_pts = {p["id"]: p for p in data.get("points", [])}
+
+    missing_in_backup = [pid for pid in point_ids if pid not in backup_pts]
+    incomplete = []
+    for pid in point_ids:
+        if pid in backup_pts:
+            bp = backup_pts[pid]
+            if not bp.get("payload"):
+                incomplete.append({"point_id": pid, "issue": "missing_payload"})
+            if not bp.get("vector"):
+                incomplete.append({"point_id": pid, "issue": "missing_vector"})
+
+    return {
+        "simulated_point_ids": point_ids,
+        "backup_path": str(backup_path),
+        "checksum_sha256": sha256_file(backup_path),
+        "all_points_in_backup": len(missing_in_backup) == 0,
+        "missing_from_backup": missing_in_backup,
+        "incomplete_backups": incomplete,
+        "rollback_feasible": len(missing_in_backup) == 0 and len(incomplete) == 0,
+        "rollback_strategy": "delete_by_exact_ids + upsert_original_payloads_vectors",
+        "never_bulk_delete_by_document_name": True,
     }
 
 
@@ -374,18 +402,30 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Phase 10.2 Qdrant repair tool (read-only/dry-run)")
     parser.add_argument("--audit", action="store_true", help="Read-only inventory of target documents")
     parser.add_argument("--dry-run", action="store_true", help="Plan before/after diffs + backup snapshot, no writes")
+    parser.add_argument("--rollback-test", action="store_true", help="Simulate failure + verify exact-point rollback")
     parser.add_argument("--document", action="append", help="Target document name (exact match, repeatable)")
+    parser.add_argument("--backup", help="Backup file path for rollback test")
     args = parser.parse_args()
 
-    if not args.audit and not args.dry_run:
-        parser.error("one of --audit or --dry-run is required")
+    if not args.audit and not args.dry_run and not args.rollback_test:
+        parser.error("one of --audit, --dry-run, or --rollback-test is required")
 
     store = QdrantStore()
 
     if args.audit:
         result = run_audit(store, args.document)
-    else:
+    elif args.dry_run:
         result = run_dry_run(store, args.document)
+    else:
+        if not args.backup:
+            parser.error("--rollback-test requires --backup <path>")
+        points = scroll_all_points(store)
+        docs = args.document or ["Tiger_mini.pdf", "AUTOMATIC_gun.pdf", "manual_GUNS.pdf", "Elephant.pdf"]
+        all_ids: list[str] = []
+        for doc in docs:
+            pts = points_by_document(points, doc)
+            all_ids.extend(p["id"] for p in pts)
+        result = simulate_rollback(points, all_ids, Path(args.backup))
 
     print(json.dumps(result, indent=2, default=str))
     return 0

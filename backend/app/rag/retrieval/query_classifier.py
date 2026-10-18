@@ -87,8 +87,6 @@ PRODUCT_DISCOVERY_PATTERNS = [
     re.compile(r"\bwhich\b.*?\bproduct\b", re.IGNORECASE),
     re.compile(r"\bwhat\b.*?\bproduct\b", re.IGNORECASE),
     re.compile(r"\bwhich\b.*?\bpump\b", re.IGNORECASE),
-    re.compile(r"\bwhat\b.*?\bpump\b", re.IGNORECASE),
-    re.compile(r"\bwhich\b.*?\bspray\b", re.IGNORECASE),
     re.compile(r"\brecommend\s+a\s+product\b", re.IGNORECASE),
     re.compile(r"\bsuggest\s+a\s+product\b", re.IGNORECASE),
 ]
@@ -314,6 +312,13 @@ def is_vr_coatings_domain_query(
     if any(kw in normalized for kw in company_keywords):
         return True
 
+    # Discovery queries ("Which product can...", "What product...") name no
+    # specific product but are still VR Coatings domain queries that should
+    # retrieve from the catalogue.
+    for pattern in PRODUCT_DISCOVERY_PATTERNS:
+        if pattern.search(normalized):
+            return True
+
     # Product/technical/application keywords strongly imply a domain query.
     domain_keywords = [
         "pressure ratio", "output per cycle", "flow rate", "viscosity", "max pressure",
@@ -337,16 +342,27 @@ def is_vr_coatings_domain_query(
 def _is_domain_followup(question: str, active_context: Optional[Dict[str, Optional[str]]] = None) -> bool:
     q = question.strip().lower()
 
-    general_knowledge_indicators = [
-        "artificial intelligence", "machine learning", "python", "java", "javascript",
-        "sql", "tcp", "udp", "joke", "factorial", "capital of", "president",
-        "planet", "country", "explain newton", "write a ", "code to", "function to",
-        "what is a ", "how does a ", "difference between ", " ai", "deep learning",
-        "neural network", "transformer model", "algorithm", "data structure",
+    # General-knowledge indicators always veto, even with active context
+    # (e.g. "What is machine learning?", "Explain AI", "Write a Python function"
+    #  after discussing Tiger).
+    _GK_INDICATORS = [
+        "artificial intelligence", "machine learning", "deep learning",
+        "neural network", "transformer model", "data structure",
+        "capital of", "explain newton", "difference between",
+        "explain ",
+        "python", "java", "javascript", "sql", "tcp", "udp", "joke",
+        "factorial", "president", "planet", "country", "algorithm",
     ]
-    for indicator in general_knowledge_indicators:
+    for indicator in _GK_INDICATORS:
         if indicator in q:
             return False
+
+    # Short follow-ups (<=4 words) with an active product context are domain
+    # queries (e.g. "What is AI?" after discussing Tiger 30:150). "AI" is not
+    # in the GK list above so short AI follow-ups pass through here.
+    words = q.split()
+    if len(words) <= 4:
+        return True
 
     domain_indicators = [
         "its ", "it's ", "its", "this ", "that ", "these ", "those ",

@@ -132,6 +132,13 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "high pressure ball valves",
         ],
     },
+    "cheetah": {
+        "canonical_slug": "cheetah",
+        "aliases": [
+            "cheetah",
+            "cheetah pump",
+        ],
+    },
     "automatic-spray-guns": {
         "canonical_slug": "automatic-spray-guns",
         "aliases": [
