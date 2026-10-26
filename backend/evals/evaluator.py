@@ -252,7 +252,11 @@ class RagEvaluator:
             if _should_apply_product_filter(message, active_context, intent):
                 product_slug = active_context.get("product_slug")
                 if product_slug:
-                    retrieval_filters.setdefault("product_slug", product_slug)
+                    from app.rag.services.rag_service import _is_family_product_slug
+                    if _is_family_product_slug(product_slug):
+                        retrieval_filters.setdefault("product_slug_or_parent", [{"parent_product_slug": product_slug}])
+                    else:
+                        retrieval_filters.setdefault("product_slug", product_slug)
                 model = active_context.get("model")
                 if model:
                     retrieval_filters.setdefault("model", model)
@@ -275,7 +279,12 @@ class RagEvaluator:
                     # docs even when conversation context hasn't set a product.
                     resolved = resolve_product_identity(message)
                     if resolved:
-                        retrieval_filters["product_slug"] = resolved[0]
+                        from app.rag.services.rag_service import _is_family_product_slug
+                        slug = resolved[0]
+                        if _is_family_product_slug(slug):
+                            retrieval_filters["product_slug_or_parent"] = [{"parent_product_slug": slug}]
+                        else:
+                            retrieval_filters["product_slug"] = slug
                     elif active_context.get("product_slug"):
                         retrieval_filters["product_slug"] = active_context["product_slug"]
             elif intent.value == QueryIntent.PRODUCT_DISCOVERY.value:

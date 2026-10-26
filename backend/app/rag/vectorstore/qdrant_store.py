@@ -46,6 +46,7 @@ class QdrantStore:
             ("sha256", PayloadSchemaType.KEYWORD),
             ("content_type", PayloadSchemaType.KEYWORD),
             ("model", PayloadSchemaType.KEYWORD),
+            ("parent_product_slug", PayloadSchemaType.KEYWORD),
         ]:
             try:
                 self.client.create_payload_index(collection_name=self.collection_name, field_name=field, field_schema=schema_type)
@@ -55,7 +56,7 @@ class QdrantStore:
     @property
     def _indexed_payload_fields(self) -> set:
         """Payload fields that have a Qdrant keyword index (safe to filter on)."""
-        return {"source_type", "product_slug", "document_id", "document_name", "sha256", "content_type", "model"}
+        return {"source_type", "product_slug", "document_id", "document_name", "sha256", "content_type", "model", "parent_product_slug"}
 
     async def upsert_points(
         self,
@@ -102,6 +103,7 @@ class QdrantStore:
         # unindexed key (e.g. "model") raises a 400 from the Qdrant API. Unknown keys
         # are skipped with a warning rather than silently mis-filtering.
         must = []
+        should = []
         for key, value in filters.items():
             if value is None:
                 continue
@@ -124,15 +126,37 @@ class QdrantStore:
                         FieldCondition(key="document_name", match=MatchAny(any=vals))
                     )
                 continue
+            # Family retrieval: OR condition across product_slug and
+            # parent_product_slug. Value is a list of dicts, each containing
+            # product_slug and/or parent_product_slug. Matches points where ANY
+            # of the specified child/family conditions hold.
+            if key == "product_slug_or_parent" and isinstance(value, (list, tuple)):
+                for entry in value:
+                    if not isinstance(entry, dict):
+                        continue
+                    entry_conditions = []
+                    child_slug = entry.get("product_slug")
+                    if child_slug:
+                        entry_conditions.append(
+                            FieldCondition(key="product_slug", match=MatchValue(value=child_slug))
+                        )
+                    parent_slug = entry.get("parent_product_slug")
+                    if parent_slug:
+                        entry_conditions.append(
+                            FieldCondition(key="parent_product_slug", match=MatchValue(value=parent_slug))
+                        )
+                    if entry_conditions:
+                        should.append(Filter(should=entry_conditions))
+                continue
             if key not in self._indexed_payload_fields:
                 logger.warning(
                     "Skipping Qdrant filter on unindexed payload field %r", key
                 )
                 continue
             must.append(FieldCondition(key=key, match=MatchValue(value=value)))
-        if not must:
+        if not must and not should:
             return None
-        return Filter(must=must)
+        return Filter(must=must if must else None, should=should if should else None)
 
     async def hybrid_search(self, dense_query: List[float], sparse_query: Dict[str, Any], limit: int, filters: Optional[Dict[str, Any]] = None) -> List[Any]:
         sparse_vector = SparseVector(indices=sparse_query.get("indices", []), values=sparse_query.get("values", []))

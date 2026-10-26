@@ -24,10 +24,14 @@ def _should_apply_product_filter(question: str, active_context: Optional[Dict[st
     if intent.value in ("product_comparison", "governance"):
         return False
     if intent.value == "general_company":
-        # A question about a specific product (product_slug present in the active
-        # context) is about that product, so isolate it. Generic company-overview
-        # questions (no product context) are already filtered out above.
-        return True
+        if not active_context or not active_context.get("product_slug"):
+            return False
+        # A generic company question must not inherit an unrelated active product.
+        # A question that explicitly names the active product keeps product isolation.
+        from app.rag.product_identity import resolve_product_identity
+
+        resolved = resolve_product_identity(question)
+        return bool(resolved and resolved[0] == active_context.get("product_slug"))
     normalized = f" {question.strip().lower()} "
     if any(hint in normalized for hint in _COMPARISON_HINTS):
         return False
@@ -57,10 +61,31 @@ def _cross_product_guard(question: str, active_context: Optional[Dict[str, Optio
     catalogue_sources = [c for c in chunks if c.get("source_type") == SOURCE_TYPE_CATALOGUE]
     if not catalogue_sources:
         return False, ""
-    matching = [c for c in catalogue_sources if c.get("product_slug") == resolved_slug]
+    if _is_family_product_slug(resolved_slug):
+        matching = [c for c in catalogue_sources if c.get("parent_product_slug") == resolved_slug]
+    else:
+        matching = [c for c in catalogue_sources if c.get("product_slug") == resolved_slug]
     if not matching:
         return True, ANSWER_UNAVAILABLE
     return False, ""
+
+
+_FAMILY_PRODUCT_SLUGS = {"automatic-spray-guns", "manual-spray-guns"}
+
+
+def _is_family_product_slug(slug: Optional[str]) -> bool:
+    return bool(slug) and slug in _FAMILY_PRODUCT_SLUGS
+
+
+def _product_filter_for_slug(slug: str) -> Dict[str, Any]:
+    """Return the appropriate Qdrant filter dict for a product slug.
+
+    Family slugs (e.g. automatic-spray-guns) are stored in parent_product_slug,
+    so they need the OR-style family filter. Child slugs keep exact matching.
+    """
+    if _is_family_product_slug(slug):
+        return {"product_slug_or_parent": [{"parent_product_slug": slug}]}
+    return {"product_slug": slug}
 
 
 class RAGService:
@@ -93,7 +118,12 @@ class RAGService:
 
         retrieval_filters = dict(filters or {})
         if _should_apply_product_filter(question, active_context, intent):
-            retrieval_filters.setdefault("product_slug", active_context.get("product_slug"))
+            slug = active_context.get("product_slug")
+            if slug:
+                if _is_family_product_slug(slug):
+                    retrieval_filters.setdefault("product_slug_or_parent", [{"parent_product_slug": slug}])
+                else:
+                    retrieval_filters.setdefault("product_slug", slug)
 
         dense_query = self.dense.embed_query(effective_query)
         sparse_query = self.sparse.embed_query(effective_query)

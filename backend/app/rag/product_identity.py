@@ -132,6 +132,13 @@ PRODUCT_ALIASES: Dict[str, Dict[str, object]] = {
             "high pressure ball valves",
         ],
     },
+    "cheetah": {
+        "canonical_slug": "cheetah",
+        "aliases": [
+            "cheetah",
+            "cheetah pump",
+        ],
+    },
     "automatic-spray-guns": {
         "canonical_slug": "automatic-spray-guns",
         "aliases": [
@@ -402,7 +409,10 @@ def resolve_all_product_identities(text: str) -> List[Tuple[str, str]]:
 def get_canonical_slug(raw: Optional[str]) -> Optional[str]:
     if not raw:
         return None
-    result = resolve_product_identity(raw)
+    # Filenames often use underscores; treat them as spaces for identity
+    # resolution so "Tiger_mini.pdf" resolves to "tiger-mini".
+    normalized_raw = raw.replace("_", " ")
+    result = resolve_product_identity(normalized_raw)
     if not result:
         return None
     return result[0]
