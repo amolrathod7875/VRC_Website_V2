@@ -1,3 +1,7 @@
+import asyncio
+import logging
+import time
+import uuid
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -21,6 +25,8 @@ from app.rag.catalogue_resolver import CatalogueResolver
 from app.rag.constants import SOURCE_TYPE_COMPANY_MASTER
 
 router = APIRouter()
+
+logger = logging.getLogger(__name__)
 
 
 def _build_rag_service() -> RAGService:
@@ -62,6 +68,132 @@ def _generation_ready() -> bool:
         return False
 
 
+_rag_service = None
+_generation_service = None
+_rag_service_error: Exception | None = None
+_generation_service_error: Exception | None = None
+_service_lock = asyncio.Lock()
+_original_build_rag_service = None
+_original_build_generation_service = None
+
+
+def _register_original_builders() -> None:
+    global _original_build_rag_service, _original_build_generation_service
+    _original_build_rag_service = _build_rag_service
+    _original_build_generation_service = _build_generation_service
+
+
+_register_original_builders()
+
+
+async def get_rag_service() -> RAGService:
+    global _rag_service, _rag_service_error
+    builder = _build_rag_service
+    if builder is not _original_build_rag_service:
+        return await asyncio.to_thread(builder)
+
+    if _rag_service is not None:
+        return _rag_service
+    async with _service_lock:
+        if _rag_service is not None:
+            return _rag_service
+        if _rag_service_error is not None:
+            raise RuntimeError("RAG service initialization failed") from _rag_service_error
+        try:
+            service = await asyncio.to_thread(builder)
+        except Exception as exc:
+            _rag_service_error = exc
+            raise RuntimeError("RAG service initialization failed") from exc
+        _rag_service = service
+        globals()["_embedding_models_ready"] = True
+        return service
+
+
+async def get_generation_service() -> GenerationService:
+    global _generation_service, _generation_service_error
+    builder = _build_generation_service
+    if builder is not _original_build_generation_service:
+        return await asyncio.to_thread(builder)
+
+    if _generation_service is not None:
+        return _generation_service
+    async with _service_lock:
+        if _generation_service is not None:
+            return _generation_service
+        if _generation_service_error is not None:
+            raise RuntimeError("Generation service initialization failed") from _generation_service_error
+        try:
+            service = await asyncio.to_thread(builder)
+        except Exception as exc:
+            _generation_service_error = exc
+            raise RuntimeError("Generation service initialization failed") from exc
+        _generation_service = service
+        return service
+
+
+def _provider_status_code(exc: BaseException) -> int | None:
+    seen: set[int] = set()
+    current: BaseException | None = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        status = getattr(current, "status_code", None)
+        if status is None:
+            response = getattr(current, "response", None)
+            status = getattr(response, "status_code", None)
+        if isinstance(status, int):
+            return status
+        current = current.__cause__ or current.__context__
+    return None
+
+
+def _chat_error_to_http(exc: Exception, stage: str, request_id: str, elapsed_ms: float) -> HTTPException:
+    status_code = getattr(exc, "status_code", None)
+    if not isinstance(status_code, int):
+        status_code = _provider_status_code(exc)
+
+    if status_code == 429:
+        http_status = 429
+        detail = "The AI service is rate-limited. Please try again shortly."
+    elif status_code in (401, 403):
+        http_status = 502
+        detail = "The AI service authentication failed."
+    elif status_code is not None and status_code >= 500:
+        http_status = 502
+        detail = "The AI service is temporarily unavailable."
+    elif isinstance(exc, (ConnectionError, TimeoutError, asyncio.TimeoutError)):
+        http_status = 503
+        detail = "A backend dependency is temporarily unavailable."
+    else:
+        message = str(exc).lower()
+        if "qdrant" in message or "connection" in message:
+            http_status = 503
+            detail = "A backend dependency is temporarily unavailable."
+        elif "embedding" in message:
+            http_status = 503
+            detail = "A backend dependency is temporarily unavailable."
+        elif "groq" in message and ("rate" in message or "429" in message):
+            http_status = 429
+            detail = "The AI service is rate-limited. Please try again shortly."
+        else:
+            http_status = 500
+            detail = "An unexpected error occurred."
+
+    logger.exception(
+        "Chat request failed",
+        extra={
+            "request_id": request_id,
+            "stage": stage,
+            "exception_type": type(exc).__name__,
+            "provider_http_status": status_code,
+            "elapsed_ms": round(elapsed_ms, 2),
+        },
+    )
+    headers = {}
+    if http_status == 429:
+        headers["Retry-After"] = "10"
+    return HTTPException(status_code=http_status, detail=detail, headers=headers or None)
+
+
 # Extend ChatRequest to include optional history for stateless operation
 class ChatRequestWithHistory(ChatRequest):
     history: Optional[List[Dict[str, Any]]] = Field(default=None, description="Recent conversation history from frontend")
@@ -69,6 +201,8 @@ class ChatRequestWithHistory(ChatRequest):
 
 @router.post("", response_model=ChatResponse)
 async def chat(request: ChatRequestWithHistory) -> ChatResponse:
+    request_id = uuid.uuid4().hex
+    started_at = time.perf_counter()
     if not request.message or not request.message.strip():
         raise HTTPException(status_code=422, detail="Message must not be empty")
 
@@ -138,9 +272,10 @@ async def chat(request: ChatRequestWithHistory) -> ChatResponse:
     if domain_query:
         # PATH B: VR Coatings RAG.
         try:
-            service = _build_rag_service()
-        except RuntimeError as exc:
-            raise HTTPException(status_code=503, detail=str(exc)) from exc
+            service = await get_rag_service()
+        except Exception as exc:
+            elapsed_ms = (time.perf_counter() - started_at) * 1000
+            raise _chat_error_to_http(exc, "rag_service_init", request_id, elapsed_ms)
 
         augmented_query = conversation_service.build_augmented_query(message, recent_messages, active_context)
 
@@ -153,13 +288,15 @@ async def chat(request: ChatRequestWithHistory) -> ChatResponse:
                 active_context=active_context,
             )
         except Exception as exc:
-            raise HTTPException(status_code=500, detail="RAG pipeline failed") from exc
+            elapsed_ms = (time.perf_counter() - started_at) * 1000
+            raise _chat_error_to_http(exc, "rag_pipeline", request_id, elapsed_ms)
     else:
         # PATH C: general chat via Groq directly.
         try:
-            service = _build_generation_service()
-        except RuntimeError as exc:
-            raise HTTPException(status_code=503, detail=str(exc)) from exc
+            service = await get_generation_service()
+        except Exception as exc:
+            elapsed_ms = (time.perf_counter() - started_at) * 1000
+            raise _chat_error_to_http(exc, "generation_service_init", request_id, elapsed_ms)
 
         try:
             result = await service.generate_general_answer(
@@ -167,7 +304,8 @@ async def chat(request: ChatRequestWithHistory) -> ChatResponse:
                 recent_messages=recent_messages,
             )
         except Exception as exc:
-            raise HTTPException(status_code=500, detail="General chat generation failed") from exc
+            elapsed_ms = (time.perf_counter() - started_at) * 1000
+            raise _chat_error_to_http(exc, "general_generation", request_id, elapsed_ms)
 
     intent = QueryIntent(result.get("intent", QueryIntent.UNKNOWN.value))
     answer = result.get("answer", "")
@@ -274,47 +412,30 @@ def _filter_sources_for_ui(
 
 @router.get("/status")
 async def chat_status() -> Dict[str, Any]:
-    dense_embedding_ready = False
-    sparse_embedding_ready = False
     qdrant_connected = False
-    try:
-        DenseEmbeddingService()
-        dense_embedding_ready = True
-    except Exception:
-        pass
-    try:
-        SparseEmbeddingService()
-        sparse_embedding_ready = True
-    except Exception:
-        pass
-    try:
-        QdrantStore().client.get_collections()
-        qdrant_connected = True
-    except Exception:
-        pass
-    
-    # Get document inventory from Qdrant registry
     indexed_count = 0
     try:
-        from app.rag.vectorstore.document_registry import DocumentRegistry
-        docs = DocumentRegistry().list_indexed_documents()
-        indexed_count = len(docs)
+        store = QdrantStore()
+        collection_name = rag_settings.QDRANT_COLLECTION_NAME
+        info = await asyncio.to_thread(store.client.get_collection, collection_name)
+        qdrant_connected = True
+        indexed_count = int(getattr(info, "points_count", 0) or 0)
     except Exception:
-        pass
-    
-    ocr_available = False
-    try:
-        from app.rag.ingestion.ocr.ocr_service import ocr_service_from_settings
-        ocr_available = ocr_service_from_settings() is not None
-    except Exception:
-        pass
-    rag_ready = dense_embedding_ready and sparse_embedding_ready and qdrant_connected and indexed_count > 0
+        try:
+            store = QdrantStore()
+            await asyncio.to_thread(store.client.get_collections)
+            qdrant_connected = True
+        except Exception:
+            qdrant_connected = False
+
+    generation_ready = _generation_ready()
+    rag_ready = qdrant_connected and indexed_count > 0 and generation_ready
     return {
         "rag_ready": rag_ready,
-        "dense_embedding_ready": dense_embedding_ready,
-        "sparse_embedding_ready": sparse_embedding_ready,
+        "dense_embedding_ready": globals().get("_embedding_models_ready", False),
+        "sparse_embedding_ready": globals().get("_embedding_models_ready", False),
         "qdrant_connected": qdrant_connected,
-        "generation_ready": _generation_ready(),
-        "ocr_available": ocr_available,
+        "generation_ready": generation_ready,
+        "ocr_available": False,
         "indexed_documents": indexed_count,
     }

@@ -29,6 +29,14 @@ if media_root.exists():
     app.mount(settings.MEDIA_BASE_URL, StaticFiles(directory=str(media_root)), name="media")
 
 
+@app.middleware("http")
+async def media_cache_headers(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith(settings.MEDIA_BASE_URL):
+        response.headers.setdefault("Cache-Control", "public, max-age=31536000, immutable")
+    return response
+
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
