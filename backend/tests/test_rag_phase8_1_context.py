@@ -263,7 +263,7 @@ def test_unknown_product_does_not_inherit_previous_specs() -> None:
     messages = [
         {"role": "user", "content": "Tell me about Tiger 30:150.", "sources": [], "retrieval_metadata": {}},
         {"role": "assistant", "content": "Tiger 30:150 outputs 150 cc.", "sources": [{"document": "Tiger.pdf", "product_slug": "tiger", "model": "30:150"}], "retrieval_metadata": {}},
-        {"role": "user", "content": "What is Cheetah?", "sources": [], "retrieval_metadata": {}},
+        {"role": "user", "content": "What is Zebra?", "sources": [], "retrieval_metadata": {}},
     ]
 
     ctx = service.get_active_product_context(messages)

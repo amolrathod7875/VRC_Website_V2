@@ -24,10 +24,14 @@ def _should_apply_product_filter(question: str, active_context: Optional[Dict[st
     if intent.value in ("product_comparison", "governance"):
         return False
     if intent.value == "general_company":
-        # A question about a specific product (product_slug present in the active
-        # context) is about that product, so isolate it. Generic company-overview
-        # questions (no product context) are already filtered out above.
-        return True
+        if not active_context or not active_context.get("product_slug"):
+            return False
+        # A generic company question must not inherit an unrelated active product.
+        # A question that explicitly names the active product keeps product isolation.
+        from app.rag.product_identity import resolve_product_identity
+
+        resolved = resolve_product_identity(question)
+        return bool(resolved and resolved[0] == active_context.get("product_slug"))
     normalized = f" {question.strip().lower()} "
     if any(hint in normalized for hint in _COMPARISON_HINTS):
         return False

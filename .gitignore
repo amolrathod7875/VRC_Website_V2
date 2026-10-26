@@ -60,3 +60,8 @@ database backups/
 # Misc
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 start.txt
+# Local repair backups and generated debug artifacts
+/durable_backups/
+/phase10_2_prod_backups/
+/phase10_2_prod_backups_copy/
+backend/rag_debug/Tiger_chunks.json

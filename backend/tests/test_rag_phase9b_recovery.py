@@ -89,9 +89,8 @@ def test_tiger_mini_slug_does_not_collide_with_tiger() -> None:
 def test_tiger_and_tiger_mini_produce_different_slugs() -> None:
     # Tiger.pdf should map to 'tiger'
     assert get_canonical_slug("Tiger") == "tiger"
-    # The alias resolver returns 'tiger' for 'Tiger Mini' due to substring matching.
-    # The recovery script must override this and use 'tiger-mini' for Tiger_mini.pdf.
-    assert get_canonical_slug("Tiger Mini") == "tiger"
+    # Tiger Mini is a distinct canonical product.
+    assert get_canonical_slug("Tiger Mini") == "tiger-mini"
     # In the PostgreSQL-free world, document slugs are stored in Qdrant payloads,
     # not PostgreSQL. Verify via Qdrant that Tiger_mini.pdf has the correct slug.
     from qdrant_client import QdrantClient

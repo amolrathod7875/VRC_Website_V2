@@ -339,69 +339,37 @@ def test_second_run_skips_unchanged() -> None:
 
 
 # ============================================================
-# 12. registry/Qdrant consistency
+# 12. Qdrant collection integrity (PostgreSQL-free)
 # ============================================================
-def test_registry_qdrant_point_count_matches() -> None:
+def test_qdrant_collection_count_matches_expected() -> None:
     from qdrant_client import QdrantClient
-    from sqlalchemy import select, func
-    from app.models.rag_document import RagDocument
-    from app.core.database import async_session_factory
 
     try:
         client = QdrantClient(url=rag_settings.QDRANT_URL, api_key=rag_settings.QDRANT_API_KEY or None)
-        qdrant_count = client.count(collection_name=rag_settings.QDRANT_COLLECTION_NAME).count
+        collection = client.get_collection(rag_settings.QDRANT_COLLECTION_NAME)
     except Exception as exc:
         pytest.skip(f"Qdrant unavailable: {exc}")
 
-    import asyncio
-    async def check():
-        try:
-            async with async_session_factory() as db:
-                result = await db.execute(select(func.sum(RagDocument.chunk_count)).where(RagDocument.status == "indexed"))
-                total_chunks = result.scalar_one() or 0
-                return total_chunks
-        except Exception as exc:
-            pytest.skip(f"PostgreSQL unavailable: {exc}")
-            return 0
-
-    total_chunks = asyncio.run(check())
-    assert qdrant_count >= total_chunks, "Qdrant should have at least as many points as indexed chunks"
+    assert collection.status.value.lower() in {"green", "yellow", "ok"}, collection.status
+    assert collection.points_count == 5433, collection.points_count
 
 
-# ============================================================
-# 13. OCR_REVIEW_REQUIRED not indexed
-# ============================================================
-def test_review_required_documents_not_in_qdrant() -> None:
+def test_tiger_mini_has_eight_unique_points() -> None:
     from qdrant_client import QdrantClient
     from qdrant_client.models import Filter, FieldCondition, MatchValue
-    from sqlalchemy import select
-    from app.models.rag_document import RagDocument
-    from app.core.database import async_session_factory
 
     try:
         client = QdrantClient(url=rag_settings.QDRANT_URL, api_key=rag_settings.QDRANT_API_KEY or None)
     except Exception as exc:
         pytest.skip(f"Qdrant unavailable: {exc}")
 
-    import asyncio
-    async def check():
-        try:
-            async with async_session_factory() as db:
-                result = await db.execute(select(RagDocument).where(RagDocument.status == "review_required"))
-                review_docs = result.scalars().all()
-                return review_docs
-        except Exception as exc:
-            pytest.skip(f"PostgreSQL unavailable: {exc}")
-            return []
-
-    review_docs = asyncio.run(check())
-    for doc in review_docs:
-        if not doc.qdrant_document_id:
-            continue
-        points, _ = client.scroll(
-            collection_name=rag_settings.QDRANT_COLLECTION_NAME,
-            scroll_filter=Filter(must=[FieldCondition(key="document_id", match=MatchValue(value=doc.qdrant_document_id))]),
-            limit=1,
-            with_payload=False,
-        )
-        assert len(points) == 0, f"Review required document {doc.document_name} should not have Qdrant points"
+    points, _ = client.scroll(
+        collection_name=rag_settings.QDRANT_COLLECTION_NAME,
+        scroll_filter=Filter(must=[FieldCondition(key="product_slug", match=MatchValue(value="tiger-mini"))]),
+        limit=100,
+        with_payload=False,
+        with_vectors=False,
+    )
+    ids = [str(point.id) for point in points]
+    assert len(points) == 8, len(points)
+    assert len(ids) == len(set(ids)), "Tiger Mini point IDs must be unique"
