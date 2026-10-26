@@ -5,6 +5,7 @@ from app.rag.utils.hashing import calculate_sha256
 from app.rag.utils.ids import generate_document_id_for
 from app.rag.ingestion.pdf_parser import extract_pages, page_needs_ocr
 from app.rag.ingestion.pdf_table_parser import extract_tables
+from app.rag.ingestion.ocr_corrections import apply_ocr_corrections
 from app.rag.ingestion.catalogue_chunker import chunk_catalogue
 from app.rag.ingestion.multi_product_chunker import chunk_multi_product_catalogue, _product_slug_from_heading
 from app.rag.ingestion.system_catalogue_chunker import chunk_system_catalogue
@@ -12,6 +13,8 @@ from app.rag.ingestion.company_parser import parse_company_text
 from app.rag.ingestion.company_chunker import chunk_company_sections
 from app.rag.ingestion.metadata_builder import build_catalogue_metadata, build_company_metadata
 from app.rag.vectorstore.qdrant_store import QdrantStore
+from qdrant_client.models import Filter, FieldCondition, MatchValue
+from app.rag.utils.ids import stable_point_id
 from app.rag.embeddings.dense import DenseEmbeddingService
 from app.rag.embeddings.sparse import SparseEmbeddingService
 from app.rag.vectorstore.document_registry import DocumentRegistry
@@ -108,6 +111,7 @@ class IngestionService:
         try:
             pages, ocr_results = extract_pages(str(file_path), enable_ocr=True)
             tables = extract_tables(str(file_path))
+            pages, tables = apply_ocr_corrections(document_name, pages, tables)
             if not pages:
                 raise ValueError("No pages extracted")
 
@@ -162,6 +166,38 @@ class IngestionService:
             if old_document_id and old_document_id != document_id:
                 deleted = self.document_registry.delete_document_points(old_document_id)
                 logger.info("Deleted %d stale points for %s (old doc_id: %s)", deleted, document_name, old_document_id)
+
+            # Generic legacy/stale point cleanup: remove any points for this
+            # document whose IDs are not part of the newly generated set. This
+            # handles legacy point IDs, changed chunk counts, and partial prior
+            # ingestions without deleting by document name in bulk.
+            new_point_ids = {
+                stable_point_id(document_id, str(pl.get("chunk_id", idx)))
+                for idx, pl in enumerate(payloads)
+            }
+            stale_ids: list[str] = []
+            offset = None
+            while True:
+                batch, offset = self.qdrant_store.client.scroll(
+                    collection_name=self.qdrant_store.collection_name,
+                    scroll_filter=Filter(must=[FieldCondition(key="document_name", match=MatchValue(value=document_name))]),
+                    limit=200,
+                    with_payload=False,
+                    with_vectors=False,
+                    offset=offset,
+                )
+                for pt in batch:
+                    if str(pt.id) not in new_point_ids:
+                        stale_ids.append(str(pt.id))
+                if not offset:
+                    break
+            if stale_ids:
+                self.qdrant_store.client.delete(
+                    collection_name=self.qdrant_store.collection_name,
+                    points_selector=stale_ids,
+                )
+                logger.info("Deleted %d stale/legacy points for %s", len(stale_ids), document_name)
+
             return {"status": "indexed", "document_name": document_name, "chunks": len(chunks), "document_id": document_id}
 
         except Exception as exc:
@@ -225,6 +261,33 @@ class IngestionService:
             if old_document_id and old_document_id != document_id:
                 deleted = self.document_registry.delete_document_points(old_document_id)
                 logger.info("Deleted %d stale points for %s (old doc_id: %s)", deleted, document_name, old_document_id)
+
+            new_point_ids = {
+                stable_point_id(document_id, str(pl.get("chunk_id", idx)))
+                for idx, pl in enumerate(payloads)
+            }
+            stale_ids: list[str] = []
+            offset = None
+            while True:
+                batch, offset = self.qdrant_store.client.scroll(
+                    collection_name=self.qdrant_store.collection_name,
+                    scroll_filter=Filter(must=[FieldCondition(key="document_name", match=MatchValue(value=document_name))]),
+                    limit=200,
+                    with_payload=False,
+                    with_vectors=False,
+                    offset=offset,
+                )
+                for pt in batch:
+                    if str(pt.id) not in new_point_ids:
+                        stale_ids.append(str(pt.id))
+                if not offset:
+                    break
+            if stale_ids:
+                self.qdrant_store.client.delete(
+                    collection_name=self.qdrant_store.collection_name,
+                    points_selector=stale_ids,
+                )
+                logger.info("Deleted %d stale/legacy points for %s", len(stale_ids), document_name)
 
             logger.info("Successfully indexed company master: %s (%d chunks)", document_name, len(chunks))
             return {"status": "indexed", "document_name": document_name, "chunks": len(chunks), "document_id": document_id}
