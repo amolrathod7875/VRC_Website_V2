@@ -111,6 +111,7 @@ export function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const slowTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputId = useId();
 
@@ -190,6 +191,12 @@ export function ChatWidget() {
     }
   }, [open]);
 
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
+
   // Escape key
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -201,27 +208,32 @@ export function ChatWidget() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [open, messages, status, conversationId, input]);
 
-  async function handleSubmit(text?: string) {
+  async function handleSubmit(text?: string, retry = false) {
     const message = (text ?? input).trim();
     if (!message) return;
-    if (status.type === "loading") return;
+    if (status.type === "loading" || status.type === "slow") return;
+    abortControllerRef.current?.abort();
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
-    const userMsg: ChatMessage = {
-      id: uid(),
-      role: "user",
-      content: message,
-      sources: [],
-      retrieval: null,
-      catalogues: [],
-      show_catalogues: false,
-    };
+    if (!retry) {
+      const userMsg: ChatMessage = {
+        id: uid(),
+        role: "user",
+        content: message,
+        sources: [],
+        retrieval: null,
+        catalogues: [],
+        show_catalogues: false,
+      };
 
-    setMessages((prev) => [...prev, userMsg]);
-    setInput("");
+      setMessages((prev) => [...prev, userMsg]);
+      setInput("");
+    }
     setStatus({ type: "loading" });
 
     try {
-      const result: ChatAPIResponse = await sendChatMessage(message, conversationId, messages);
+      const result: ChatAPIResponse = await sendChatMessage(message, conversationId, messages, controller.signal);
 
       setConversationId(result.conversation_id);
       try {
@@ -245,6 +257,12 @@ export function ChatWidget() {
       setMessages((prev) => [...prev, assistantMsg]);
       setStatus({ type: "open" });
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setStatus({ type: "open" });
+        return;
+      }
+
+      const isRateLimited = err instanceof Error && (err as Error & { status?: number }).status === 429;
       const assistantMsg: ChatMessage = {
         id: uid(),
         role: "assistant",
@@ -253,11 +271,17 @@ export function ChatWidget() {
         retrieval: null,
         catalogues: [],
         show_catalogues: false,
-        error: "I'm having trouble reaching the VR Coatings knowledge service. Please try again.",
+        error: isRateLimited
+          ? "The assistant is temporarily rate-limited. Please try again shortly."
+          : "I'm having trouble reaching the VR Coatings knowledge service. Please try again.",
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
       setStatus({ type: "error", message: err instanceof Error ? err.message : "Something went wrong." });
+    } finally {
+      if (abortControllerRef.current === controller) {
+        abortControllerRef.current = null;
+      }
     }
   }
 
@@ -273,13 +297,21 @@ export function ChatWidget() {
   }
 
   function handleRetry() {
-    setStatus({ type: "loading" });
     const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
-    if (lastUserMsg) {
-      handleSubmit(lastUserMsg.content);
-    } else {
+    if (!lastUserMsg) {
       setStatus({ type: "open" });
+      return;
     }
+
+    setMessages((prev) => {
+      const last = prev[prev.length - 1];
+      if (last?.role === "assistant" && last.error) {
+        return prev.slice(0, -1);
+      }
+      return prev;
+    });
+
+    void handleSubmit(lastUserMsg.content, true);
   }
 
   function handleClose() {
@@ -550,7 +582,7 @@ export function ChatWidget() {
   }
 
   const hasMessages = messages.length > 0;
-  const isAvailable = ["ready", "open", "error", "loading", "slow"].includes(status.type);
+  const isAvailable = ["idle", "ready", "open", "error", "loading", "slow"].includes(status.type);
 
   return (
     <>

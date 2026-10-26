@@ -199,11 +199,20 @@ class DocumentRegistry:
 
     def find_documents_by_product_slug(self, product_slug: str) -> List[Dict[str, Any]]:
         """Find all documents that match the given product_slug."""
+        from qdrant_client.models import Filter, FieldCondition, MatchValue, MatchAny
+
         documents: Dict[str, Dict[str, Any]] = {}
         offset = None
+        scroll_filter = Filter(
+            should=[
+                FieldCondition(key="product_slug", match=MatchValue(value=product_slug)),
+                FieldCondition(key="parent_product_slug", match=MatchValue(value=product_slug)),
+            ]
+        )
         while True:
             points, offset = self.qdrant_store.client.scroll(
                 collection_name=self.qdrant_store.collection_name,
+                scroll_filter=scroll_filter,
                 limit=self.PAGE_SIZE,
                 with_payload=True,
                 with_vectors=False,
@@ -211,20 +220,22 @@ class DocumentRegistry:
             )
             for point in points:
                 payload = point.payload or {}
-                if payload.get("product_slug") == product_slug or product_slug in (payload.get("product_slugs") or []):
-                    doc_id = payload.get("document_id") or payload.get("document_name")
-                    if not doc_id:
-                        continue
-                    if doc_id not in documents:
-                        documents[doc_id] = self.get_document_state(doc_id) or {
-                            "document_id": doc_id,
-                            "document_name": payload.get("document_name"),
-                            "source_type": payload.get("source_type"),
-                            "product_slug": payload.get("product_slug"),
-                            "sha256": payload.get("sha256") or payload.get("source_hash"),
-                            "chunk_count": 0,
-                        }
-                    documents[doc_id]["chunk_count"] = documents[doc_id].get("chunk_count", 0) + 1
+                doc_id = payload.get("document_id") or payload.get("document_name")
+                if not doc_id:
+                    continue
+                if doc_id not in documents:
+                    documents[doc_id] = {
+                        "document_id": doc_id,
+                        "document_name": payload.get("document_name"),
+                        "source_type": payload.get("source_type"),
+                        "product_slug": payload.get("product_slug"),
+                        "product_slugs": payload.get("product_slugs"),
+                        "parent_product_slug": payload.get("parent_product_slug"),
+                        "sha256": payload.get("sha256") or payload.get("source_hash"),
+                        "storage_path": payload.get("storage_path"),
+                        "chunk_count": 0,
+                    }
+                documents[doc_id]["chunk_count"] = documents[doc_id].get("chunk_count", 0) + 1
             if not offset:
                 break
         return list(documents.values())

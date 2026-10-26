@@ -1,6 +1,6 @@
 import time
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from app.rag.config import rag_settings
 from app.rag.generation.base import BaseLLMProvider
 from app.rag.generation.factory import LLMFactory
@@ -68,11 +68,31 @@ class GenerationService:
             "provider_error": False,
         }
 
+    @staticmethod
+    def _format_recent_messages(recent_messages: List[Dict[str, Any]]) -> str:
+        lines: List[str] = []
+        for message in recent_messages[-8:]:
+            role = message.get("role")
+            content = message.get("content")
+            if role not in ("user", "assistant") or not isinstance(content, str):
+                continue
+            trimmed = content.strip()
+            if not trimmed:
+                continue
+            lines.append(f"{str(role).capitalize()}: {trimmed[:1000]}")
+        return "\n".join(lines)
+
     async def generate_general_answer(
         self,
         question: str,
         conversation_history: str = "",
+        recent_messages: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
+        if recent_messages:
+            formatted_history = self._format_recent_messages(recent_messages)
+            if formatted_history:
+                conversation_history = formatted_history
+
         if conversation_history and conversation_history.strip():
             user_prompt = f"{conversation_history}\n\nQuestion: {question}"
         else:

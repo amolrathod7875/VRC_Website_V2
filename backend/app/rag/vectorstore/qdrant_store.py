@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, Dict, List, Optional
 import uuid
 import logging
@@ -161,7 +162,8 @@ class QdrantStore:
     async def hybrid_search(self, dense_query: List[float], sparse_query: Dict[str, Any], limit: int, filters: Optional[Dict[str, Any]] = None) -> List[Any]:
         sparse_vector = SparseVector(indices=sparse_query.get("indices", []), values=sparse_query.get("values", []))
         qdrant_filter = self._build_qdrant_filter(filters)
-        results = self.client.query_points(
+        results = await asyncio.to_thread(
+            self.client.query_points,
             collection_name=self.collection_name,
             prefetch=[
                 Prefetch(query=dense_query, using="dense", limit=limit * 2),

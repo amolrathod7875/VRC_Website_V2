@@ -23,6 +23,7 @@ export function ApplicationsShowcaseVideo({
   const [activeSlug, setActiveSlug] = useState<string>(items[0]?.slug ?? "");
   const [measuredHeight, setMeasuredHeight] = useState<Record<string, number>>({});
   const [revealVisible, setRevealVisible] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const mediaRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -41,6 +42,15 @@ export function ApplicationsShowcaseVideo({
     );
     observer.observe(section);
     return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefersReducedMotion(mediaQuery.matches);
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
   }, []);
 
   useEffect(() => {
@@ -169,14 +179,15 @@ export function ApplicationsShowcaseVideo({
                     }}
                     className="relative h-[240px] sm:h-[230px] lg:h-[260px]"
                   >
-                    {app.video ? (
+                    {isActive && app.video ? (
                       <video
                         src={app.video}
-                        autoPlay
+                        autoPlay={!prefersReducedMotion}
                         muted
                         loop
                         playsInline
                         preload="metadata"
+                        poster={app.image}
                         aria-hidden="true"
                         className="absolute inset-0 h-full w-full object-cover object-top"
                       />

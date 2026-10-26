@@ -27,7 +27,8 @@ function formatHistoryForBackend(messages: ChatMessage[]): HistoryMessage[] {
 export async function sendChatMessage(
   message: string,
   conversationId?: string | null,
-  history?: ChatMessage[]
+  history?: ChatMessage[],
+  signal?: AbortSignal
 ): Promise<ChatAPIResponse> {
   const body: Record<string, unknown> = { message };
   if (conversationId) {
@@ -43,6 +44,7 @@ export async function sendChatMessage(
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+    signal,
   });
 
   if (!res.ok) {
@@ -54,7 +56,9 @@ export async function sendChatMessage(
     } catch {
       // use default detail
     }
-    throw new Error(detail);
+    const error = new Error(detail) as Error & { status?: number };
+    error.status = res.status;
+    throw error;
   }
 
   const data = (await res.json()) as {
